@@ -134,3 +134,4 @@ C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.0\Bang_Avalonia.csproj.CopyComplete
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.0\Bang_Avalonia.genruntimeconfig.cache
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.0\ref\Bang_Avalonia.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.0\Bang_Avalonia.sourcelink.json
