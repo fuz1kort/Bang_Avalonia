@@ -8,12 +8,12 @@ namespace Bang_Avalonia.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     public string Greeting => "Добро пожаловать в Бэнг!";
-    public List<Bitmap> Rules { get; set; }
+    public List<Image> Rules { get; set; }
 
     public MainWindowViewModel()
     {
         Rules = new();
-        Rules.AddRange(Directory.GetFiles("../../../Assets/Rules").Select(Image.FromFile).Select(x=> new Bitmap(x)).ToList());
+        Rules.AddRange(Directory.GetFiles("../../../Assets/Rules").Select(x=> Image.FromFile(x)));
     }
 
 }

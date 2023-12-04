@@ -15,11 +15,14 @@ public partial class MainWindow : Window
         Greeting.IsVisible = false;
         Continue.IsVisible = false;
         MainMenu.IsVisible = true;
+        BackButton.IsVisible = false;
+        Rules.IsVisible = false;
     }
 
     private void Rules_OnClick(object? sender, RoutedEventArgs e)
     {
         MainMenu.IsVisible = false;
         Rules.IsVisible = true;
+        BackButton.IsVisible = true;
     }
 }
