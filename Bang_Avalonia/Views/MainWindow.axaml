@@ -7,7 +7,7 @@
         x:Class="Bang_Avalonia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/bang-logo.ico"
-        Title="Bang_Avalonia">
+        Title="Bang">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -17,15 +17,22 @@
     <Window.Background>
         <ImageBrush Source="/Assets/startup-background.jpg" Stretch="Fill"/>
     </Window.Background>
+    <Grid>
     <TextBlock Text="{Binding Greeting}" 
+               TextAlignment="Center"
                HorizontalAlignment="Center" 
                VerticalAlignment="Top" 
                FontSize="40" 
-               Foreground="Red"
+               Foreground="Wheat"
                Margin="65"
                OpacityMask="Black"
-               FontWeight="Bold">
-        <Label BorderBrush="Black" BorderThickness="1" ></Label>
-    </TextBlock>
+               FontWeight="Bold"
+               Background="#B4FF6800"
+               MaxWidth="10000"
+               Width="10000" />
+    <Button Background="GhostWhite" Content="Продолжить" Foreground="Brown" HorizontalAlignment="Center"
+            VerticalAlignment="Bottom" Margin="100" ClickMode="Press">
+    </Button>
+    </Grid>
 
 </Window>
