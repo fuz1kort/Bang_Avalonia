@@ -26,18 +26,41 @@
                    FontSize="40"
                    Foreground="Wheat"
                    Margin="65"
-                   OpacityMask="Black"
                    FontWeight="Bold"
                    Background="#B4FF6800"
                    MaxWidth="10000"
                    Width="10000" />
-        <Button x:Name="Continue" Background="GhostWhite" Content="Продолжить" Foreground="Brown" HorizontalAlignment="Center"
+        <Button x:Name="Continue" Background="GhostWhite" Content="Продолжить" Foreground="Black"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="OpenMainMenu">
         </Button>
-        <Grid x:Name="MainMenu">
-            <Button x:Name="StartButton" 
-                    Content="Начать"/>
-        </Grid>
+        <StackPanel x:Name="MainMenu" IsVisible="False" VerticalAlignment="Center">
+
+            <Button x:Name="StartButton"
+                    Content="Начать"
+                    HorizontalAlignment="Center"
+                    Background="GhostWhite"
+                    Foreground="Black"
+                    Margin="5" />
+            <Button x:Name="RulesButton"
+                    Content="Правила"
+                    HorizontalAlignment="Center"
+                    Background="GhostWhite"
+                    Foreground="Black"
+                    Margin="5"
+                    Click="Rules_OnClick" />
+        </StackPanel>
+        <ListBox x:Name="Rules"
+                 ItemsSource="{Binding Rules}"
+                 IsVisible="False">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Image Source="{Binding }" Stretch="Fill" Height="200" Width="400"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
     </Grid>
+
 
 </Window>
