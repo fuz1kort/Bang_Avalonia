@@ -4,6 +4,7 @@
     <option name="projectPerEditor">
       <map>
         <entry key="Bang_Avalonia/App.axaml" value="Bang_Avalonia/Bang_Avalonia.csproj" />
+        <entry key="Bang_Avalonia/Views/MainMenu.axaml" value="Bang_Avalonia/Bang_Avalonia.csproj" />
         <entry key="Bang_Avalonia/Views/MainWindow.axaml" value="Bang_Avalonia/Bang_Avalonia.csproj" />
       </map>
     </option>
