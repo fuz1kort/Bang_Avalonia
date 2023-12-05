@@ -11,7 +11,7 @@ public partial class MainWindow : Window
         
     }
 
-    private void OpenMainMenu(object? sender, RoutedEventArgs e)
+    private void OpenMainMenu_OnClick(object? sender, RoutedEventArgs e)
     {
         GreetingPage.IsVisible = false;
         MainMenuPage.IsVisible = true;
@@ -24,8 +24,13 @@ public partial class MainWindow : Window
         RulesPage.IsVisible = true;
     }
 
-    private void CloseWindow(object? sender, RoutedEventArgs e)
+    private void CloseWindow_OnClick(object? sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    private void StartButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        
     }
 }

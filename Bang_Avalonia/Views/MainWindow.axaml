@@ -32,7 +32,7 @@
                    Width="10000" />
         <Button x:Name="Continue" Background="GhostWhite" Content="Продолжить" Foreground="Black"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="OpenMainMenu">
+                VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="OpenMainMenu_OnClick">
         </Button>
         </Grid>
         <Grid x:Name="MainMenuPage" IsVisible="False">
@@ -42,7 +42,8 @@
                         HorizontalAlignment="Center"
                         Background="GhostWhite"
                         Foreground="Black"
-                        Margin="20" />
+                        Margin="20"
+                        Click="StartButton_OnClick"/>
                 <Button x:Name="RulesButton"
                         Content="Правила"
                         HorizontalAlignment="Center"
@@ -56,7 +57,7 @@
                         Foreground="Black"
                         Margin="20"
                         HorizontalAlignment="Center"
-                        Click="CloseWindow"/>
+                        Click="CloseWindow_OnClick"/>
             </StackPanel>
         </Grid>
         <Grid x:Name="RulesPage" IsVisible="False">
@@ -79,7 +80,7 @@
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left"
                 Foreground="White"
-                Click="OpenMainMenu"
+                Click="OpenMainMenu_OnClick"
                 Margin="20"
                 Background="#69000A0A"/>
         </Grid>
