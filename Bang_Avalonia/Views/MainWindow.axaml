@@ -18,8 +18,8 @@
         <ImageBrush Source="/Assets/startup-background.jpg" Stretch="Fill" />
     </Window.Background>
     <Grid>
-        <TextBlock x:Name="Greeting"
-                   Text="{Binding Greeting}"
+        <Grid x:Name="GreetingPage" IsVisible="True">
+        <TextBlock Text="{Binding Greeting}"
                    TextAlignment="Center"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Top"
@@ -34,60 +34,55 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="OpenMainMenu">
         </Button>
-        <StackPanel x:Name="MainMenu" IsVisible="False" VerticalAlignment="Center">
-
-            <Button x:Name="StartButton"
-                    Content="Начать"
-                    HorizontalAlignment="Center"
-                    Background="GhostWhite"
-                    Foreground="Black"
-                    Margin="20" />
-            <Button x:Name="RulesButton"
-                    Content="Правила"
-                    HorizontalAlignment="Center"
-                    Background="GhostWhite"
-                    Foreground="Black"
-                    Margin="20"
-                    Click="Rules_OnClick" />
-        </StackPanel>
-
-        <Grid>
-            
-            <ListBox x:Name="Rules"
-                     IsVisible="False"
-                     Focusable="False"
-                     Margin="0"
-                     
-            >
-
-                <Image Stretch="Fill" Source="../Assets/Rules/Rule1.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Rule2.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Rule3.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0004.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0005.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0006.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0007.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0008.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0009.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0010.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0011.jpg"/>
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0012.jpg"/>
+        </Grid>
+        <Grid x:Name="MainMenuPage" IsVisible="False">
+            <StackPanel  VerticalAlignment="Center">
+                <Button x:Name="StartButton"
+                        Content="Начать"
+                        HorizontalAlignment="Center"
+                        Background="GhostWhite"
+                        Foreground="Black"
+                        Margin="20" />
+                <Button x:Name="RulesButton"
+                        Content="Правила"
+                        HorizontalAlignment="Center"
+                        Background="GhostWhite"
+                        Foreground="Black"
+                        Margin="20"
+                        Click="Rules_OnClick" />
+                <Button x:Name="ExitButton"
+                        Content="Выйти"
+                        Background="GhostWhite"
+                        Foreground="Black"
+                        Margin="20"
+                        HorizontalAlignment="Center"
+                        Click="CloseWindow"/>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="RulesPage" IsVisible="False">
+            <ListBox Margin="0">
+                <Image Stretch="Fill" Source="../Assets/Rules/Rule1.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Rule2.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Rule3.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0004.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0005.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0006.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0007.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0008.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0009.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0010.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0011.jpg" />
+                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0012.jpg" />
             </ListBox>
             <Button
-                x:Name="BackButton"
                 Content="Назад"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left"
-                IsVisible="False" 
                 Foreground="White"
                 Click="OpenMainMenu"
                 Margin="20"
-                Background="#69000A0A"
-                    
-            />
+                Background="#69000A0A"/>
         </Grid>
-           
-
     </Grid>
 
 

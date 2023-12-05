@@ -2,12 +2,12 @@
 
 public class RoleCard
 {
-    public Roles Role { get; set; }
+    public ERoles ERole { get; set; }
     public string RoleDescription { get; set; }
     
-    public RoleCard(Roles role, string roleDescription)
+    public RoleCard(ERoles eRole, string roleDescription)
     {
-        Role = role;
+        ERole = eRole;
         RoleDescription = roleDescription;
     }
 }

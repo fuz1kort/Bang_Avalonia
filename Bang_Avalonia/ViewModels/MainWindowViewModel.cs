@@ -15,5 +15,6 @@ public class MainWindowViewModel : ViewModelBase
         Rules = new();
         Rules.AddRange(Directory.GetFiles("../../../Assets/Rules").Select(x=> Image.FromFile(x)));
     }
-
+    
+    
 }
