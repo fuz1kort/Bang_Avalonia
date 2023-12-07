@@ -5,7 +5,6 @@ namespace Bang_Avalonia.Views;
 
 public partial class MainWindow : Window
 {
-
     public MainWindow() => InitializeComponent();
 
     private void OpenMainMenu_OnClick(object? sender, RoutedEventArgs e)

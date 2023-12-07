@@ -63,12 +63,9 @@
             <ListBox Name="ListBoxRules" ItemsSource="{Binding RuleImages}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                            <Image Source="{Binding Bitmap}" Margin="-20" />
+                        <Image Source="{Binding Bitmap}" Margin="-20" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-
-                
-
             </ListBox>
             <Button
                 Content="Назад"
@@ -77,20 +74,7 @@
                 Foreground="White"
                 Click="OpenMainMenu_OnClick"
                 Margin="20"
-                Background="#69000A0A"/>
+                Background="#69000A0A" />
         </Grid>
     </Grid>
 </Window>
-
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Rule1.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Rule2.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Rule3.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0004.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0005.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0006.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0007.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0008.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0009.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0010.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0011.jpg" /> -->
-<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0012.jpg" /> -->
