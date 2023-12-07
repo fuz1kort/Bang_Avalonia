@@ -8,7 +8,6 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/bang-logo.ico"
         Title="Bang">
-
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -19,31 +18,31 @@
     </Window.Background>
     <Grid>
         <Grid x:Name="GreetingPage" IsVisible="True">
-        <TextBlock Text="{Binding Greeting}"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Top"
-                   FontSize="40"
-                   Foreground="Wheat"
-                   Margin="65"
-                   FontWeight="Bold"
-                   Background="#B4FF6800"
-                   MaxWidth="10000"
-                   Width="10000" />
-        <Button x:Name="Continue" Background="GhostWhite" Content="Продолжить" Foreground="Black"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="OpenMainMenu_OnClick">
-        </Button>
+            <TextBlock Text="{Binding Greeting}"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       FontSize="40"
+                       Foreground="Wheat"
+                       Margin="65"
+                       FontWeight="Bold"
+                       Background="#B4FF6800"
+                       MaxWidth="10000"
+                       Width="10000" />
+            <Button x:Name="Continue" Background="GhostWhite" Content="Продолжить" Foreground="Black"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="OpenMainMenu_OnClick">
+            </Button>
         </Grid>
         <Grid x:Name="MainMenuPage" IsVisible="False">
-            <StackPanel  VerticalAlignment="Center">
+            <StackPanel VerticalAlignment="Center">
                 <Button x:Name="StartButton"
                         Content="Начать"
                         HorizontalAlignment="Center"
                         Background="GhostWhite"
                         Foreground="Black"
                         Margin="20"
-                        Click="StartButton_OnClick"/>
+                        Click="StartButton_OnClick" />
                 <Button x:Name="RulesButton"
                         Content="Правила"
                         HorizontalAlignment="Center"
@@ -57,23 +56,19 @@
                         Foreground="Black"
                         Margin="20"
                         HorizontalAlignment="Center"
-                        Click="CloseWindow_OnClick"/>
+                        Click="CloseWindow_OnClick" />
             </StackPanel>
         </Grid>
         <Grid x:Name="RulesPage" IsVisible="False">
-            <ListBox Margin="0">
-                <Image Stretch="Fill" Source="../Assets/Rules/Rule1.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Rule2.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Rule3.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0004.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0005.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0006.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0007.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0008.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0009.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0010.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0011.jpg" />
-                <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0012.jpg" />
+            <ListBox Name="ListBoxRules" ItemsSource="{Binding RuleImages}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                            <Image Source="{Binding Bitmap}" Margin="-20" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                
+
             </ListBox>
             <Button
                 Content="Назад"
@@ -85,6 +80,17 @@
                 Background="#69000A0A"/>
         </Grid>
     </Grid>
-
-
 </Window>
+
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Rule1.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Rule2.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Rule3.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0004.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0005.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0006.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0007.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0008.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0009.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0010.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0011.jpg" /> -->
+<!-- <Image Stretch="Fill" Source="../Assets/Rules/Правила игры Бэнг_page-0012.jpg" /> -->

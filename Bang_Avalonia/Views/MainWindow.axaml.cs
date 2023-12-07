@@ -5,11 +5,8 @@ namespace Bang_Avalonia.Views;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
-    {
-        InitializeComponent();
-        
-    }
+
+    public MainWindow() => InitializeComponent();
 
     private void OpenMainMenu_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -31,6 +28,6 @@ public partial class MainWindow : Window
 
     private void StartButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        
+        MainMenuPage.IsVisible = false;
     }
 }

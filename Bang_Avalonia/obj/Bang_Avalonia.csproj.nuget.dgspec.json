@@ -68,6 +68,14 @@
             "Avalonia.Themes.Fluent": {
               "target": "Package",
               "version": "[11.0.5, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "Nito.AsyncEx": {
+              "target": "Package",
+              "version": "[3.0.1, )"
             }
           },
           "imports": [
