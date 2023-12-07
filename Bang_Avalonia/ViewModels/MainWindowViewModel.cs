@@ -1,27 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Drawing;
 using System.Linq;
+using Bang_Avalonia.Models;
 
 namespace Bang_Avalonia.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    public MainWindowViewModel() => Initialize();
+
+    private void Initialize()
+    {
+        var files = Directory.GetFiles("../../../Assets/Rules/");
+        var images = files.Select(x => new RuleImage(new FileInfo(x).FullName));
+        RuleImages = new ObservableCollection<RuleImage>(images);
+    }
+
     public string Greeting => "Добро пожаловать в Бэнг!";
-    public List<Image> Rules { get; set; }
 
-    public MainWindowViewModel()
-    {
-        Rules = new();
-        Rules.AddRange(Directory.GetFiles("../../../Assets/Rules").Select(x=> Image.FromFile(x)));
-    }
+    private ObservableCollection<RuleImage>? _ruleImages;
 
-    public bool HandleButtonClick(int arg)
+    public ObservableCollection<RuleImage>? RuleImages
     {
-        Console.WriteLine($"ButtonClicked {arg}");
-        return true;
+        get => _ruleImages;
+        set
+        {
+            if (value != null) _ruleImages = value;
+        }
     }
-    
-    
 }
