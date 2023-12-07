@@ -84,10 +84,10 @@ namespace XProtocol
 
         public void SetValue(byte id, object structure)
         {
-            if (!structure.GetType().IsValueType)
-            {
-                throw new Exception("Only value types are available.");
-            }
+            // if (!structure.GetType().IsValueType)
+            // {
+            //     throw new Exception("Only value types are available.");
+            // }
 
             var field = GetField(id);
 

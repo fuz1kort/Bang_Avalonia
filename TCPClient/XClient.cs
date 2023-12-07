@@ -17,7 +17,7 @@ namespace TCPClient
             Connect(new IPEndPoint(IPAddress.Parse(ip), port));
         }
 
-        public void Connect(IPEndPoint server)
+        private void Connect(IPEndPoint server)
         {
             _serverEndPoint = server;
 

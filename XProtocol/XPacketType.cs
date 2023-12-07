@@ -3,6 +3,7 @@
     public enum XPacketType
     {
         Unknown,
-        Handshake
+        Handshake,
+        Name
     }
 }

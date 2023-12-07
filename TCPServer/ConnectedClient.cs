@@ -49,6 +49,9 @@ namespace TCPServer
                 case XPacketType.Handshake:
                     ProcessHandshake(packet);
                     break;
+                case XPacketType.Name:
+                    ProcessName(packet);
+                    break;
                 case XPacketType.Unknown:
                     break;
                 default:
@@ -66,6 +69,18 @@ namespace TCPServer
             Console.WriteLine("Answering..");
 
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Handshake, handshake).ToPacket());
+        }
+        
+        private void ProcessName(XPacket packet)
+        {
+            Console.WriteLine("Recieved name packet.");
+
+            var name = XPacketConverter.Deserialize<XPacketName>(packet);
+
+            Console.WriteLine($"Connected player with name: {name}");
+            Console.WriteLine("Answering..");
+
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.Name, name).ToPacket());
         }
 
         public void QueuePacketSend(byte[] packet)

@@ -4,18 +4,18 @@ namespace XProtocol
 {
     public static class RijndaelHandler
     {
-        private const int Keysize = 128;
+        private const int Keysize = 256;
         private const int DerivationIterations = 1000;
 
         public static byte[] Encrypt(byte[] data, string passPhrase)
         { 
-            var saltStringBytes = Generate128BitsOfRandomEntropy();
-            var ivStringBytes = Generate128BitsOfRandomEntropy();
+            var saltStringBytes = Generate256BitsOfRandomEntropy();
+            var ivStringBytes = Generate256BitsOfRandomEntropy();
 
             using var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations);
             var keyBytes = password.GetBytes(Keysize / 8);
             using var symmetricKey = new RijndaelManaged();
-            symmetricKey.BlockSize = 128;
+            symmetricKey.BlockSize = 256;
             symmetricKey.Mode = CipherMode.CBC;
             symmetricKey.Padding = PaddingMode.PKCS7;
             using var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes);
@@ -40,7 +40,7 @@ namespace XProtocol
             using var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations);
             var keyBytes = password.GetBytes(Keysize / 8);
             using var symmetricKey = new RijndaelManaged();
-            symmetricKey.BlockSize = 128;
+            symmetricKey.BlockSize = 256;
             symmetricKey.Mode = CipherMode.CBC;
             symmetricKey.Padding = PaddingMode.PKCS7;
             using var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes);
@@ -53,9 +53,9 @@ namespace XProtocol
             return plainTextBytes.Take(read).ToArray();
         }
 
-        private static byte[] Generate128BitsOfRandomEntropy()
+        private static byte[] Generate256BitsOfRandomEntropy()
         {
-            var randomBytes = new byte[16];
+            var randomBytes = new byte[32];
             using var rngCsp = new RNGCryptoServiceProvider();
             rngCsp.GetBytes(randomBytes);
             return randomBytes;

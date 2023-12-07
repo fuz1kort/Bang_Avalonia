@@ -10,7 +10,7 @@ public class XPacketConverter
         return Serialize(t.Item1, t.Item2, obj, strict);
     }
 
-    public static XPacket Serialize(byte type, byte subtype, object obj, bool strict = false)
+    private static XPacket Serialize(byte type, byte subtype, object obj, bool strict = false)
     {
         var fields = GetFields(obj.GetType());
 

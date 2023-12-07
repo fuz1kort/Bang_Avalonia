@@ -7,6 +7,7 @@
         static XPacketTypeManager()
         {
             RegisterType(XPacketType.Handshake, 1, 0);
+            RegisterType(XPacketType.Name, 2, 0);
         }
 
         private static void RegisterType(XPacketType type, byte btype, byte bsubtype)

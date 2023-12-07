@@ -11,24 +11,26 @@ namespace TCPClient
         {
             Console.Title = "XClient";
             Console.ForegroundColor = ConsoleColor.White;
-            
+
+            Console.WriteLine("Введите имя");
+            var name = Console.ReadLine();
             var client = new XClient();
             client.OnPacketRecieve += OnPacketRecieve;
             client.Connect("127.0.0.1", 4910);
 
-            var rand = new Random();
-            _handshakeMagic = rand.Next();
+            // var rand = new Random();
+            // _handshakeMagic = rand.Next();
 
             Thread.Sleep(1000);
             
-            Console.WriteLine("Sending handshake packet..");
+            Console.WriteLine("Sending name packet..");
 
             client.QueuePacketSend(
                 XPacketConverter.Serialize(
-                    XPacketType.Handshake,
-                    new XPacketHandshake
+                    XPacketType.Name,
+                    new XPacketName()
                     {
-                        MagicHandshakeNumber = _handshakeMagic
+                        Name = name!
                     })
                     .ToPacket());
 
@@ -51,6 +53,9 @@ namespace TCPClient
                 case XPacketType.Handshake:
                     ProcessHandshake(packet);
                     break;
+                case XPacketType.Name:
+                    ProcessName(packet);
+                    break;
                 case XPacketType.Unknown:
                     break;
                 default:
@@ -66,6 +71,13 @@ namespace TCPClient
             {
                 Console.WriteLine("Handshake successful!");
             }
+        }
+        
+        private static void ProcessName(XPacket packet)
+        {
+            var name = XPacketConverter.Deserialize<XPacketName>(packet);
+
+            Console.WriteLine($"Your Name is {name}");
         }
     }
 }
