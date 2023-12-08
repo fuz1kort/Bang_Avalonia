@@ -54,16 +54,6 @@ namespace XProtocol
             field.Contents = bytes;
         }
 
-        private byte[] GetValueRaw(byte id)
-        {
-            var field = GetField(id);
-
-            if (field == null)
-                throw new Exception($"Field with ID {id} wasn't found.");
-
-            return field.Contents;
-        }
-
         public static XPacket Create(byte type, byte subtype)
         {
             return new XPacket
@@ -142,8 +132,11 @@ namespace XProtocol
             
             while (true)
             {
+                // if (fields.Length == 2) // Остались последние два байта, завершающие пакет.
+                //     return encrypted ? DecryptPacket(xpacket) : xpacket;
+
                 if (fields.Length == 2) // Остались последние два байта, завершающие пакет.
-                    return encrypted ? xpacket.Decrypt() : xpacket;
+                    return xpacket;
 
                 var id = fields[0];
                 var size = fields[1];
@@ -160,6 +153,16 @@ namespace XProtocol
 
                 fields = fields.Skip(2 + size).ToArray();
             }
+        }
+        
+        private byte[] GetValueRaw(byte id)
+        {
+            var field = GetField(id);
+
+            if (field == null)
+                throw new Exception($"Field with ID {id} wasn't found.");
+
+            return field.Contents;
         }
 
         private void SetValueRaw(byte id, byte[] rawData)
@@ -185,11 +188,7 @@ namespace XProtocol
             field.Contents = rawData;
         }
 
-        public XPacket Encrypt() => EncryptPacket(this);
-        
-        public XPacket Decrypt() => DecryptPacket(this);
-
-        private static XPacket EncryptPacket(XPacket? packet)
+        private static XPacket EncryptPacket(XPacket? packet) //Не нужен, оставлю, вдруг пригодится потом
         {
             if (packet == null)
                 return null!; // Нам попросту нечего шифровать
@@ -204,7 +203,7 @@ namespace XProtocol
             return p;
         }
 
-        private static XPacket DecryptPacket(XPacket packet)
+        private static XPacket DecryptPacket(XPacket packet) //Не нужен, оставлю, вдруг пригодится потом
         {
             if (!packet.HasField(0))
                 return null!; // Зашифрованные данные должны быть в 0 поле
