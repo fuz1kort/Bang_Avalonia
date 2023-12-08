@@ -2,7 +2,8 @@
 
 namespace XProtocol;
 
-public struct XPacketName
+[Serializable]
+public class XPacketName
 {
     [XField(1)]
     public string Name;

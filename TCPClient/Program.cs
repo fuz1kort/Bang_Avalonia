@@ -75,9 +75,9 @@ namespace TCPClient
         
         private static void ProcessName(XPacket packet)
         {
-            var name = XPacketConverter.Deserialize<XPacketName>(packet);
+            var packetName = XPacketConverter.Deserialize<XPacketName>(packet);
 
-            Console.WriteLine($"Your Name is {name}");
+            Console.WriteLine($"Your Name is {packetName.Name}");
         }
     }
 }
