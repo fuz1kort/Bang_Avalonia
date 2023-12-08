@@ -77,7 +77,7 @@ namespace TCPServer
 
             var name = XPacketConverter.Deserialize<XPacketName>(packet);
 
-            Console.WriteLine($"Connected player with name: {name}");
+            Console.WriteLine($"Connected player with name: {name.Name}");
             Console.WriteLine("Answering..");
 
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Name, name).ToPacket());

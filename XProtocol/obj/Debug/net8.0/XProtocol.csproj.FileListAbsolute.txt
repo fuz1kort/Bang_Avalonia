@@ -10,3 +10,4 @@ C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XP
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\refint\XProtocol.dll
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.pdb
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\ref\XProtocol.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.csproj.AssemblyReference.cache

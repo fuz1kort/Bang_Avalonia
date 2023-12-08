@@ -2,7 +2,7 @@
 
 namespace XProtocol;
 
-public class XPacketName
+public struct XPacketName
 {
     [XField(1)]
     public string Name;
