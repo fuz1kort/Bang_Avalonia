@@ -29,4 +29,9 @@ public partial class MainWindow : Window
     {
         MainMenuPage.IsVisible = false;
     }
+
+    private void GoToMainMenu_OnClick(object? sender, RoutedEventArgs e)
+    {
+        
+    }
 }
