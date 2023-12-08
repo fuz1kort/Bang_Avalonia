@@ -10,7 +10,7 @@ internal class ConnectedClient
     private Socket Client { get; }
 
     private readonly Queue<byte[]> _packetSendingQueue = new();
-
+    
     public ConnectedClient(Socket client)
     {
         Client = client;
@@ -18,7 +18,7 @@ internal class ConnectedClient
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
     }
-
+    
     private async Task ReceivePacketsAsync()
     {
         while (true) // Слушаем пакеты, пока клиент не отключится.
@@ -94,7 +94,7 @@ internal class ConnectedClient
 
         _packetSendingQueue.Enqueue(packet);
     }
-
+    
     private async Task SendPacketsAsync()
     {
         while (true)
@@ -106,8 +106,8 @@ internal class ConnectedClient
             }
 
             var packet = _packetSendingQueue.Dequeue();
-            var encrPacket = XProtocolEncryptor.Encrypt(packet);
-            Client.Send(encrPacket);
+            var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
+            Client.Send(encryptedPacket);
 
             await Task.Delay(100);
         }

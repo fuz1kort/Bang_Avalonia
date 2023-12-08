@@ -6,8 +6,7 @@ public static class RijndaelHandler
 {
     private const int Keysize = 128;
     private const int DerivationIterations = 1000;
-
-    [Obsolete("Obsolete")]
+    
     public static byte[] Encrypt(byte[] data, string passPhrase)
     { 
         var saltStringBytes = Generate128BitsOfRandomEntropy();
@@ -32,7 +31,6 @@ public static class RijndaelHandler
         return cipherTextBytes;
     }
 
-    [Obsolete("Obsolete")]
     public static byte[] Decrypt(byte[] data, string passPhrase)
     {
         var saltStringBytes = data.Take(Keysize / 8).ToArray();
@@ -55,7 +53,7 @@ public static class RijndaelHandler
         return plainTextBytes.Take(read).ToArray();
     }
 
-    [Obsolete("Obsolete")]
+
     private static byte[] Generate128BitsOfRandomEntropy()
     {
         var randomBytes = new byte[16];

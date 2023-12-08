@@ -59,9 +59,7 @@ internal class XServer
         while (true)
         {
             if (_stopListening)
-            {
                 return;
-            }
 
             Socket client;
 
