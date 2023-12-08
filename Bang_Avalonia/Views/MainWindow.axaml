@@ -30,8 +30,8 @@
                Background="#B4FF6800"
                MaxWidth="10000"
                Width="10000" />
-    <Button Background="GhostWhite" Content="Продолжить" Foreground="Brown" HorizontalAlignment="Center"
-            VerticalAlignment="Bottom" Margin="100" ClickMode="Press">
+    <Button Name="GoToMainMenu" Background="GhostWhite" Content="Продолжить" Foreground="Brown" HorizontalAlignment="Center"
+            VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="GoToMainMenu_OnClick">
     </Button>
     </Grid>
 
