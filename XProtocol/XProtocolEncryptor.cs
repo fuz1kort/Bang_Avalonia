@@ -1,17 +1,18 @@
-﻿namespace XProtocol
+﻿namespace XProtocol;
+
+public static class XProtocolEncryptor
 {
-    public class XProtocolEncryptor
+    private static string Key => "2e985f930";
+
+    [Obsolete("Obsolete")]
+    public static byte[] Encrypt(byte[] data)
     {
-        private static string Key => "2e985f930";
+        return RijndaelHandler.Encrypt(data, Key);
+    }
 
-        public static byte[] Encrypt(byte[] data)
-        {
-            return RijndaelHandler.Encrypt(data, Key);
-        }
-
-        public static byte[] Decrypt(byte[] data)
-        {
-            return RijndaelHandler.Decrypt(data, Key);
-        }
+    [Obsolete("Obsolete")]
+    public static byte[] Decrypt(byte[] data)
+    {
+        return RijndaelHandler.Decrypt(data, Key);
     }
 }

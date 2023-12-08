@@ -11,6 +11,6 @@ public class RuleImage
     }
 
     public string RuleImagePath { get; set; }
-    
+
     public Bitmap Bitmap { get; set; }
 }

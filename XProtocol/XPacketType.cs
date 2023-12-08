@@ -1,9 +1,8 @@
-﻿namespace XProtocol
+﻿namespace XProtocol;
+
+public enum XPacketType
 {
-    public enum XPacketType
-    {
-        Unknown,
-        Handshake,
-        Name
-    }
+    Unknown,
+    Handshake,
+    Name
 }
