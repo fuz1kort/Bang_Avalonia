@@ -1,83 +1,43 @@
-﻿using XProtocol;
+﻿using TCPClient;
+using XProtocol;
 using XProtocol.Serializer;
+using XProtocol.XPackets;
 
-namespace TCPClient
-{
-    internal class Program
+Console.Title = "XClient";
+Console.ForegroundColor = ConsoleColor.White;
+
+var client = new XClient();
+client.Connect("127.0.0.1", 4910);
+
+Console.WriteLine("Sending handshake packet..");
+
+Thread.Sleep(1000);
+
+client.QueuePacketSend(XPacketConverter.Serialize(XPacketType.Handshake,
+    new XPacketHandshake
     {
-        private static int _handshakeMagic;
+        MagicHandshakeNumber = 14
+    }).ToPacket());
 
-        private static void Main()
-        {
-            Console.Title = "XClient";
-            Console.ForegroundColor = ConsoleColor.White;
+Thread.Sleep(1000);
 
-            Console.WriteLine("Введите имя");
-            var name = Console.ReadLine();
-            var client = new XClient();
-            client.OnPacketRecieve += OnPacketRecieve;
-            client.Connect("127.0.0.1", 4910);
+Console.WriteLine("Введите имя");
+var name = Console.ReadLine()!;
+Console.WriteLine("Введите возраст");
+var age = int.Parse(Console.ReadLine()!);
 
-            // var rand = new Random();
-            // _handshakeMagic = rand.Next();
+Console.WriteLine("Sending name packet..");
 
-            Thread.Sleep(1000);
-            
-            Console.WriteLine("Sending name packet..");
+Thread.Sleep(1000);
 
-            client.QueuePacketSend(
-                XPacketConverter.Serialize(
-                    XPacketType.Name,
-                    new XPacketName()
-                    {
-                        Name = name!
-                    })
-                    .ToPacket());
+client.QueuePacketSend(XPacketConverter.Serialize(
+    XPacketType.Name, new XPacketName
+    {
+        Name = name,
+        Age = age
+    }).ToPacket());
 
-            while(true) {}
-        }
 
-        private static void OnPacketRecieve(byte[] packet)
-        {
-            var parsed = XPacket.Parse(packet);
-
-            ProcessIncomingPacket(parsed);
-        }
-
-        private static void ProcessIncomingPacket(XPacket packet)
-        {
-            var type = XPacketTypeManager.GetTypeFromPacket(packet);
-
-            switch (type)
-            {
-                case XPacketType.Handshake:
-                    ProcessHandshake(packet);
-                    break;
-                case XPacketType.Name:
-                    ProcessName(packet);
-                    break;
-                case XPacketType.Unknown:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private static void ProcessHandshake(XPacket packet)
-        {
-            var handshake = XPacketConverter.Deserialize<XPacketHandshake>(packet);
-
-            if (_handshakeMagic - handshake.MagicHandshakeNumber == 15)
-            {
-                Console.WriteLine("Handshake successful!");
-            }
-        }
-        
-        private static void ProcessName(XPacket packet)
-        {
-            var packetName = XPacketConverter.Deserialize<XPacketName>(packet);
-
-            Console.WriteLine($"Your Name is {packetName.Name}");
-        }
-    }
+while (true)
+{
 }

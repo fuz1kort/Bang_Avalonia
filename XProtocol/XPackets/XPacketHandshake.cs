@@ -1,7 +1,8 @@
 ﻿using XProtocol.Serializer;
 
-namespace XProtocol;
+namespace XProtocol.XPackets;
 
+[Serializable]
 public class XPacketHandshake
 {
     [XField(1)]

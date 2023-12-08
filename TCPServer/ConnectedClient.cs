@@ -1,39 +1,41 @@
 ﻿using System.Net.Sockets;
 using XProtocol;
 using XProtocol.Serializer;
+using XProtocol.XPackets;
 
 namespace TCPServer
 {
     internal class ConnectedClient
     {
-        public Socket Client { get; }
+        private Socket Client { get; }
 
-        private readonly Queue<byte[]> _packetSendingQueue = new Queue<byte[]>();
+        private readonly Queue<byte[]> _packetSendingQueue = new();
 
         public ConnectedClient(Socket client)
         {
             Client = client;
 
-            Task.Run(ProcessIncomingPackets);
-            Task.Run(SendPackets);
+            Task.Run(ReceivePacketsAsync);
+            Task.Run(SendPacketsAsync);
         }
 
-        private void ProcessIncomingPackets()
+        private async Task ReceivePacketsAsync()
         {
             while (true) // Слушаем пакеты, пока клиент не отключится.
             {
-                var buff = new byte[256]; // Максимальный размер пакета - 256 байт.
-                Client.Receive(buff);
+                var buff = new byte[128]; // Максимальный размер пакета - 128 байт.
+                await Client.ReceiveAsync(buff);
+                var decrBuff = XProtocolEncryptor.Decrypt(buff);
 
-                buff = buff.TakeWhile((b, i) =>
+                buff = decrBuff.TakeWhile((b, i) =>
                 {
                     if (b != 0xFF) return true;
-                    return buff[i + 1] != 0;
+                    return decrBuff[i + 1] != 0;
                 }).Concat(new byte[] { 0xFF, 0 }).ToArray();
 
                 var parsed = XPacket.Parse(buff);
 
-                if (parsed != null)
+                if (parsed != null!)
                 {
                     ProcessIncomingPacket(parsed);
                 }
@@ -55,7 +57,7 @@ namespace TCPServer
                 case XPacketType.Unknown:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentException("Получен неизвестный пакет");
             }
         }
 
@@ -64,7 +66,7 @@ namespace TCPServer
             Console.WriteLine("Recieved handshake packet.");
 
             var handshake = XPacketConverter.Deserialize<XPacketHandshake>(packet);
-            handshake.MagicHandshakeNumber -= 15;
+            handshake.MagicHandshakeNumber += 10;
 
             Console.WriteLine("Answering..");
 
@@ -83,17 +85,17 @@ namespace TCPServer
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Name, name).ToPacket());
         }
 
-        public void QueuePacketSend(byte[] packet)
+        private void QueuePacketSend(byte[] packet)
         {
-            if (packet.Length > 256)
+            if (packet.Length > 128)
             {
-                throw new Exception("Max packet size is 256 bytes.");
+                throw new Exception("Max packet size is 128 bytes.");
             }
-
+            
             _packetSendingQueue.Enqueue(packet);
         }
 
-        private void SendPackets()
+        private async Task SendPacketsAsync()
         {
             while (true)
             {
@@ -102,11 +104,12 @@ namespace TCPServer
                     Thread.Sleep(100);
                     continue;
                 }
-
+                
                 var packet = _packetSendingQueue.Dequeue();
-                Client.Send(packet);
+                var encrPacket = XProtocolEncryptor.Encrypt(packet);
+                Client.Send(encrPacket);
 
-                Thread.Sleep(100);
+                await Task.Delay(100);
             }
         }
     }

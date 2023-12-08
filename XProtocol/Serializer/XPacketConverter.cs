@@ -49,11 +49,8 @@ public class XPacketConverter
             return instance;
         }
 
-        foreach (var tuple in fields)
+        foreach (var (field, packetFieldId) in fields)
         {
-            var field = tuple.Item1;
-            var packetFieldId = tuple.Item2;
-
             if (!packet.HasField(packetFieldId))
             {
                 if (strict)
@@ -67,7 +64,7 @@ public class XPacketConverter
             var value = typeof(XPacket)
                 .GetMethod("GetValue")?
                 .MakeGenericMethod(field.FieldType)
-                .Invoke(packet, new object[] {packetFieldId});
+                .Invoke(packet, new object[] { packetFieldId });
 
             if (value == null)
             {
@@ -91,7 +88,7 @@ public class XPacketConverter
                            BindingFlags.NonPublic |
                            BindingFlags.Public)
             .Where(field => field.GetCustomAttribute<XFieldAttribute>() != null)
-            .Select(field => Tuple.Create(field, field.GetCustomAttribute<XFieldAttribute>().FieldID))
+            .Select(field => Tuple.Create(field, field.GetCustomAttribute<XFieldAttribute>()!.FieldId))
             .ToList();
     }
 }

@@ -1,14 +1,7 @@
-﻿namespace TCPServer
-{
-    internal class Program
-    {
-        private static void Main()
-        {
-            Console.Title = "XServer";
+﻿using TCPServer;
 
-            var server = new XServer();
-            server.Start();
-            server.AcceptClients();
-        }
-    }
-}
+Console.Title = "XServer";
+
+var server = new XServer();
+await server.StartAsync();
+server.AcceptClients();

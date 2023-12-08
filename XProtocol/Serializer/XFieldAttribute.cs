@@ -3,10 +3,10 @@
 [AttributeUsage(AttributeTargets.Field)]
 public class XFieldAttribute : Attribute
 {
-    public byte FieldID { get; }
+    public byte FieldId { get; }
 
     public XFieldAttribute(byte fieldId)
     {
-        FieldID = fieldId;
+        FieldId = fieldId;
     }
 }

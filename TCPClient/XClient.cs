@@ -1,31 +1,34 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using XProtocol;
+using XProtocol.Serializer;
+using XProtocol.XPackets;
 
 namespace TCPClient
 {
     internal class XClient
     {
-        public Action<byte[]> OnPacketRecieve { get; set; }
+        private const int HandshakeMagic = 14;
 
         private readonly Queue<byte[]> _packetSendingQueue = new();
 
-        private Socket _socket;
-        private IPEndPoint _serverEndPoint;
-
+        private Socket? _socket;
+        private IPEndPoint? _serverEndPoint;
+        
         public void Connect(string ip, int port)
         {
             Connect(new IPEndPoint(IPAddress.Parse(ip), port));
         }
 
-        private void Connect(IPEndPoint server)
+        private void Connect(IPEndPoint? server)
         {
             _serverEndPoint = server;
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _socket.Connect(_serverEndPoint);
+            _socket.Connect(_serverEndPoint!);
 
-            Task.Run(RecievePackets);
-            Task.Run(SendPackets);
+            Task.Run(ReceivePacketsAsync);
+            Task.Run(SendPacketsAsync);
         }
 
         public void QueuePacketSend(byte[] packet)
@@ -38,24 +41,67 @@ namespace TCPClient
             _packetSendingQueue.Enqueue(packet);
         }
 
-        private void RecievePackets()
+        private async Task ReceivePacketsAsync()
         {
             while (true)
             {
-                var buff = new byte[256];
-                _socket.Receive(buff);
+                var buff = new byte[128];
+                await _socket!.ReceiveAsync(buff);
+                var decrBuff = XProtocolEncryptor.Decrypt(buff);
 
-                buff = buff.TakeWhile((b, i) =>
+                buff = decrBuff.TakeWhile((b, i) =>
                 {
                     if (b != 0xFF) return true;
-                    return buff[i + 1] != 0;
+                    return decrBuff[i + 1] != 0;
                 }).Concat(new byte[] {0xFF, 0}).ToArray();
 
-                OnPacketRecieve?.Invoke(buff);
+                var parsed = XPacket.Parse(buff);
+
+                if (parsed != null!)
+                {
+                    ProcessIncomingPacket(parsed);
+                }
+            }
+        }
+        
+        private void ProcessIncomingPacket(XPacket packet)
+        {
+            var type = XPacketTypeManager.GetTypeFromPacket(packet);
+
+            switch (type)
+            {
+                case XPacketType.Handshake:
+                    ProcessHandshake(packet);
+                    break;
+                case XPacketType.Name:
+                    ProcessName(packet);
+                    break;
+                case XPacketType.Unknown:
+                    break;
+                default:
+                    throw new ArgumentException("Получен неизвестный пакет");
+            }
+        }
+        
+        private void ProcessHandshake(XPacket packet)
+        {
+            var handshake = XPacketConverter.Deserialize<XPacketHandshake>(packet);
+
+            if (handshake.MagicHandshakeNumber - HandshakeMagic == 10)
+            {
+                Console.WriteLine("Handshake successful!");
             }
         }
 
-        private void SendPackets()
+        private void ProcessName(XPacket packet)
+        {
+            var packetName = XPacketConverter.Deserialize<XPacketName>(packet);
+
+            Console.WriteLine($"Your Name is {packetName.Name}" +
+                              $"\nYour Age is {packetName.Age}");
+        }
+
+        private async Task SendPacketsAsync()
         {
             while (true)
             {
@@ -66,9 +112,10 @@ namespace TCPClient
                 }
 
                 var packet = _packetSendingQueue.Dequeue();
-                _socket.Send(packet);
+                var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
+                await _socket!.SendAsync(encryptedPacket);
 
-                Thread.Sleep(100);
+                await Task.Delay(100);
             }
         }
     }
