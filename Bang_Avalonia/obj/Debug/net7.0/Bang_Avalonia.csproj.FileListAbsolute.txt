@@ -272,3 +272,7 @@ C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.0\Bang_Avalonia.csproj.CopyComplete
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.0\Bang_Avalonia.genruntimeconfig.cache
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\obj\Debug\net7.0\ref\Bang_Avalonia.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\bin\Debug\net7.0\Nito.AsyncEx.Concurrent.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\bin\Debug\net7.0\Nito.AsyncEx.Enlightenment.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Avalonia\bin\Debug\net7.0\Nito.AsyncEx.dll

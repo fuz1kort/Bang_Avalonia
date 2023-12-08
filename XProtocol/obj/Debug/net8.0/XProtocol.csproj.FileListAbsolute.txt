@@ -1,0 +1,13 @@
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\bin\Debug\net8.0\XProtocol.deps.json
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\bin\Debug\net8.0\XProtocol.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\bin\Debug\net8.0\XProtocol.pdb
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.AssemblyInfoInputs.cache
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.AssemblyInfo.cs
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.csproj.CoreCompileInputs.cache
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.sourcelink.json
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\refint\XProtocol.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.pdb
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\ref\XProtocol.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net8.0\XProtocol.csproj.AssemblyReference.cache
