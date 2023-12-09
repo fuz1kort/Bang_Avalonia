@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 
-namespace Bang_Avalonia.Models;
+namespace Bang_Game.Models;
 
 public class RuleImage
 {

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Drawing;
+using System.Net;
 using System.Net.Sockets;
 
 namespace TCPServer;
@@ -6,8 +7,11 @@ namespace TCPServer;
 internal class XServer
 {
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
     // ReSharper disable once CollectionNeverQueried.Local
     private List<ConnectedClient> _clients = new();
+
+    internal static List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
 
     private bool _listening;
     private bool _stopListening;
@@ -20,7 +24,7 @@ internal class XServer
             {
                 throw new Exception("Server is already listening incoming requests.");
             }
-            
+
             _socket.Bind(new IPEndPoint(IPAddress.Any, 4910));
             _socket.Listen(10);
 

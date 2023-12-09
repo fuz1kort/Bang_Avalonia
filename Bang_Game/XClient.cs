@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Bang_Game.Models;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -15,22 +17,21 @@ internal class XClient
 {
     private const int HandshakeMagic = 14;
 
+
+
     private readonly Queue<byte[]> _packetSendingQueue = new();
 
     private Socket? _socket;
     private IPEndPoint? _serverEndPoint;
 
-    public void Connect(string ip, int port)
-    {
-        Connect(new IPEndPoint(IPAddress.Parse(ip), port));
-    }
+    public void ConnectAsync(string ip, int port) => ConnectAsync(new IPEndPoint(IPAddress.Parse(ip), port));
 
-    private void Connect(IPEndPoint? server)
+    private async Task ConnectAsync(IPEndPoint? server)
     {
         _serverEndPoint = server;
 
         _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        _socket.Connect(_serverEndPoint!);
+        await _socket.ConnectAsync(_serverEndPoint!);
 
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
@@ -81,11 +82,25 @@ internal class XClient
             case XPacketType.Name:
                 ProcessName(packet);
                 break;
+            case XPacketType.Color:
+                ProcessColor(packet);
+                break;
             case XPacketType.Unknown:
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
+    }
+
+    private void ProcessColor(XPacket packet)
+    {
+        var colorPacket = XPacketConverter.Deserialize<XPacketColor>(packet);
+
+        var color = Color.FromArgb(colorPacket.Argb);
+        var newColor = ColorTranslator.FromHtml(colorPacket.Argb.ToString());
+        Player.Instance.SetColor(color);
+        
+        Console.WriteLine($"Your color is {newColor.Name}");
     }
 
     private void ProcessHandshake(XPacket packet)
@@ -102,8 +117,7 @@ internal class XClient
     {
         var packetName = XPacketConverter.Deserialize<XPacketName>(packet);
 
-        Console.WriteLine($"Your Name is {packetName.Name}" +
-                          $"\nYour Age is {packetName.Age}");
+        Console.WriteLine($"Your Nickname is {packetName.Name}");
     }
 
     private async Task SendPacketsAsync()

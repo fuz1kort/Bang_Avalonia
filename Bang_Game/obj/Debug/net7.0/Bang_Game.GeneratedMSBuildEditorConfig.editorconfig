@@ -13,12 +13,15 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Bang_Game
-build_property.ProjectDir = C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\
+build_property.ProjectDir = C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 
-[C:/Users/gafar/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/App.axaml]
+[C:/Users/Marat/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/gafar/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/Views/MainWindow.axaml]
+[C:/Users/Marat/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/Views/GameWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/Marat/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

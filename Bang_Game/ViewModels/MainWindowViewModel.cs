@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using Bang_Avalonia.Models;
+using Bang_Game.Models;
 
 namespace Bang_Game.ViewModels;
 

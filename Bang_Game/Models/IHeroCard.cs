@@ -1,4 +1,4 @@
-﻿namespace Bang_Avalonia.Models;
+﻿namespace Bang_Game.Models;
 
 public interface IHeroCard
 {

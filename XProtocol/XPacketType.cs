@@ -4,5 +4,6 @@ public enum XPacketType
 {
     Unknown,
     Handshake,
-    Name
+    Name,
+    Color
 }

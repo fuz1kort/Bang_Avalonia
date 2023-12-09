@@ -9,7 +9,7 @@
         Icon="/Assets/bang-logo.ico"
         Title="Bang">
     <Window.Styles>
-        <Style Selector="Button.OnBackgrounImage">
+        <Style Selector="Button.OnBackgroundImage">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="20" />
@@ -39,7 +39,7 @@
                        Background="#B4FF6800"
                        MaxWidth="10000"
                        Width="10000" />
-            <Button x:Name="Continue" Content="Продолжить" Classes="OnBackgrounImage" VerticalAlignment="Bottom"
+            <Button x:Name="Continue" Content="Продолжить" Classes="OnBackgroundImage" VerticalAlignment="Bottom"
                     Margin="100"
                     Click="OpenMainMenu_OnClick">
             </Button>
@@ -48,15 +48,15 @@
             <StackPanel VerticalAlignment="Center">
                 <Button x:Name="StartButton"
                         Content="Начать"
-                        Classes="OnBackgrounImage"
+                        Classes="OnBackgroundImage"
                         Click="StartButton_OnClick" />
                 <Button x:Name="RulesButton"
                         Content="Правила"
-                        Classes="OnBackgrounImage"
+                        Classes="OnBackgroundImage"
                         Click="Rules_OnClick" />
                 <Button x:Name="ExitButton"
                         Content="Выйти"
-                        Classes="OnBackgrounImage"
+                        Classes="OnBackgroundImage"
                         Click="CloseWindow_OnClick" />
             </StackPanel>
         </Grid>
@@ -70,21 +70,20 @@
             </ListBox>
             <Button
                 Content="Назад"
-                Classes="OnBackgrounImage"
+                Classes="OnBackgroundImage"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left"
                 Click="OpenMainMenu_OnClick" />
         </Grid>
 
         <Border CornerRadius="20" x:Name="NickInput" IsVisible="False" HorizontalAlignment="Center"
-                VerticalAlignment="Center" Background="#E64E4E4E" Width="250">
+                VerticalAlignment="Center" Background="#E64E4E4E" Width="350">
             <StackPanel>
-                <TextBlock Margin="10 5" Text="Nickname:" />
-                <TextBox Watermark="Введите свой никнейм" />
+                <TextBlock Margin="20 15" Text="Nickname:" />
+                <TextBox Watermark="Введите свой никнейм" Margin="10" x:Name="Nickname" />
                 <Border>
-                    <Button Content="Подключиться" Classes="OnBackgrounImage" />
+                    <Button Content="Подключиться" Classes="OnBackgroundImage" Click="PlayerJoin_OnClick" />
                 </Border>
-
             </StackPanel>
         </Border>
     </Grid>

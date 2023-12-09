@@ -7,6 +7,7 @@
         <entry key="Bang_Avalonia/Views/MainMenu.axaml" value="Bang_Avalonia/Bang_Avalonia.csproj" />
         <entry key="Bang_Avalonia/Views/MainWindow.axaml" value="Bang_Avalonia/Bang_Avalonia.csproj" />
         <entry key="Bang_Game/App.axaml" value="Bang_Game/Bang_Game.csproj" />
+        <entry key="Bang_Game/Views/GameWindow.axaml" value="Bang_Game/Bang_Game.csproj" />
         <entry key="Bang_Game/Views/MainWindow.axaml" value="Bang_Game/Bang_Game.csproj" />
       </map>
     </option>

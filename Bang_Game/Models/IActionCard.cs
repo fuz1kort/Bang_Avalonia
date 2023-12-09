@@ -1,4 +1,6 @@
-﻿namespace Bang_Avalonia.Models;
+﻿using Bang_Game.Models;
+
+namespace Bang_Game.Models;
 
 public interface IActionCard
 {

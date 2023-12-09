@@ -1,6 +1,4 @@
-﻿using XProtocol;
-
-namespace XProtocol;
+﻿namespace XProtocol;
 
 public static class XPacketTypeManager
 {
@@ -10,6 +8,7 @@ public static class XPacketTypeManager
     {
         RegisterType(XPacketType.Handshake, 1, 0);
         RegisterType(XPacketType.Name, 2, 0);
+        RegisterType(XPacketType.Color, 3, 0);
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)

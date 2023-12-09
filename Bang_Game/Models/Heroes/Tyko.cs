@@ -1,4 +1,4 @@
-﻿namespace Bang_Avalonia.Models.Heroes;
+﻿namespace Bang_Game.Models.Heroes;
 
 public class Tyko: IHeroCard
 {
