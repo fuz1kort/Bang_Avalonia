@@ -17,12 +17,11 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        // BackConsoleAsync();
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
 
-    private static async Task BackConsoleAsync()
+    private static void BackConsoleAsync()
     {
         try
         {

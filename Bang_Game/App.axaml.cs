@@ -1,8 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Bang_Avalonia.ViewModels;
-using Bang_Avalonia.Views;
+using Bang_Game.ViewModels;
+using MainWindow = Bang_Game.Views.MainWindow;
 
 namespace Bang_Game;
 

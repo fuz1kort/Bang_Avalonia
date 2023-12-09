@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Bang_Avalonia.Models;
 
-namespace Bang_Avalonia.ViewModels;
+namespace Bang_Game.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {

@@ -1,17 +1,27 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Bang_Avalonia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:Bang_Game.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Bang_Avalonia.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
+        x:Class="Bang_Game.Views.MainWindow"
+        x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/bang-logo.ico"
         Title="Bang">
+    <Window.Styles>
+        <Style Selector="Button.OnBackgrounImage">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="20" />
+            <Setter Property="Background" Value="GhostWhite" />
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
+    </Window.Styles>
+
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel />
+        <viewModels:MainWindowViewModel />
     </Design.DataContext>
     <Window.Background>
         <ImageBrush Source="/Assets/startup-background.jpg" Stretch="Fill" />
@@ -29,33 +39,24 @@
                        Background="#B4FF6800"
                        MaxWidth="10000"
                        Width="10000" />
-            <Button x:Name="Continue" Background="GhostWhite" Content="Продолжить" Foreground="Black"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom" Margin="100" ClickMode="Press" Click="OpenMainMenu_OnClick">
+            <Button x:Name="Continue" Content="Продолжить" Classes="OnBackgrounImage" VerticalAlignment="Bottom"
+                    Margin="100"
+                    Click="OpenMainMenu_OnClick">
             </Button>
         </Grid>
         <Grid x:Name="MainMenuPage" IsVisible="False">
             <StackPanel VerticalAlignment="Center">
                 <Button x:Name="StartButton"
                         Content="Начать"
-                        HorizontalAlignment="Center"
-                        Background="GhostWhite"
-                        Foreground="Black"
-                        Margin="20"
+                        Classes="OnBackgrounImage"
                         Click="StartButton_OnClick" />
                 <Button x:Name="RulesButton"
                         Content="Правила"
-                        HorizontalAlignment="Center"
-                        Background="GhostWhite"
-                        Foreground="Black"
-                        Margin="20"
+                        Classes="OnBackgrounImage"
                         Click="Rules_OnClick" />
                 <Button x:Name="ExitButton"
                         Content="Выйти"
-                        Background="GhostWhite"
-                        Foreground="Black"
-                        Margin="20"
-                        HorizontalAlignment="Center"
+                        Classes="OnBackgrounImage"
                         Click="CloseWindow_OnClick" />
             </StackPanel>
         </Grid>
@@ -69,12 +70,22 @@
             </ListBox>
             <Button
                 Content="Назад"
+                Classes="OnBackgrounImage"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left"
-                Foreground="White"
-                Click="OpenMainMenu_OnClick"
-                Margin="20"
-                Background="#69000A0A" />
+                Click="OpenMainMenu_OnClick" />
         </Grid>
+
+        <Border CornerRadius="20" x:Name="NickInput" IsVisible="False" HorizontalAlignment="Center"
+                VerticalAlignment="Center" Background="#E64E4E4E" Width="250">
+            <StackPanel>
+                <TextBlock Margin="10 5" Text="Nickname:" />
+                <TextBox Watermark="Введите свой никнейм" />
+                <Border>
+                    <Button Content="Подключиться" Classes="OnBackgrounImage" />
+                </Border>
+
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

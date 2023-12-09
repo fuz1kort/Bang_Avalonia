@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Bang_Avalonia.Views;
+namespace Bang_Game.Views;
 
 public partial class MainWindow : Window
 {
@@ -25,5 +25,6 @@ public partial class MainWindow : Window
     private void StartButton_OnClick(object? sender, RoutedEventArgs e)
     {
         MainMenuPage.IsVisible = false;
+        NickInput.IsVisible = true;
     }
 }

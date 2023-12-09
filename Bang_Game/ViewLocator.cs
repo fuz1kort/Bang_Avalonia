@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Bang_Avalonia.ViewModels;
+using Bang_Game.ViewModels;
 
 
 namespace Bang_Game;
