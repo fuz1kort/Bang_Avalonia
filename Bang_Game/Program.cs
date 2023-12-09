@@ -2,6 +2,7 @@
 using Avalonia.ReactiveUI;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -16,8 +17,13 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        // BackConsoleAsync();
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
+    }
+
+    private static async Task BackConsoleAsync()
+    {
         try
         {
             var client = new XClient();
