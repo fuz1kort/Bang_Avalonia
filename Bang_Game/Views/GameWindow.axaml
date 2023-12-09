@@ -11,7 +11,14 @@
         
         <Grid >
                 <Grid x:Name="PlayersList" HorizontalAlignment="Left" Width="150" Background="Gray">
-                        <ListBox ItemsSource="{Binding }"></ListBox>
+                        <ListBox ItemsSource="{Binding PlayersList}">
+                                <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                                <TextBlock Foreground="{Binding Color}" Text="{Binding Name}"></TextBlock>
+                                        </DataTemplate>
+                                </ListBox.ItemTemplate>
+                        </ListBox>
+                        
                 </Grid>
         </Grid>
 </Window>

@@ -6,5 +6,5 @@ namespace XProtocol.XPackets;
 public class XPacketBeginPlayer
 {
     [XField(1)] public string? Name;
-    [XField(2)] public int? ColorRgb;
+    [XField(2)] public int Argb;
 }

@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Bang_Game.Models;
+using Bang_Game.ViewModels;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -37,7 +38,7 @@ internal class XClient
                     IsSuccessfull = false
                 }).ToPacket());
 
-            Player = new Player(name);
+            Player = new Player(name, 0);
 
             while (true)
             {
@@ -107,13 +108,27 @@ internal class XClient
                 ProcessConnection(packet);
                 break;
             case XPacketType.BeginPlayer:
-                ProcessBeginPlayer(packet);
+                if (Player.Color == Color.FromArgb(0))
+                {
+                    ProcessBeginPlayer(packet);
+                }
+                else
+                {
+                    ReceivePlayer(packet);
+                }
+                    
                 break;
             case XPacketType.Unknown:
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
+    }
+
+    private void ReceivePlayer(XPacket packet)
+    {
+        var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
+        GameWindowViewModel.PlayersList.Add(new Player(packetPlayer.Name!, packetPlayer.Argb));
     }
 
     private void ProcessConnection(XPacket packet)
@@ -128,7 +143,7 @@ internal class XClient
         var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
         Player.Name = packetPlayer.Name ?? Player.Name;
         
-        var newColor = ColorTranslator.FromHtml(packetPlayer.ColorRgb.ToString()!);
+        var newColor = ColorTranslator.FromHtml(packetPlayer.Argb.ToString()!);
         Player.Color = newColor;
         
         Console.WriteLine($"Your Nickname is {Player.Name}");

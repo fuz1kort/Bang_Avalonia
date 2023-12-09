@@ -9,7 +9,7 @@ internal class XServer
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
     // ReSharper disable once CollectionNeverQueried.Local
-    private List<ConnectedClient> _clients = new();
+    internal static List<ConnectedClient> _clients = new();
 
     internal static List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
 

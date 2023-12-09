@@ -7,5 +7,9 @@ public class Player
     public string? Name { get; set; }
     public Color Color { get; set; }
 
-    public Player(string name) => Name = name;
+    public Player(string name, int argb)
+    {
+        Name = name;
+        Color = Color.FromArgb(argb);
+    }
 }

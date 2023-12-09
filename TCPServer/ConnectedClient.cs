@@ -90,7 +90,7 @@ internal class ConnectedClient
         Argb = randomColor.ToArgb();
         var xPacketBeginPlayerColor = new XPacketBeginPlayer
         {
-            ColorRgb = Argb
+            Argb = Argb
         };
         XServer.Colors.RemoveAt(randomNum);
 
@@ -98,6 +98,9 @@ internal class ConnectedClient
                           $"\nGiven color: {ColorTranslator.FromHtml(Argb.ToString()).Name}");
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayerColor).ToPacket());
+        
+        foreach (var xpacketClient in XServer._clients.Select(client => new XPacketBeginPlayer { Name = Name, Argb = Argb }))
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xpacketClient).ToPacket());
     }
 
     private void QueuePacketSend(byte[] packet)
