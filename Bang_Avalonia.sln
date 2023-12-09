@@ -1,12 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bang_Avalonia", "Bang_Avalonia\Bang_Avalonia.csproj", "{34BD4D5F-4665-433D-9FE7-A393CF807811}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bang_Game", "Bang_Game\Bang_Game.csproj", "{38E8231C-E413-49BB-A5E2-164561CDFE25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPServer", "TCPServer\TCPServer.csproj", "{543D5F86-E367-40BC-A049-0A0B93ED5E05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPServer", "TCPServer\TCPServer.csproj", "{CFBCAC94-167C-48B7-A1A1-45D8861FBF0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPClient", "TCPClient\TCPClient.csproj", "{A3404338-9177-42DE-AF86-8D991A93EF60}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XProtocol", "XProtocol\XProtocol.csproj", "{C82C84FD-F6C2-415C-815C-CF6A72ED7AC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XProtocol", "XProtocol\XProtocol.csproj", "{D789A6BD-9650-40C1-9326-48783DAEA738}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,21 +12,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{34BD4D5F-4665-433D-9FE7-A393CF807811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34BD4D5F-4665-433D-9FE7-A393CF807811}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34BD4D5F-4665-433D-9FE7-A393CF807811}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34BD4D5F-4665-433D-9FE7-A393CF807811}.Release|Any CPU.Build.0 = Release|Any CPU
-		{543D5F86-E367-40BC-A049-0A0B93ED5E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{543D5F86-E367-40BC-A049-0A0B93ED5E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{543D5F86-E367-40BC-A049-0A0B93ED5E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{543D5F86-E367-40BC-A049-0A0B93ED5E05}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3404338-9177-42DE-AF86-8D991A93EF60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3404338-9177-42DE-AF86-8D991A93EF60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3404338-9177-42DE-AF86-8D991A93EF60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3404338-9177-42DE-AF86-8D991A93EF60}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C82C84FD-F6C2-415C-815C-CF6A72ED7AC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C82C84FD-F6C2-415C-815C-CF6A72ED7AC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C82C84FD-F6C2-415C-815C-CF6A72ED7AC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C82C84FD-F6C2-415C-815C-CF6A72ED7AC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38E8231C-E413-49BB-A5E2-164561CDFE25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38E8231C-E413-49BB-A5E2-164561CDFE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38E8231C-E413-49BB-A5E2-164561CDFE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38E8231C-E413-49BB-A5E2-164561CDFE25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFBCAC94-167C-48B7-A1A1-45D8861FBF0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFBCAC94-167C-48B7-A1A1-45D8861FBF0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFBCAC94-167C-48B7-A1A1-45D8861FBF0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFBCAC94-167C-48B7-A1A1-45D8861FBF0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D789A6BD-9650-40C1-9326-48783DAEA738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D789A6BD-9650-40C1-9326-48783DAEA738}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D789A6BD-9650-40C1-9326-48783DAEA738}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D789A6BD-9650-40C1-9326-48783DAEA738}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
