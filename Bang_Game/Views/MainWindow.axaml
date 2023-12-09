@@ -64,7 +64,7 @@
             <ListBox Name="ListBoxRules" ItemsSource="{Binding RuleImages}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding Bitmap}" Margin="-20" />
+                        <Image Source="{Binding Bitmap}" Margin="-15" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -79,7 +79,7 @@
         <Border CornerRadius="20" x:Name="NickInput" IsVisible="False" HorizontalAlignment="Center"
                 VerticalAlignment="Center" Background="#E64E4E4E" Width="350">
             <StackPanel>
-                <TextBlock Margin="20 15" Text="Nickname:" />
+                <TextBlock Margin="20 15" Text="Nickname:" Foreground="White" />
                 <TextBox Watermark="Введите свой никнейм" Margin="10" x:Name="Nickname" />
                 <Border>
                     <Button Content="Подключиться" Classes="OnBackgroundImage" Click="PlayerJoin_OnClick" />

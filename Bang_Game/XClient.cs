@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -15,16 +16,41 @@ namespace Bang_Game;
 
 internal class XClient
 {
-    private const int HandshakeMagic = 14;
-
-
-
     private readonly Queue<byte[]> _packetSendingQueue = new();
 
     private Socket? _socket;
     private IPEndPoint? _serverEndPoint;
 
-    public void ConnectAsync(string ip, int port) => ConnectAsync(new IPEndPoint(IPAddress.Parse(ip), port));
+    private Player Player { get; set; } = null!;
+
+    public async Task ConnectAsync(string name)
+    {
+        try
+        {
+            ConnectAsync("127.0.0.1", 4910);
+
+
+
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection,
+                new XPacketConnection
+                {
+                    IsSuccessfull = false
+                }).ToPacket());
+
+            Player = new Player(name);
+
+            while (true)
+            {
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void ConnectAsync(string ip, int port) => ConnectAsync(new IPEndPoint(IPAddress.Parse(ip), port));
 
     private async Task ConnectAsync(IPEndPoint? server)
     {
@@ -36,6 +62,7 @@ internal class XClient
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
     }
+    
 
     public void QueuePacketSend(byte[] packet)
     {
@@ -76,14 +103,11 @@ internal class XClient
 
         switch (type)
         {
-            case XPacketType.Handshake:
-                ProcessHandshake(packet);
+            case XPacketType.Connection:
+                ProcessConnection(packet);
                 break;
-            case XPacketType.Name:
-                ProcessName(packet);
-                break;
-            case XPacketType.Color:
-                ProcessColor(packet);
+            case XPacketType.BeginPlayer:
+                ProcessBeginPlayer(packet);
                 break;
             case XPacketType.Unknown:
                 break;
@@ -92,32 +116,23 @@ internal class XClient
         }
     }
 
-    private void ProcessColor(XPacket packet)
+    private void ProcessConnection(XPacket packet)
     {
-        var colorPacket = XPacketConverter.Deserialize<XPacketColor>(packet);
+        var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
 
-        var color = Color.FromArgb(colorPacket.Argb);
-        var newColor = ColorTranslator.FromHtml(colorPacket.Argb.ToString());
-        Player.Instance.SetColor(color);
+        if (connection.IsSuccessfull) Console.WriteLine("Handshake successful!");
+    }
+
+    private void ProcessBeginPlayer(XPacket packet)
+    {
+        var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
+        Player.Name = packetPlayer.Name ?? Player.Name;
         
-        Console.WriteLine($"Your color is {newColor.Name}");
-    }
-
-    private void ProcessHandshake(XPacket packet)
-    {
-        var handshake = XPacketConverter.Deserialize<XPacketHandshake>(packet);
-
-        if (handshake.MagicHandshakeNumber - HandshakeMagic == 10)
-        {
-            Console.WriteLine("Handshake successful!");
-        }
-    }
-
-    private void ProcessName(XPacket packet)
-    {
-        var packetName = XPacketConverter.Deserialize<XPacketName>(packet);
-
-        Console.WriteLine($"Your Nickname is {packetName.Name}");
+        var newColor = ColorTranslator.FromHtml(packetPlayer.ColorRgb.ToString()!);
+        Player.Color = newColor;
+        
+        Console.WriteLine($"Your Nickname is {Player.Name}");
+        Console.WriteLine($"Your color is {Player.Color.Name}");
     }
 
     private async Task SendPacketsAsync()

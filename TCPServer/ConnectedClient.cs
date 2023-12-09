@@ -13,19 +13,22 @@ internal class ConnectedClient
     private readonly Queue<byte[]> _packetSendingQueue = new();
 
     private readonly Random _random = new();
-    
+
+    private string Name { get; set; }
+
     private int Argb { get; set; }
-    
+
     public ConnectedClient(Socket client)
     {
         Client = client;
 
+        Name = "NoName";
         Argb = 128128128;
 
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
     }
-    
+
     private async Task ReceivePacketsAsync()
     {
         while (true) // Слушаем пакеты, пока клиент не отключится.
@@ -55,13 +58,11 @@ internal class ConnectedClient
 
         switch (type)
         {
-            case XPacketType.Handshake:
-                ProcessHandshake(packet);
+            case XPacketType.Connection:
+                ProcessConnection(packet);
                 break;
-            case XPacketType.Name:
-                ProcessName(packet);
-                break;
-            case XPacketType.Color:
+            case XPacketType.BeginPlayer:
+                ProcessBeginPlayer(packet);
                 break;
             case XPacketType.Unknown:
                 break;
@@ -70,43 +71,33 @@ internal class ConnectedClient
         }
     }
 
-    private void ProcessHandshake(XPacket packet)
+    private void ProcessConnection(XPacket packet)
     {
-        Console.WriteLine("Recieved handshake packet.");
+        var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
+        connection.IsSuccessfull = true;
 
-        var handshake = XPacketConverter.Deserialize<XPacketHandshake>(packet);
-        handshake.MagicHandshakeNumber += 10;
-
-        Console.WriteLine("Answering...");
-
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Handshake, handshake).ToPacket());
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, connection).ToPacket());
     }
 
-    private void ProcessName(XPacket packet)
+    private void ProcessBeginPlayer(XPacket packet)
     {
-        Console.WriteLine("Recieved name packet.");
-
-        var xPacketName = XPacketConverter.Deserialize<XPacketName>(packet);
-
-        Console.WriteLine($"Connected player with name: {xPacketName.Name}");
-        Console.WriteLine("Sending color...");
+        var xPacketBeginPlayerName = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
+        Name = xPacketBeginPlayerName.Name!;
 
         var colorsCount = XServer.Colors.Count;
         var randomNum = _random.Next(colorsCount);
         var randomColor = XServer.Colors[randomNum];
         Argb = randomColor.ToArgb();
-
-        Console.WriteLine($"{randomColor.Name}");
-        var xPacketColor = new XPacketColor
+        var xPacketBeginPlayerColor = new XPacketBeginPlayer
         {
-            Argb = randomColor.ToArgb()
+            ColorRgb = Argb
         };
         XServer.Colors.RemoveAt(randomNum);
 
+        Console.WriteLine($"Connected player with name: {Name}" +
+                          $"\nGiven color: {ColorTranslator.FromHtml(Argb.ToString()).Name}");
 
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Name, xPacketName).ToPacket());
-        
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Color, xPacketColor).ToPacket());
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayerColor).ToPacket());
     }
 
     private void QueuePacketSend(byte[] packet)
@@ -116,7 +107,7 @@ internal class ConnectedClient
 
         _packetSendingQueue.Enqueue(packet);
     }
-    
+
     private async Task SendPacketsAsync()
     {
         while (true)

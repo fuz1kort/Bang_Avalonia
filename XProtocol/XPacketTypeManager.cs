@@ -6,9 +6,9 @@ public static class XPacketTypeManager
 
     static XPacketTypeManager()
     {
-        RegisterType(XPacketType.Handshake, 1, 0);
-        RegisterType(XPacketType.Name, 2, 0);
-        RegisterType(XPacketType.Color, 3, 0);
+        RegisterType(XPacketType.Connection, 1, 0);
+        RegisterType(XPacketType.BeginPlayer, 2, 0);
+        
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)

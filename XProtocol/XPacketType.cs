@@ -3,7 +3,6 @@
 public enum XPacketType
 {
     Unknown,
-    Handshake,
-    Name,
-    Color
+    Connection,
+    BeginPlayer,
 }

@@ -13,6 +13,7 @@ internal class XServer
 
     internal static List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
 
+    private bool _lobbyfull;
     private bool _listening;
     private bool _stopListening;
 
@@ -60,7 +61,7 @@ internal class XServer
 
     public void AcceptClients()
     {
-        while (true)
+        while (!_lobbyfull)
         {
             if (_stopListening)
                 return;
@@ -80,6 +81,15 @@ internal class XServer
 
             var c = new ConnectedClient(client);
             _clients.Add(c);
+            if (_clients.Count == 4)
+                _lobbyfull = true;
         }
+
+        while (_clients.Count == 4)
+        {
+            
+        }
+        
+        
     }
 }

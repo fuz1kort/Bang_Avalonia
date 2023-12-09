@@ -8,5 +8,10 @@
         x:Class="Bang_Game.Views.GameWindow"
         Icon="/Assets/bang-logo.ico"
         Title="Bang">
-    Welcome to Avalonia!
+        
+        <Grid >
+                <Grid x:Name="PlayersList" HorizontalAlignment="Left" Width="150" Background="Gray">
+                        <ListBox ItemsSource="{Binding }"></ListBox>
+                </Grid>
+        </Grid>
 </Window>

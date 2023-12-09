@@ -38,13 +38,13 @@ public partial class MainWindow : Window
     {
         NickInput.IsVisible = false;
         var name = Nickname.Text;
-        Player.Instance.SetName(name!);
-        Task.Run(Player.Instance.ConnectAsync);
-        Player.SendPacket(XPacketConverter.Serialize(XPacketType.Name, new XPacketName
+        var client = new XClient();
+        Task.Run(() => client.ConnectAsync(name!));
+        client.QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer
         {
             Name = name
         }).ToPacket());
         new GameWindow().Show();
-        // Close();
+        Close();
     }
 }
