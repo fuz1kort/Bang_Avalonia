@@ -1,6 +1,4 @@
-﻿using Bang_Game.Models;
-
-namespace Bang_Game.Models;
+﻿namespace Bang_Game.Models;
 
 public class RoleCard
 {

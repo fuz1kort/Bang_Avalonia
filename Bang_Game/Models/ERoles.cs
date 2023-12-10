@@ -3,7 +3,6 @@
 public enum ERoles
 {
     Sheriff,
-    Assistant,
     Bandit,
     Renegade,
 }
