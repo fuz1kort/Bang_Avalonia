@@ -1,6 +1,9 @@
 ﻿using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using XProtocol;
+using XProtocol.Serializer;
+using XProtocol.XPackets;
 
 namespace TCPServer;
 
@@ -11,9 +14,7 @@ internal class XServer
     // ReSharper disable once CollectionNeverQueried.Local
     internal static List<ConnectedClient> _clients = new();
 
-    internal static List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
-
-    private bool _lobbyfull;
+    private bool _full;
     private bool _listening;
     private bool _stopListening;
 
@@ -59,16 +60,17 @@ internal class XServer
 
     public void AcceptClients()
     {
-        while (!_lobbyfull)
+        while (!_full)
         {
             if (_stopListening)
                 return;
-
+            
             Socket client;
 
             try
             {
                 client = _socket.Accept();
+                
             }
             catch
             {
@@ -80,11 +82,16 @@ internal class XServer
             var c = new ConnectedClient(client);
             _clients.Add(c);
             if (_clients.Count == 4)
-                _lobbyfull = true;
+                _full = true;
         }
 
-        while (_clients.Count == 4)
+        while (_full)
         {
+            if (_clients.Count < 4)
+                _full = false;
+            
         }
     }
+
+
 }

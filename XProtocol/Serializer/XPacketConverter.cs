@@ -31,10 +31,7 @@ public class XPacketConverter
 
         var packet = XPacket.Create(type, subtype);
 
-        foreach (var field in fields)
-        {
-            packet.SetValue(field.Item2, field.Item1.GetValue(obj)!);
-        }
+        foreach (var field in fields) packet.SetValue(field.Item2, field.Item1.GetValue(obj)!);
 
         return packet;
     }
@@ -45,18 +42,14 @@ public class XPacketConverter
         var instance = Activator.CreateInstance<T>();
 
         if (fields.Count == 0)
-        {
             return instance;
-        }
 
         foreach (var (field, packetFieldId) in fields)
         {
             if (!packet.HasField(packetFieldId))
             {
                 if (strict)
-                {
                     throw new Exception($"Couldn't get field[{packetFieldId}] for {field.Name}");
-                }
 
                 continue;
             }
@@ -69,9 +62,7 @@ public class XPacketConverter
             if (value == null)
             {
                 if (strict)
-                {
                     throw new Exception($"Couldn't get value for field[{packetFieldId}] for {field.Name}");
-                }
 
                 continue;
             }

@@ -11,12 +11,14 @@ internal class ConnectedClient
     private Socket Client { get; }
 
     private readonly Queue<byte[]> _packetSendingQueue = new();
+    
+    private static List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
 
     private readonly Random _random = new();
 
     private string Name { get; set; }
 
-    private int Argb { get; set; }
+    private uint Argb { get; set; }
 
     public ConnectedClient(Socket client)
     {
@@ -27,6 +29,13 @@ internal class ConnectedClient
 
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
+        Task.Run(SendPlayersAsync);
+    }
+
+    private async Task SendPlayersAsync()
+    {
+        
+        
     }
 
     private async Task ReceivePacketsAsync()
@@ -45,10 +54,7 @@ internal class ConnectedClient
 
             var parsed = XPacket.Parse(buff);
 
-            if (parsed != null!)
-            {
-                ProcessIncomingPacket(parsed);
-            }
+            if (parsed != null!) ProcessIncomingPacket(parsed);
         }
     }
 
@@ -66,6 +72,8 @@ internal class ConnectedClient
                 break;
             case XPacketType.Unknown:
                 break;
+            // case XPacketType.Players:
+            //     break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
@@ -81,24 +89,29 @@ internal class ConnectedClient
 
     private void ProcessBeginPlayer(XPacket packet)
     {
-        var xPacketBeginPlayerName = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
-        Name = xPacketBeginPlayerName.Name!;
+        var xPacketBeginPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
+        Name = xPacketBeginPlayer.Name!;
 
-        var colorsCount = XServer.Colors.Count;
+        var colorsCount = Colors.Count;
         var randomNum = _random.Next(colorsCount);
-        var randomColor = XServer.Colors[randomNum];
-        Argb = randomColor.ToArgb();
-        var xPacketBeginPlayerColor = new XPacketBeginPlayer(argb: Argb);
-        XServer.Colors.RemoveAt(randomNum);
+        var randomColor = Colors[randomNum];
+        Argb = (uint)randomColor.ToArgb();
+        xPacketBeginPlayer.Argb = Argb;
+        Colors.RemoveAt(randomNum);
 
         Console.WriteLine($"Connected player with name: {Name}" +
                           $"\nGiven color: {ColorTranslator.FromHtml(Argb.ToString()).Name}");
 
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayerColor).ToPacket());
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
+        
+        var players = XServer._clients.Select(x => (x.Name, x.Argb)).ToList();
+        
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Players,
+            new XPacketPlayers(players: players)).ToPacket());
 
-        foreach (var xPacketBeginPlayer in XServer._clients.Select(client => new XPacketBeginPlayer
-                     { Name = Name, Argb = Argb }))
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
+        // foreach (var xPacketBeginPlayer in XServer._clients.Select(client => new XPacketBeginPlayer
+        //              { Name = Name, Argb = Argb }))
+        //     QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
     }
 
     private void QueuePacketSend(byte[] packet)
@@ -114,10 +127,7 @@ internal class ConnectedClient
         while (true)
         {
             if (_packetSendingQueue.Count == 0)
-            {
-                Thread.Sleep(100);
                 continue;
-            }
 
             var packet = _packetSendingQueue.Dequeue();
             var encryptedPacket = XProtocolEncryptor.Encrypt(packet);

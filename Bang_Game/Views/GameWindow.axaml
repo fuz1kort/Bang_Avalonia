@@ -4,17 +4,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:Bang_Game.ViewModels"
         x:DataType="viewModels:GameWindowViewModel"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
         x:Class="Bang_Game.Views.GameWindow"
         Icon="/Assets/bang-logo.ico"
         Title="Bang">
+    
+    <Design.DataContext>
+        <viewModels:GameWindowViewModel />
+    </Design.DataContext>
 
-    <Grid>
-        <Grid x:Name="PlayersList" HorizontalAlignment="Left" Width="150" Background="Gray">
+    <Grid ColumnDefinitions="1*,1*" Background="White">
+        <Grid x:Name="PlayersListGrid" HorizontalAlignment="Left" Background="Gray">
             <ListBox ItemsSource="{Binding PlayersList}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Foreground="{Binding Color}" Text="{Binding Name}"></TextBlock>
+                        <TextBlock Background="{Binding Color}" Text="{Binding Name}"></TextBlock>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

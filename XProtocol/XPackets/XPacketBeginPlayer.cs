@@ -6,11 +6,11 @@ namespace XProtocol.XPackets;
 public class XPacketBeginPlayer
 {
     [XField(1)] public string? Name;
-    [XField(2)] public int Argb;
+    [XField(2)] public uint Argb;
 
     public XPacketBeginPlayer() {}
 
     public XPacketBeginPlayer(string? name) => Name = name;
 
-    public XPacketBeginPlayer(int argb) : this() => Argb = argb;
+    public XPacketBeginPlayer(uint argb) : this() => Argb = argb;
 }

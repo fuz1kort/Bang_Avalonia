@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bang_Game.Models;
 using Bang_Game.ViewModels;
+using DynamicData;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -105,11 +106,10 @@ internal class XClient
                 ProcessConnection(packet);
                 break;
             case XPacketType.BeginPlayer:
-                if (Player.Color == Color.FromArgb(0))
-                    ProcessBeginPlayer(packet);
-                else
-                    ReceivePlayer(packet);
-
+                ProcessBeginPlayer(packet);
+                break;
+            case XPacketType.Players:
+                ProcessPlayers(packet);
                 break;
             case XPacketType.Unknown:
                 break;
@@ -118,10 +118,19 @@ internal class XClient
         }
     }
 
-    private static void ReceivePlayer(XPacket packet)
+    private static void ProcessPlayers(XPacket packet)
     {
-        var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
-        GameWindowViewModel.PlayersList!.Add(new Player(packetPlayer.Name!, packetPlayer.Argb));
+        var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
+        var playersFromPacket = packetPlayer.Players;
+        var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2)).ToList();
+        // for (var i = 0; i < playersList.Count; i++)
+        // {
+        //     if (playersList.Count - GameWindowViewModel.PlayersList!.Count >= 1)
+        //         GameWindowViewModel.PlayersList.Add(playersList[i]);
+        //     else
+        //         GameWindowViewModel.PlayersList[i] = playersList[i];
+        // }
+        Console.WriteLine(playersList.Count);
     }
 
     private static void ProcessConnection(XPacket packet)
@@ -134,13 +143,12 @@ internal class XClient
     private void ProcessBeginPlayer(XPacket packet)
     {
         var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
-        Player.Name = packetPlayer.Name ?? Player.Name;
 
         var newColor = ColorTranslator.FromHtml(packetPlayer.Argb.ToString());
-        Player.Color = newColor;
+        Player.SetColor(packetPlayer.Argb);
 
         Console.WriteLine($"Your Nickname is {Player.Name}");
-        Console.WriteLine($"Your color is {Player.Color.Name}");
+        Console.WriteLine($"Your color is {newColor.Name}");
     }
 
     private async Task SendPacketsAsync()
