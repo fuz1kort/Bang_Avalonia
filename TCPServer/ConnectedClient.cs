@@ -74,7 +74,7 @@ internal class ConnectedClient
     private void ProcessConnection(XPacket packet)
     {
         var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
-        connection.IsSuccessfull = true;
+        connection.IsSuccessful = true;
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, connection).ToPacket());
     }
@@ -88,19 +88,17 @@ internal class ConnectedClient
         var randomNum = _random.Next(colorsCount);
         var randomColor = XServer.Colors[randomNum];
         Argb = randomColor.ToArgb();
-        var xPacketBeginPlayerColor = new XPacketBeginPlayer
-        {
-            Argb = Argb
-        };
+        var xPacketBeginPlayerColor = new XPacketBeginPlayer(argb: Argb);
         XServer.Colors.RemoveAt(randomNum);
 
         Console.WriteLine($"Connected player with name: {Name}" +
                           $"\nGiven color: {ColorTranslator.FromHtml(Argb.ToString()).Name}");
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayerColor).ToPacket());
-        
-        foreach (var xpacketClient in XServer._clients.Select(client => new XPacketBeginPlayer { Name = Name, Argb = Argb }))
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xpacketClient).ToPacket());
+
+        foreach (var xPacketBeginPlayer in XServer._clients.Select(client => new XPacketBeginPlayer
+                     { Name = Name, Argb = Argb }))
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
     }
 
     private void QueuePacketSend(byte[] packet)

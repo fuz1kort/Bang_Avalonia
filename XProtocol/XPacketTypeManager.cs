@@ -8,7 +8,6 @@ public static class XPacketTypeManager
     {
         RegisterType(XPacketType.Connection, 1, 0);
         RegisterType(XPacketType.BeginPlayer, 2, 0);
-        
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)

@@ -22,9 +22,7 @@ internal class XServer
         try
         {
             if (_listening)
-            {
                 throw new Exception("Server is already listening incoming requests.");
-            }
 
             _socket.Bind(new IPEndPoint(IPAddress.Any, 4910));
             _socket.Listen(10);
@@ -87,9 +85,6 @@ internal class XServer
 
         while (_clients.Count == 4)
         {
-            
         }
-        
-        
     }
 }

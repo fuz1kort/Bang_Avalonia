@@ -6,9 +6,9 @@ public static class RijndaelHandler
 {
     private const int Keysize = 128;
     private const int DerivationIterations = 1000;
-    
+
     public static byte[] Encrypt(byte[] data, string passPhrase)
-    { 
+    {
         var saltStringBytes = Generate128BitsOfRandomEntropy();
         var ivStringBytes = Generate128BitsOfRandomEntropy();
 

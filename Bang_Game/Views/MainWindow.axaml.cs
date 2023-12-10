@@ -1,8 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Bang_Game.Models;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -40,10 +38,7 @@ public partial class MainWindow : Window
         var name = Nickname.Text;
         var client = new XClient();
         Task.Run(() => client.ConnectAsync(name!));
-        client.QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer
-        {
-            Name = name
-        }).ToPacket());
+        client.QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer(name: name)).ToPacket());
         new GameWindow().Show();
         Close();
     }

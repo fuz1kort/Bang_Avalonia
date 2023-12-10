@@ -12,7 +12,9 @@ public class XPacket
     // public bool Protected { get; set; }
     private bool ChangeHeaders => false;
 
-    private XPacket() { }
+    private XPacket()
+    {
+    }
 
     private XPacketField GetField(byte id) => Fields.FirstOrDefault(field => field.FieldId == id)!;
 

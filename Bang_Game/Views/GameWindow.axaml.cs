@@ -1,13 +1,8 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
 namespace Bang_Game.Views;
 
 public partial class GameWindow : Window
 {
-    public GameWindow()
-    {
-        InitializeComponent();
-    }
+    public GameWindow() => InitializeComponent();
 }

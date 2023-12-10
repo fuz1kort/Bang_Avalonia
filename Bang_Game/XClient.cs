@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -31,11 +30,10 @@ internal class XClient
             ConnectAsync("127.0.0.1", 4910);
 
 
-
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection,
                 new XPacketConnection
                 {
-                    IsSuccessfull = false
+                    IsSuccessful = false
                 }).ToPacket());
 
             Player = new Player(name, 0);
@@ -63,7 +61,6 @@ internal class XClient
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
     }
-    
 
     public void QueuePacketSend(byte[] packet)
     {
@@ -109,14 +106,10 @@ internal class XClient
                 break;
             case XPacketType.BeginPlayer:
                 if (Player.Color == Color.FromArgb(0))
-                {
                     ProcessBeginPlayer(packet);
-                }
                 else
-                {
                     ReceivePlayer(packet);
-                }
-                    
+
                 break;
             case XPacketType.Unknown:
                 break;
@@ -125,27 +118,27 @@ internal class XClient
         }
     }
 
-    private void ReceivePlayer(XPacket packet)
+    private static void ReceivePlayer(XPacket packet)
     {
         var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
-        GameWindowViewModel.PlayersList.Add(new Player(packetPlayer.Name!, packetPlayer.Argb));
+        GameWindowViewModel.PlayersList!.Add(new Player(packetPlayer.Name!, packetPlayer.Argb));
     }
 
-    private void ProcessConnection(XPacket packet)
+    private static void ProcessConnection(XPacket packet)
     {
         var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
 
-        if (connection.IsSuccessfull) Console.WriteLine("Handshake successful!");
+        if (connection.IsSuccessful) Console.WriteLine("Handshake successful!");
     }
 
     private void ProcessBeginPlayer(XPacket packet)
     {
         var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
         Player.Name = packetPlayer.Name ?? Player.Name;
-        
-        var newColor = ColorTranslator.FromHtml(packetPlayer.Argb.ToString()!);
+
+        var newColor = ColorTranslator.FromHtml(packetPlayer.Argb.ToString());
         Player.Color = newColor;
-        
+
         Console.WriteLine($"Your Nickname is {Player.Name}");
         Console.WriteLine($"Your color is {Player.Color.Name}");
     }

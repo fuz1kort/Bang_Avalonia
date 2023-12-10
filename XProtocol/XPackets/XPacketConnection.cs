@@ -5,5 +5,5 @@ namespace XProtocol.XPackets;
 [Serializable]
 public class XPacketConnection
 {
-    [XField(1)] public bool IsSuccessfull;
+    [XField(1)] public bool IsSuccessful;
 }

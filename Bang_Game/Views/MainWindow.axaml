@@ -8,6 +8,7 @@
         x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/bang-logo.ico"
         Title="Bang">
+
     <Window.Styles>
         <Style Selector="Button.OnBackgroundImage">
             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -23,9 +24,11 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
+
     <Window.Background>
         <ImageBrush Source="/Assets/startup-background.jpg" Stretch="Fill" />
     </Window.Background>
+
     <Grid>
         <Grid x:Name="GreetingPage" IsVisible="True">
             <TextBlock Text="{Binding Greeting}"
@@ -44,6 +47,7 @@
                     Click="OpenMainMenu_OnClick">
             </Button>
         </Grid>
+
         <Grid x:Name="MainMenuPage" IsVisible="False">
             <StackPanel VerticalAlignment="Center">
                 <Button x:Name="StartButton"
@@ -60,6 +64,7 @@
                         Click="CloseWindow_OnClick" />
             </StackPanel>
         </Grid>
+
         <Grid x:Name="RulesPage" IsVisible="False">
             <ListBox Name="ListBoxRules" ItemsSource="{Binding RuleImages}">
                 <ListBox.ItemTemplate>
