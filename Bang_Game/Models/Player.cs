@@ -1,17 +1,17 @@
-﻿using Avalonia.Media;
+﻿using System.Drawing;
 
 namespace Bang_Game.Models;
 
 public class Player
 {
     public string? Name { get; set; }
-    public Brush Color { get; set; }
+    public Color Color { get; set; }
 
-    public Player(string name, uint argb)
+    public Player(string name, int argb)
     {
         Name = name;
-        Color = new SolidColorBrush(argb);
+        Color = Color.FromArgb(argb);
     }
 
-    public void SetColor(uint argb) => Color = new SolidColorBrush(argb);
+    public void SetColor(int argb) => Color = Color.FromArgb(argb);
 }

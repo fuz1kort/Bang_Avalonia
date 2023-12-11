@@ -86,7 +86,6 @@ internal class XClient
                 if (b != 0xFF) return true;
                 return decrBuff[i + 1] != 0;
             }).Concat(new byte[] { 0xFF, 0 }).ToArray();
-
             var parsed = XPacket.Parse(buff);
 
             if (parsed != null!)
@@ -123,13 +122,13 @@ internal class XClient
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2)).ToList();
-        // for (var i = 0; i < playersList.Count; i++)
-        // {
-        //     if (playersList.Count - GameWindowViewModel.PlayersList!.Count >= 1)
-        //         GameWindowViewModel.PlayersList.Add(playersList[i]);
-        //     else
-        //         GameWindowViewModel.PlayersList[i] = playersList[i];
-        // }
+        for (var i = 0; i < playersList.Count; i++)
+        {
+            if (playersList.Count - GameWindowViewModel.PlayersList!.Count >= 1)
+                GameWindowViewModel.PlayersList.Add(playersList[i]);
+            else
+                GameWindowViewModel.PlayersList[i] = playersList[i];
+        }
         Console.WriteLine(playersList.Count);
     }
 

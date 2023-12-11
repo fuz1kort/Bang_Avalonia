@@ -18,7 +18,7 @@ internal class ConnectedClient
 
     private string Name { get; set; }
 
-    private uint Argb { get; set; }
+    private int Argb { get; set; }
 
     public ConnectedClient(Socket client)
     {
@@ -29,14 +29,9 @@ internal class ConnectedClient
 
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
-        Task.Run(SendPlayersAsync);
     }
 
-    private async Task SendPlayersAsync()
-    {
-        
-        
-    }
+    private (string, int) GetPlayer() => (Name, Argb);
 
     private async Task ReceivePacketsAsync()
     {
@@ -74,6 +69,8 @@ internal class ConnectedClient
                 break;
             // case XPacketType.Players:
             //     break;
+            case XPacketType.Players:
+                break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
@@ -95,7 +92,7 @@ internal class ConnectedClient
         var colorsCount = Colors.Count;
         var randomNum = _random.Next(colorsCount);
         var randomColor = Colors[randomNum];
-        Argb = (uint)randomColor.ToArgb();
+        Argb = randomColor.ToArgb();
         xPacketBeginPlayer.Argb = Argb;
         Colors.RemoveAt(randomNum);
 
@@ -104,17 +101,26 @@ internal class ConnectedClient
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
         
-        var players = XServer._clients.Select(x => (x.Name, x.Argb)).ToList();
-        
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Players,
-            new XPacketPlayers(players: players)).ToPacket());
+        SendPlayers();
 
         // foreach (var xPacketBeginPlayer in XServer._clients.Select(client => new XPacketBeginPlayer
         //              { Name = Name, Argb = Argb }))
         //     QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
     }
+    
+    private static void SendPlayers()
+    {
+        var players = XServer._clients.Select(x => x.GetPlayer()).ToList();
+        foreach (var client in XServer._clients)
+        {
+            var packet = XPacketConverter.Serialize(XPacketType.Players,
+                new XPacketPlayers(players: players));
+            var bytePacket = packet.ToPacket();
+            client.QueuePacketSend(bytePacket);
+        }
+    }
 
-    private void QueuePacketSend(byte[] packet)
+    internal void QueuePacketSend(byte[] packet)
     {
         if (packet.Length > 128)
             throw new Exception("Max packet size is 128 bytes.");
