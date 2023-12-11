@@ -31,7 +31,7 @@ internal class ConnectedClient
         Task.Run(SendPacketsAsync);
     }
 
-    private (string, int) GetPlayer() => (Name, Argb);
+    private List<string> GetPlayerParameters() => new(){Name, Argb.ToString()};
 
     private async Task ReceivePacketsAsync()
     {
@@ -110,7 +110,7 @@ internal class ConnectedClient
     
     private static void SendPlayers()
     {
-        var players = XServer._clients.Select(x => x.GetPlayer()).ToList();
+        var players = XServer._clients.Select(x => x.GetPlayerParameters()).ToList();
         foreach (var client in XServer._clients)
         {
             var packet = XPacketConverter.Serialize(XPacketType.Players,
@@ -120,7 +120,7 @@ internal class ConnectedClient
         }
     }
 
-    internal void QueuePacketSend(byte[] packet)
+    private void QueuePacketSend(byte[] packet)
     {
         if (packet.Length > 128)
             throw new Exception("Max packet size is 128 bytes.");

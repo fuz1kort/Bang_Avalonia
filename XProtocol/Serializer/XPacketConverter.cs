@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 
 namespace XProtocol.Serializer;
 
@@ -21,9 +22,7 @@ public class XPacketConverter
             foreach (var field in fields)
             {
                 if (usedUp.Contains(field.Item2))
-                {
                     throw new Exception("One field used two times.");
-                }
 
                 usedUp.Add(field.Item2);
             }
@@ -35,6 +34,7 @@ public class XPacketConverter
 
         return packet;
     }
+
 
     public static T Deserialize<T>(XPacket packet, bool strict = false)
     {

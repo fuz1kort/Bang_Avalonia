@@ -121,7 +121,7 @@ internal class XClient
     {
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
-        var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2)).ToList();
+        var playersList = playersFromPacket!.Select(x => new Player(x[0], int.Parse(x[1]))).ToList();
         for (var i = 0; i < playersList.Count; i++)
         {
             if (playersList.Count - GameWindowViewModel.PlayersList!.Count >= 1)
@@ -130,6 +130,9 @@ internal class XClient
                 GameWindowViewModel.PlayersList[i] = playersList[i];
         }
         Console.WriteLine(playersList.Count);
+        Console.WriteLine(playersFromPacket![0][0]);
+        
+        Console.WriteLine(Color.FromArgb(int.Parse(playersFromPacket[0][0])).Name);
     }
 
     private static void ProcessConnection(XPacket packet)

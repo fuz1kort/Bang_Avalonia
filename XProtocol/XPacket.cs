@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Text;
 using System.Text.Json;
 
 namespace XProtocol;
@@ -38,10 +39,8 @@ public class XPacket
 
         if (field == null!)
         {
-            field = new XPacketField
-            {
-                FieldId = id
-            };
+            field = new XPacketField();
+            field.FieldId = id;
 
             Fields.Add(field);
         }
@@ -49,13 +48,13 @@ public class XPacket
         var jsonString = JsonSerializer.Serialize(obj);
         var bytes = Encoding.UTF8.GetBytes(jsonString);
 
-
         if (bytes.Length > byte.MaxValue)
             throw new Exception("Object is too big. Max length is 255 bytes.");
 
         field.FieldSize = (byte)bytes.Length;
         field.Contents = bytes;
     }
+
 
     public static XPacket Create(byte type, byte subtype)
     {
