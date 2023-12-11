@@ -31,8 +31,6 @@ internal class ConnectedClient
         Task.Run(SendPacketsAsync);
     }
 
-    private List<string> GetPlayerParameters() => new(){Name, Argb.ToString()};
-
     private async Task ReceivePacketsAsync()
     {
         while (true) // Слушаем пакеты, пока клиент не отключится.
@@ -102,22 +100,18 @@ internal class ConnectedClient
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
         
         SendPlayers();
-
-        // foreach (var xPacketBeginPlayer in XServer._clients.Select(client => new XPacketBeginPlayer
-        //              { Name = Name, Argb = Argb }))
-        //     QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
     }
+    
+    private (string, int) GetPlayerParameters() => (Name, Argb);
     
     private static void SendPlayers()
     {
         var players = XServer._clients.Select(x => x.GetPlayerParameters()).ToList();
-        foreach (var client in XServer._clients)
-        {
-            var packet = XPacketConverter.Serialize(XPacketType.Players,
-                new XPacketPlayers(players: players));
-            var bytePacket = packet.ToPacket();
+        var packet = XPacketConverter.Serialize(XPacketType.Players,
+            new XPacketPlayers(players: players));
+        var bytePacket = packet.ToPacket();
+        foreach (var client in XServer._clients) 
             client.QueuePacketSend(bytePacket);
-        }
     }
 
     private void QueuePacketSend(byte[] packet)

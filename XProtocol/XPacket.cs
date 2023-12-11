@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿
+
+
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace XProtocol;
 
@@ -30,7 +32,7 @@ public class XPacket
             throw new Exception($"Field with ID {id} wasn't found.");
 
         var jsonString = Encoding.UTF8.GetString(field.Contents);
-        return JsonSerializer.Deserialize<T>(jsonString)!;
+        return JsonConvert.DeserializeObject<T>(jsonString)!;
     }
 
     public void SetValue(byte id, object? obj)
@@ -39,13 +41,17 @@ public class XPacket
 
         if (field == null!)
         {
-            field = new XPacketField();
-            field.FieldId = id;
+            field = new XPacketField
+            {
+                FieldId = id
+            };
 
             Fields.Add(field);
         }
 
-        var jsonString = JsonSerializer.Serialize(obj);
+        var jsonString = JsonConvert.SerializeObject(obj);
+        
+        // var jsonString = JsonSerializer.Serialize(obj);
         var bytes = Encoding.UTF8.GetBytes(jsonString);
 
         if (bytes.Length > byte.MaxValue)

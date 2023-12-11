@@ -5,9 +5,9 @@ namespace XProtocol.XPackets;
 [Serializable]
 public class XPacketPlayers
 {
-    [XField(1)] public List<List<string>>? Players;
+    [XField(1)] public List<(string,int)>? Players;
 
     public XPacketPlayers() {}
 
-    public XPacketPlayers(List<List<string>>? players) => Players = players;
+    public XPacketPlayers(List<(string,int)>? players) => Players = players;
 }

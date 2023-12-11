@@ -36,3 +36,4 @@ C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\obj\Debug\net7.0\re
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\obj\Debug\net7.0\TCPServer.pdb
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\obj\Debug\net7.0\TCPServer.genruntimeconfig.cache
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\obj\Debug\net7.0\ref\TCPServer.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Newtonsoft.Json.dll
