@@ -13,5 +13,8 @@ public class Player
         Color = Color.FromArgb(argb);
     }
 
-    public void SetColor(int argb) => Color = Color.FromArgb(argb);
+    public void SetColor(int argb)
+    {
+        Color = Color.FromArgb(argb);
+    }
 }

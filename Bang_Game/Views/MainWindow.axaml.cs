@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Bang_Game.ViewModels;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -39,7 +40,8 @@ public partial class MainWindow : Window
         var client = new XClient();
         Task.Run(() => client.ConnectAsync(name!));
         client.QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer(name: name)).ToPacket());
-        new GameWindow().Show();
+        var gameWindow = new GameWindow { DataContext = new GameWindowViewModel() };
+        gameWindow.Show();
         Close();
     }
 }

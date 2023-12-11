@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bang_Game.Models;
 using Bang_Game.ViewModels;
-using DynamicData;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -68,9 +67,7 @@ internal class XClient
     public void QueuePacketSend(byte[] packet)
     {
         if (packet.Length > 256)
-        {
             throw new Exception("Max packet size is 256 bytes.");
-        }
 
         _packetSendingQueue.Enqueue(packet);
     }
@@ -90,10 +87,7 @@ internal class XClient
             }).Concat(new byte[] { 0xFF, 0 }).ToArray();
             var parsed = XPacket.Parse(buff);
 
-            if (parsed != null!)
-            {
-                ProcessIncomingPacket(parsed);
-            }
+            if (parsed != null!) ProcessIncomingPacket(parsed);
         }
     }
 
@@ -124,13 +118,8 @@ internal class XClient
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2)).ToList();
-        for (var i = 0; i < playersList.Count; i++)
-        {
-            if (playersList.Count - GameWindowViewModel.PlayersList!.Count >= 1)
-                GameWindowViewModel.PlayersList.Add(playersList[i]);
-            else
-                GameWindowViewModel.PlayersList[i] = playersList[i];
-        }
+
+        GameWindowViewModel.SetPlayersList(playersList);
     }
 
     private static void ProcessConnection(XPacket packet)
