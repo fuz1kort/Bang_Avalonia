@@ -20,8 +20,5 @@ build_property.EnableGeneratedComInterfaceComImportInterop =
 [C:/Users/Marat/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/Marat/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/Views/GameWindow.axaml]
-build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
-
 [C:/Users/Marat/source/repos/fuz1kort/Bang_Avalonia/Bang_Game/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

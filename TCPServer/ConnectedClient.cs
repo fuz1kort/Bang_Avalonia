@@ -12,7 +12,7 @@ internal class ConnectedClient
 
     private readonly Queue<byte[]> _packetSendingQueue = new();
     
-    private static List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
+    private static readonly List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
 
     private readonly Random _random = new();
 

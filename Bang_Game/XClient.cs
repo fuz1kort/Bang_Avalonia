@@ -8,37 +8,45 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bang_Game.Models;
 using Bang_Game.ViewModels;
+using Bang_Game.Views;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
 
 namespace Bang_Game;
 
-internal class XClient
+public class XClient
 {
     private readonly Queue<byte[]> _packetSendingQueue = new();
 
     private Socket? _socket;
     private IPEndPoint? _serverEndPoint;
 
-    private Player Player { get; set; } = null!;
+    private Player? Player { get; set; }
 
+    public event Action<List<Player>>? PlayersReceivedEvent;
+    
     public async Task ConnectAsync(string name)
     {
         try
         {
             ConnectAsync("127.0.0.1", 4910);
-
-
+            
+            
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection,
                 new XPacketConnection
                 {
                     IsSuccessful = false
                 }).ToPacket());
-
-            await Task.Delay(100);
-
+            
+            Thread.Sleep(100);
+            
+            
             Player = new Player(name, 0);
+            
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer(name: name)).ToPacket());
+            
+            await Task.Delay(100);
 
             while (true)
             {
@@ -113,16 +121,15 @@ internal class XClient
         }
     }
 
-    private static void ProcessPlayers(XPacket packet)
+    private void ProcessPlayers(XPacket packet)
     {
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2)).ToList();
-
-        GameWindowViewModel.SetPlayersList(playersList);
+        PlayersReceivedEvent.Invoke(playersList);
     }
 
-    private static void ProcessConnection(XPacket packet)
+    private void ProcessConnection(XPacket packet)
     {
         var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
 
