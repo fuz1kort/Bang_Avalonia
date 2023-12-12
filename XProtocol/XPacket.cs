@@ -1,7 +1,4 @@
-﻿
-
-
-using System.Text;
+﻿using System.Text;
 using Newtonsoft.Json;
 
 namespace XProtocol;
@@ -11,8 +8,6 @@ public class XPacket
     public byte PacketType { get; private init; }
     public byte PacketSubtype { get; private init; }
     private List<XPacketField> Fields { get; } = new();
-
-    // public bool Protected { get; set; }
     private bool ChangeHeaders => false;
 
     private XPacket()
@@ -50,7 +45,7 @@ public class XPacket
         }
 
         var jsonString = JsonConvert.SerializeObject(obj);
-        
+
         // var jsonString = JsonSerializer.Serialize(obj);
         var bytes = Encoding.UTF8.GetBytes(jsonString);
 
@@ -195,31 +190,5 @@ public class XPacket
     //
     //     field.FieldSize = (byte) rawData.Length;
     //     field.Contents = rawData;
-    // }
-
-    // private static XPacket EncryptPacket(XPacket? packet) //Не нужен, оставлю, вдруг пригодится потом
-    // {
-    //     if (packet == null)
-    //         return null!; // Нам попросту нечего шифровать
-    //     
-    //     var rawBytes = packet.ToPacket(); // получаем пакет в байтах
-    //     var encrypted = XProtocolEncryptor.Encrypt(rawBytes); // шифруем его
-    //     
-    //     var p = Create(0, 0); // создаем пакет
-    //     p.SetValueRaw(0, encrypted); // записываем данные
-    //     p.ChangeHeaders = true; // помечаем, что нам нужен другой заголовок
-    //     
-    //     return p;
-    // }
-    //
-    // private static XPacket DecryptPacket(XPacket packet) //Не нужен, оставлю, вдруг пригодится потом
-    // {
-    //     if (!packet.HasField(0))
-    //         return null!; // Зашифрованные данные должны быть в 0 поле
-    //
-    //     var rawData = packet.GetValueRaw(0); // получаем зашифрованный пакет
-    //     var decrypted = XProtocolEncryptor.Decrypt(rawData);
-    //
-    //     return Parse(decrypted, true);
     // }
 }

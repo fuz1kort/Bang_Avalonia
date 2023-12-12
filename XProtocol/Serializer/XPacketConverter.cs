@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace XProtocol.Serializer;
 
-public class XPacketConverter
+public static class XPacketConverter
 {
     public static XPacket Serialize(XPacketType type, object obj, bool strict = false)
     {

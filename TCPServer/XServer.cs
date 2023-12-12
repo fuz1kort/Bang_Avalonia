@@ -8,7 +8,7 @@ internal class XServer
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
     // ReSharper disable once CollectionNeverQueried.Local
-    internal static List<ConnectedClient> _clients = new();
+    internal static readonly List<ConnectedClient> Clients = new();
 
     private bool _full;
     private bool _listening;
@@ -75,14 +75,14 @@ internal class XServer
             Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
             var c = new ConnectedClient(client);
-            _clients.Add(c);
-            if (_clients.Count == 4)
+            Clients.Add(c);
+            if (Clients.Count == 4)
                 _full = true;
         }
 
         while (_full)
         {
-            if (_clients.Count < 4)
+            if (Clients.Count < 4)
                 _full = false;
             
         }

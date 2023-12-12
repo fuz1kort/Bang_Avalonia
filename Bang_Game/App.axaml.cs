@@ -6,7 +6,7 @@ using MainWindow = Bang_Game.Views.MainWindow;
 
 namespace Bang_Game;
 
-public partial class App : Application
+public class App : Application
 {
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 

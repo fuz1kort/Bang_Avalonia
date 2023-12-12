@@ -33,7 +33,7 @@ public partial class MainWindow : Window
     {
         NickInput.IsVisible = false;
         var name = Nickname.Text;
-
         GameGrid.IsVisible = true;
+        Background = null;
     }
 }

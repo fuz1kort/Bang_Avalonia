@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
+using Avalonia.Media;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -11,21 +11,24 @@ internal class ConnectedClient
     private Socket Client { get; }
 
     private readonly Queue<byte[]> _packetSendingQueue = new();
-    
-    private static readonly List<Color> Colors = new() { Color.Red, Color.Yellow, Color.Green, Color.Blue };
+
+    private static readonly List<Color> Colors = new()
+    {
+        Avalonia.Media.Colors.Red, Avalonia.Media.Colors.Yellow, Avalonia.Media.Colors.Green, Avalonia.Media.Colors.Blue
+    };
 
     private readonly Random _random = new();
 
     private string Name { get; set; }
 
-    private int Argb { get; set; }
+    private uint Rgb { get; set; }
 
     public ConnectedClient(Socket client)
     {
         Client = client;
 
         Name = "NoName";
-        Argb = 128128128;
+        Rgb = 128128128;
 
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
@@ -35,14 +38,13 @@ internal class ConnectedClient
     {
         while (true) // Слушаем пакеты, пока клиент не отключится.
         {
-            var buff = new byte[128]; // Максимальный размер пакета - 128 байт.
+            var buff = new byte[512]; // Максимальный размер пакета - 512 байт.
             await Client.ReceiveAsync(buff);
-            var decrBuff = XProtocolEncryptor.Decrypt(buff);
 
-            buff = decrBuff.TakeWhile((b, i) =>
+            buff = buff.TakeWhile((b, i) =>
             {
                 if (b != 0xFF) return true;
-                return decrBuff[i + 1] != 0;
+                return buff[i + 1] != 0;
             }).Concat(new byte[] { 0xFF, 0 }).ToArray();
 
             var parsed = XPacket.Parse(buff);
@@ -90,34 +92,34 @@ internal class ConnectedClient
         var colorsCount = Colors.Count;
         var randomNum = _random.Next(colorsCount);
         var randomColor = Colors[randomNum];
-        Argb = randomColor.ToArgb();
-        xPacketBeginPlayer.Argb = Argb;
+        Rgb = randomColor.ToUInt32();
+        xPacketBeginPlayer.Rgb = Rgb;
         Colors.RemoveAt(randomNum);
 
         Console.WriteLine($"Connected player with name: {Name}" +
-                          $"\nGiven color: {ColorTranslator.FromHtml(Argb.ToString()).Name}");
+                          $"\nGiven color: {randomColor}");
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
-        
+
         SendPlayers();
     }
-    
-    private (string, int) GetPlayerParameters() => (Name, Argb);
-    
+
+    private (string, uint) GetPlayerParameters() => (Name, Rgb);
+
     private static void SendPlayers()
     {
-        var players = XServer._clients.Select(x => x.GetPlayerParameters()).ToList();
+        var players = XServer.Clients.Select(x => x.GetPlayerParameters()).ToList();
         var packet = XPacketConverter.Serialize(XPacketType.Players,
             new XPacketPlayers(players: players));
         var bytePacket = packet.ToPacket();
-        foreach (var client in XServer._clients) 
+        foreach (var client in XServer.Clients)
             client.QueuePacketSend(bytePacket);
     }
 
     private void QueuePacketSend(byte[] packet)
     {
-        if (packet.Length > 128)
-            throw new Exception("Max packet size is 128 bytes.");
+        if (packet.Length > 512)
+            throw new Exception("Max packet size is 512 bytes.");
 
         _packetSendingQueue.Enqueue(packet);
     }
@@ -130,8 +132,7 @@ internal class ConnectedClient
                 continue;
 
             var packet = _packetSendingQueue.Dequeue();
-            var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
-            await Client.SendAsync(encryptedPacket);
+            await Client.SendAsync(packet);
 
             await Task.Delay(100);
         }

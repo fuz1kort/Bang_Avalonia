@@ -81,27 +81,38 @@
                 <TextBlock Margin="20 15" Text="Nickname:" Foreground="White" />
                 <TextBox Watermark="Введите свой никнейм" Margin="10" x:Name="Nickname" />
                 <Border>
-                    <Button Content="Подключиться" Classes="OnBackgroundImage" Click="PlayerJoin_OnClick" Command="{Binding ConnectCommand}" CommandParameter="{Binding Text, ElementName=Nickname}"/>
+                    <Button Content="Подключиться" Classes="OnBackgroundImage" Click="PlayerJoin_OnClick"
+                            Command="{Binding ConnectCommand}" CommandParameter="{Binding Text, ElementName=Nickname}" />
                 </Border>
             </StackPanel>
         </Border>
-        
-        <Grid ColumnDefinitions="1*,8*" x:Name="GameGrid" IsVisible="False">
-            <Grid Grid.Column="0" Background="Gray">
-                <StackPanel Spacing="5"
-                            Margin="5"
-                            HorizontalAlignment="Left">
-                    <ListBox ItemsSource="{Binding PlayersList}" x:Name="PlayersListBox">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" Background="{Binding Color}" HorizontalAlignment="Left"></TextBlock>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </StackPanel>
+
+        <Grid RowDefinitions="1*,17*" x:Name="GameGrid" IsVisible="False">
+            <Grid Grid.Row="0" Background="Gray" VerticalAlignment="Top" Height="45">
+                <ListBox ItemsSource="{Binding PlayersList}"
+                         x:Name="PlayersListBox"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Stretch"
+                         Background="Gray">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+                                <Ellipse Fill="{Binding ColorString}" Width="10" Height="10" Margin="10 0 10 0"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center">
+                                </Ellipse>
+                                <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Foreground="White"
+                                           VerticalAlignment="Center" FontSize="16">
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
         </Grid>
     </Grid>
-    
-    
 </Window>

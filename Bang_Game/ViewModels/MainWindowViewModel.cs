@@ -10,11 +10,11 @@ using ReactiveUI;
 
 namespace Bang_Game.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
+public sealed class MainWindowViewModel : ViewModelBase
 {
     private readonly XClient _client;
-    
-    public ReactiveCommand<string,Unit> ConnectCommand { get; }
+
+    public ReactiveCommand<string, Unit> ConnectCommand { get; }
 
     public MainWindowViewModel()
     {
@@ -28,11 +28,19 @@ public class MainWindowViewModel : ViewModelBase
     private void Connect(string name) => Task.Run(() => _client.ConnectAsync(name));
 
     private ObservableCollection<Player>? _playersList;
-    private void Update(List<Player> players) => PlayersList.Add(players[PlayersList.Count]);
 
-    public new event PropertyChangedEventHandler PropertyChanged;
-    
-    protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    private void Update(List<Player> players)
+    {
+        foreach (var player in players.Where(player => !PlayersList!.Select(x => x.Name).Contains(player.Name)))
+        {
+            PlayersList!.Add(player);
+        }
+    }
+
+    public new event PropertyChangedEventHandler PropertyChanged = null!;
+
+    private void OnPropertyChanged(string propertyName) =>
+        PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public ObservableCollection<Player>? PlayersList
     {
@@ -42,7 +50,6 @@ public class MainWindowViewModel : ViewModelBase
             if (value == null) return;
             _playersList = value;
             OnPropertyChanged(nameof(PlayersList));
-
         }
     }
 
@@ -54,7 +61,7 @@ public class MainWindowViewModel : ViewModelBase
         _playersList = new ObservableCollection<Player>();
     }
 
-    public string Greeting => "Добро пожаловать в Бэнг!";
+    public static string Greeting => "Добро пожаловать в Бэнг!";
 
     private ObservableCollection<RuleImage>? _ruleImages;
 

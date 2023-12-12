@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Media;
 using Bang_Game.Models;
-using Bang_Game.ViewModels;
-using Bang_Game.Views;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -25,27 +23,28 @@ public class XClient
     private Player? Player { get; set; }
 
     public event Action<List<Player>>? PlayersReceivedEvent;
-    
+
     public async Task ConnectAsync(string name)
     {
         try
         {
             ConnectAsync("127.0.0.1", 4910);
-            
-            
+
+
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection,
                 new XPacketConnection
                 {
                     IsSuccessful = false
                 }).ToPacket());
-            
+
             Thread.Sleep(100);
-            
-            
+
+
             Player = new Player(name, 0);
-            
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer(name: name)).ToPacket());
-            
+
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer(name: name))
+                .ToPacket());
+
             await Task.Delay(100);
 
             while (true)
@@ -72,10 +71,10 @@ public class XClient
         Task.Run(SendPacketsAsync);
     }
 
-    public void QueuePacketSend(byte[] packet)
+    private void QueuePacketSend(byte[] packet)
     {
-        if (packet.Length > 256)
-            throw new Exception("Max packet size is 256 bytes.");
+        if (packet.Length > 512)
+            throw new Exception("Max packet size is 512 bytes.");
 
         _packetSendingQueue.Enqueue(packet);
     }
@@ -84,14 +83,13 @@ public class XClient
     {
         while (true)
         {
-            var buff = new byte[128];
+            var buff = new byte[512];
             await _socket!.ReceiveAsync(buff);
-            var decrBuff = XProtocolEncryptor.Decrypt(buff);
 
-            buff = decrBuff.TakeWhile((b, i) =>
+            buff = buff.TakeWhile((b, i) =>
             {
                 if (b != 0xFF) return true;
-                return decrBuff[i + 1] != 0;
+                return buff[i + 1] != 0;
             }).Concat(new byte[] { 0xFF, 0 }).ToArray();
             var parsed = XPacket.Parse(buff);
 
@@ -126,7 +124,7 @@ public class XClient
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2)).ToList();
-        PlayersReceivedEvent.Invoke(playersList);
+        PlayersReceivedEvent!.Invoke(playersList);
     }
 
     private void ProcessConnection(XPacket packet)
@@ -140,11 +138,12 @@ public class XClient
     {
         var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
 
-        var newColor = ColorTranslator.FromHtml(packetPlayer.Argb.ToString());
-        Player.SetColor(packetPlayer.Argb);
+        var newColorUint = packetPlayer.Rgb;
+        var color = Color.FromUInt32(newColorUint);
+        Player!.SetColor(newColorUint);
 
         Console.WriteLine($"Your Nickname is {Player.Name}");
-        Console.WriteLine($"Your color is {newColor.Name}");
+        Console.WriteLine($"Your color is {color.ToString()}");
     }
 
     private async Task SendPacketsAsync()
@@ -158,8 +157,7 @@ public class XClient
             }
 
             var packet = _packetSendingQueue.Dequeue();
-            var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
-            await _socket!.SendAsync(encryptedPacket);
+            await _socket!.SendAsync(packet);
 
             await Task.Delay(100);
         }

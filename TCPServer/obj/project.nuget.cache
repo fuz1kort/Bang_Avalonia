@@ -1,10 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "Qc91zAJGqdompsSn4DbeJeZHdx+0PkqBJ7XUBSRvduQMugq/pGo0OCo+6trH10LdNgz/JplRX3WiwbTIAXiqKA==",
+  "dgSpecHash": "CS/H03oAyDbiTP8w7/u6UnwlvuUHymB3W7TeL1VC1bMTBCOWdXGDvzs9LWUe6St5XQPKPn9Yn40x88pye9MQzA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\TCPServer\\TCPServer.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Marat\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "C:\\Users\\Marat\\.nuget\\packages\\avalonia\\11.0.5\\avalonia.11.0.5.nupkg.sha512",
+    "C:\\Users\\Marat\\.nuget\\packages\\avalonia.buildservices\\0.0.29\\avalonia.buildservices.0.0.29.nupkg.sha512",
+    "C:\\Users\\Marat\\.nuget\\packages\\avalonia.remote.protocol\\11.0.5\\avalonia.remote.protocol.11.0.5.nupkg.sha512",
+    "C:\\Users\\Marat\\.nuget\\packages\\microcom.runtime\\0.11.0\\microcom.runtime.0.11.0.nupkg.sha512",
+    "C:\\Users\\Marat\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\Marat\\.nuget\\packages\\system.componentmodel.annotations\\4.5.0\\system.componentmodel.annotations.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }
