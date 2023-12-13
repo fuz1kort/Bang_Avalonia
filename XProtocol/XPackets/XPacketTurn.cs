@@ -1,6 +1,4 @@
-﻿using XProtocol.Serializer;
-
-namespace XProtocol.XPackets;
+﻿namespace XProtocol.XPackets;
 
 public class XPacketTurn
 {

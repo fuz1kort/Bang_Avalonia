@@ -13,8 +13,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public Player Player { get; }
 
     public ReactiveCommand<Unit, Unit> ConnectCommand { get; }
-    
-    public ReactiveCommand<Unit,Unit> EndTurnCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> EndTurnCommand { get; }
 
     public MainWindowViewModel()
     {

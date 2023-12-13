@@ -124,7 +124,6 @@ internal class XServer
 
             else
                 client.SendBeginCardSet(role, hero, cards);
-
         }
 
         while (true)
@@ -136,6 +135,7 @@ internal class XServer
                 if (!activePlayer.Turn)
                     break;
             }
+
             Console.WriteLine($"{activePlayer.GetName()} has finished his turn");
             _activePlayerId += 1;
         }

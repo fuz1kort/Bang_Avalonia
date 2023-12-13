@@ -5,11 +5,10 @@ namespace TCPServer.Services;
 
 public class GeneratorService
 {
-    private Random _random = new();
+    private readonly Random _random = new();
 
     internal (Stack<RoleCard> rolesDeck, Stack<HeroCard> heroesDeck, Stack<PlayCard> cardsDeck) GenerateDecks()
     {
-        
         var roles = new List<RoleCard>();
         var heroes = new List<HeroCard>();
         var cards = new List<PlayCard>();
@@ -168,22 +167,21 @@ public class GeneratorService
         roles.Add(bandit2);
         var renegade = new RoleCard(RoleType.Renegade, false);
         roles.Add(renegade);
-        
+
         var cardsDeck = new Stack<PlayCard>();
         cards = cards.OrderBy(x => _random.Next()).ToList();
         foreach (var card in cards)
             cardsDeck.Push(card);
-        
+
         var rolesDeck = new Stack<RoleCard>();
         roles = roles.OrderBy(x => _random.Next()).ToList();
         foreach (var role in roles)
             rolesDeck.Push(role);
-        
+
         var heroesDeck = new Stack<HeroCard>();
         heroes = heroes.OrderBy(x => _random.Next()).ToList();
         foreach (var hero in heroes)
             heroesDeck.Push(hero);
-        
 
 
         return (rolesDeck, heroesDeck, cardsDeck);

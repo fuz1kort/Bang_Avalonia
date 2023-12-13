@@ -153,7 +153,11 @@ public sealed class Player : INotifyPropertyChanged
 
             Thread.Sleep(100);
 
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.NewPlayer, new XPacketNewPlayer(Name))
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.NewPlayer, new XPacketNewPlayer
+                {
+                    Name = Name,
+                    Rgb = 0
+                })
                 .ToPacket());
 
             while (true)
@@ -236,12 +240,12 @@ public sealed class Player : INotifyPropertyChanged
         Hero = packetBeginSet.HeroCard;
         var cards = new List<PlayCard>();
         cards.AddRange(packetBeginSet.Cards12!);
-        if(packetBeginSet.Cards34!.Count == 2)
+        if (packetBeginSet.Cards34!.Count == 2)
             cards.AddRange(packetBeginSet.Cards34!);
         else
             cards.Add(packetBeginSet.Cards34[0]);
-        
-        if(packetBeginSet.Card5 != null)
+
+        if (packetBeginSet.Card5 != null)
             cards.Add(packetBeginSet.Card5);
         Cards = cards;
         Turn = false;

@@ -151,7 +151,7 @@ internal class ConnectedClient
     {
         var players = XServer.Clients.Select(x => x.GetPlayerParameters()).ToList();
         var packet = XPacketConverter.Serialize(XPacketType.Players,
-            new XPacketPlayers(players: players));
+            new XPacketPlayers { Players = players });
         var bytePacket = packet.ToPacket();
         foreach (var client in XServer.Clients)
             client.QueuePacketSend(bytePacket);

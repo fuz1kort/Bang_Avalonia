@@ -89,16 +89,9 @@ public class XPacket
 
     public static XPacket Parse(byte[] packet)
     {
-        /*
-         * Минимальный размер пакета - 7 байт
-         * HEADER (3) + TYPE (1) + SUBTYPE (1) + PACKET ENDING (2)
-         */
         if (packet.Length < 7)
             return null!;
 
-        // var encrypted = false;
-
-        // Проверяем заголовок
         if (packet[0] != 0xAF ||
             packet[1] != 0xAA ||
             packet[2] != 0xAF)
@@ -111,31 +104,28 @@ public class XPacket
 
         var mIndex = packet.Length - 1;
 
-        // Проверяем, что бы пакет заканчивался нужными байтами
         if (packet[mIndex - 1] != 0xFF ||
             packet[mIndex] != 0x00)
-        {
             return null!;
-        }
 
         var type = packet[3];
         var subtype = packet[4];
 
-        var xpacket = new XPacket { PacketType = type, PacketSubtype = subtype };
+        var xPacket = new XPacket { PacketType = type, PacketSubtype = subtype };
 
         var fields = packet.Skip(5).ToArray();
 
         while (true)
         {
-            if (fields.Length == 2) // Остались последние два байта, завершающие пакет.
-                return xpacket;
+            if (fields.Length == 2)
+                return xPacket;
 
             var id = fields[0];
             var size = fields[1];
 
             var contents = size != 0 ? fields.Skip(2).Take(size).ToArray() : null;
 
-            xpacket.Fields.Add(new XPacketField
+            xPacket.Fields.Add(new XPacketField
             {
                 FieldId = id,
                 FieldSize = size,
