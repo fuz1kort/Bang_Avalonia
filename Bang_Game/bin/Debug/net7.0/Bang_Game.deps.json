@@ -14,6 +14,7 @@
           "Avalonia.Fonts.Inter": "11.0.5",
           "Avalonia.ReactiveUI": "11.0.5",
           "Avalonia.Themes.Fluent": "11.0.5",
+          "Bang_Cards_Models": "1.0.0",
           "XProtocol": "1.0.0"
         },
         "runtime": {
@@ -977,8 +978,14 @@
           }
         }
       },
+      "Bang_Cards_Models/1.0.0": {
+        "runtime": {
+          "Bang_Cards_Models.dll": {}
+        }
+      },
       "XProtocol/1.0.0": {
         "dependencies": {
+          "Bang_Cards_Models": "1.0.0",
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
@@ -1524,6 +1531,11 @@
       "sha512": "sha512-QVo/Y39nTYcCKBqrZuwHjXdwaky0yTQPIT3qUTEEK2MZfDtZWrJ2XyZ59zH8LBgB2fL5cWaTuP2pBTpGz/GeDQ==",
       "path": "tmds.dbus.protocol/0.15.0",
       "hashPath": "tmds.dbus.protocol.0.15.0.nupkg.sha512"
+    },
+    "Bang_Cards_Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "XProtocol/1.0.0": {
       "type": "project",

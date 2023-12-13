@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using Avalonia.Media;
+using Bang_Cards_Models;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -12,22 +13,31 @@ internal class ConnectedClient
 
     private readonly Queue<byte[]> _packetSendingQueue = new();
 
-    private static readonly List<Color> Colors = new()
+    private static readonly List<Color> ColorsList = new()
     {
-        Avalonia.Media.Colors.Red, Avalonia.Media.Colors.Yellow, Avalonia.Media.Colors.Green, Avalonia.Media.Colors.Blue
+        Colors.Red, Colors.Yellow, Colors.Green, Colors.Blue
     };
 
     private readonly Random _random = new();
-    
-    private byte Id { get; set; }
+
+    private byte Id { get; }
 
     private string Name { get; set; }
 
     private uint Rgb { get; set; }
+    
+    private RoleCard? RoleCard { get; set; }
+    
+    private IHeroCard? HeroCard { get; set; }
+    
+    private List<ICard>? Cards { get; set; }
+    
+    public bool Turn { get; set; } 
 
     public ConnectedClient(Socket client, byte id)
     {
         Client = client;
+        
         Id = id;
         Name = "NoName";
         Rgb = 128128128;
@@ -64,17 +74,20 @@ internal class ConnectedClient
             case XPacketType.Connection:
                 ProcessConnection(packet);
                 break;
-            case XPacketType.BeginPlayer:
-                ProcessBeginPlayer(packet);
+            case XPacketType.NewPlayer:
+                ProcessNewPlayer(packet);
+                break;
+            case XPacketType.Turn:
+                ProcessEndTurn(packet);
                 break;
             case XPacketType.Unknown:
-                break;
-            case XPacketType.Players:
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
     }
+
+    private void ProcessEndTurn(XPacket packet) => Turn = XPacketConverter.Deserialize<XPacketTurn>(packet).Turn;
 
     private void ProcessConnection(XPacket packet)
     {
@@ -84,22 +97,22 @@ internal class ConnectedClient
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, connection).ToPacket());
     }
 
-    private void ProcessBeginPlayer(XPacket packet)
+    private void ProcessNewPlayer(XPacket packet)
     {
-        var xPacketBeginPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
+        var xPacketBeginPlayer = XPacketConverter.Deserialize<XPacketNewPlayer>(packet);
         Name = xPacketBeginPlayer.Name!;
 
-        var colorsCount = Colors.Count;
+        var colorsCount = ColorsList.Count;
         var randomNum = _random.Next(colorsCount);
-        var randomColor = Colors[randomNum];
+        var randomColor = ColorsList[randomNum];
         Rgb = randomColor.ToUInt32();
         xPacketBeginPlayer.Rgb = Rgb;
-        Colors.RemoveAt(randomNum);
+        ColorsList.RemoveAt(randomNum);
 
         Console.WriteLine($"Connected player with name: {xPacketBeginPlayer.Name}" +
                           $"\nGiven color: {randomColor}");
 
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.NewPlayer, xPacketBeginPlayer).ToPacket());
 
         SendPlayers();
     }
@@ -114,6 +127,17 @@ internal class ConnectedClient
         var bytePacket = packet.ToPacket();
         foreach (var client in XServer.Clients)
             client.QueuePacketSend(bytePacket);
+    }
+
+    public void SendCardSet(RoleCard roleCard, IHeroCard heroCard, List<ICard> cards, bool firstTurn)
+    {
+        RoleCard = roleCard;
+        HeroCard = heroCard;
+        Cards = cards;
+        var packet = XPacketConverter.Serialize(XPacketType.BeginSet,
+            new XPacketBeginSet(roleCard, heroCard, cards, firstTurn));
+        var bytePacket = packet.ToPacket();
+        QueuePacketSend(bytePacket);
     }
 
     private void QueuePacketSend(byte[] packet)

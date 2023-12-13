@@ -14,6 +14,16 @@
             "related": ".xml"
           }
         }
+      },
+      "Bang_Cards_Models/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "compile": {
+          "bin/placeholder/Bang_Cards_Models.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Bang_Cards_Models.dll": {}
+        }
       }
     }
   },
@@ -47,10 +57,16 @@
         "newtonsoft.json.nuspec",
         "packageIcon.png"
       ]
+    },
+    "Bang_Cards_Models/1.0.0": {
+      "type": "project",
+      "path": "../Bang_Cards_Models/Bang_Cards_Models.csproj",
+      "msbuildProject": "../Bang_Cards_Models/Bang_Cards_Models.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "Bang_Cards_Models >= 1.0.0",
       "Newtonsoft.Json >= 13.0.3"
     ]
   },
@@ -86,7 +102,11 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\Bang_Cards_Models\\Bang_Cards_Models.csproj": {
+              "projectPath": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\Bang_Cards_Models\\Bang_Cards_Models.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

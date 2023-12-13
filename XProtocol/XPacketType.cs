@@ -4,6 +4,8 @@ public enum XPacketType
 {
     Unknown,
     Connection,
-    BeginPlayer,
-    Players
+    NewPlayer,
+    Players,
+    BeginSet,
+    Turn
 }

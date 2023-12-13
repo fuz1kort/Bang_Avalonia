@@ -42,7 +42,7 @@ public class XClient
 
             Player = new Player(0,name, 0);
 
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer(name: name))
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.NewPlayer, new XPacketNewPlayer(name: name))
                 .ToPacket());
 
             await Task.Delay(100);
@@ -106,17 +106,30 @@ public class XClient
             case XPacketType.Connection:
                 ProcessConnection(packet);
                 break;
-            case XPacketType.BeginPlayer:
+            case XPacketType.NewPlayer:
                 ProcessBeginPlayer(packet);
                 break;
             case XPacketType.Players:
                 ProcessPlayers(packet);
+                break;
+            case XPacketType.BeginSet:
+                ProcessBeginSet(packet);
                 break;
             case XPacketType.Unknown:
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
+    }
+
+    private void ProcessBeginSet(XPacket packet)
+    {
+        var packetBeginSet = XPacketConverter.Deserialize<XPacketBeginSet>(packet);
+        var role = packetBeginSet.RoleCard;
+        var hero = packetBeginSet.HeroCard;
+        var cards = packetBeginSet.Cards;
+        var firstTurn = packetBeginSet.FirstTurn;
+        Player!.BeginSet(role!, hero!, cards!, firstTurn);
     }
 
     private void ProcessPlayers(XPacket packet)
@@ -136,7 +149,7 @@ public class XClient
 
     private void ProcessBeginPlayer(XPacket packet)
     {
-        var packetPlayer = XPacketConverter.Deserialize<XPacketBeginPlayer>(packet);
+        var packetPlayer = XPacketConverter.Deserialize<XPacketNewPlayer>(packet);
 
         var newColorUint = packetPlayer.Rgb;
         var color = Color.FromUInt32(newColorUint);

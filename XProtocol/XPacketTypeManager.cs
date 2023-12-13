@@ -7,8 +7,10 @@ public static class XPacketTypeManager
     static XPacketTypeManager()
     {
         RegisterType(XPacketType.Connection, 1, 0);
-        RegisterType(XPacketType.BeginPlayer, 2, 0);
+        RegisterType(XPacketType.NewPlayer, 2, 0);
         RegisterType(XPacketType.Players, 3, 0);
+        RegisterType(XPacketType.BeginSet, 4, 0);
+        RegisterType(XPacketType.Turn, 4, 1);
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)

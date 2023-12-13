@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using TCPServer.GameModels;
+using Bang_Cards_Models;
 using TCPServer.Services;
 
 namespace TCPServer;
@@ -8,16 +8,18 @@ namespace TCPServer;
 internal class XServer
 {
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-    
+
     internal static readonly List<ConnectedClient> Clients = new();
 
     private bool _full;
     private bool _listening;
     private bool _stopListening;
 
-    private Stack<ICard> _deck = new();
-    private List<IHeroCard> _heroes = new();
-    private List<RoleCard> _roles = new();
+    private static Stack<ICard> _cardsDeck = new();
+    private static Stack<IHeroCard> _heroesDeck = new();
+    private static Stack<RoleCard> _rolesDeck = new();
+    private static Stack<ICard> _reset = new();
+    private static int _activePlayerId;
 
     public Task StartAsync()
     {
@@ -100,13 +102,36 @@ internal class XServer
     private void InitializeGame()
     {
         var generated = new GeneratorService().GenerateDecks();
-        _roles = generated.Item1;
-        _heroes = generated.Item2;
-        _deck = generated.Item3;
+        _rolesDeck = generated.Item1;
+        _heroesDeck = generated.Item2;
+        _cardsDeck = generated.Item3;
     }
 
-
-    private void StartGame()
+    private static void StartGame()
     {
+        foreach (var client in Clients)
+        {
+            var role = _rolesDeck.Pop();
+            var hero = _heroesDeck.Pop();
+            List<ICard> cards = new();
+            for (var i = 0; i < 6; i++)
+                cards.Add(_cardsDeck.Pop());
+            if (role.RoleType is RoleType.Sheriff)
+            {
+                _activePlayerId = Clients.IndexOf(client);
+                client.SendCardSet(role, hero, cards, true);
+            }
+            
+            else
+                client.SendCardSet(role, hero, cards, false);
+        }
+        
+        while (true)
+        {
+            var activePlayer = Clients[_activePlayerId % 4];
+            activePlayer.Turn = true;
+            //Где-то ходит
+            _activePlayerId += 1;
+        }
     }
 }
