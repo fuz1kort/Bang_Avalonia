@@ -6,16 +6,32 @@ namespace XProtocol.XPackets;
 [Serializable]
 public class XPacketBeginSet
 {
-    [XField(1)] public RoleCard? RoleCard;
-    [XField(2)] public IHeroCard? HeroCard;
-    [XField(3)] public List<ICard>? Cards;
-    [XField(4)] public bool FirstTurn;
+    [XField(1)] public List<PlayCard>? Cards12;
     
-    public XPacketBeginSet(RoleCard? roleCard, IHeroCard? heroCard, List<ICard>? cards, bool firstTurn)
+    [XField(2)] public List<PlayCard>? Cards34;
+    
+    [XField(3)] public PlayCard? Card5;
+    
+    [XField(4)] public RoleCard? RoleCard;
+    
+    [XField(5)] public HeroCard? HeroCard;
+  
+
+    public XPacketBeginSet() { }
+    
+    public XPacketBeginSet(RoleCard roleCard, HeroCard heroCard, List<PlayCard> cards)
     {
         RoleCard = roleCard;
         HeroCard = heroCard;
-        Cards = cards;
-        FirstTurn = firstTurn;
+        Cards12 = new List<PlayCard>
+        {
+            cards[0],
+            cards[1]
+        };
+
+        Cards34 = new List<PlayCard> { cards[2] };
+        if(cards.Count > 3)
+            Cards34.Add(cards[3]);
+        Card5 = cards.Count > 4 ? cards[4] : new PlayCard();
     }
 }

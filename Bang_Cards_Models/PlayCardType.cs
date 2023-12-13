@@ -13,5 +13,10 @@ public enum PlayCardType
     Gatling,
     Mustang,
     Scope,
-    Barrel
+    Barrel,
+    Volcanic,
+    Schofield,
+    Remington,
+    Carbine,
+    Winchester
 }

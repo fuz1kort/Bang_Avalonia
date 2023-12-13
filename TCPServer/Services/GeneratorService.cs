@@ -7,29 +7,30 @@ public class GeneratorService
 {
     private Random _random = new();
 
-    internal (Stack<RoleCard> roles, Stack<IHeroCard> heroes, Stack<ICard> deck) GenerateDecks()
+    internal (Stack<RoleCard> rolesDeck, Stack<HeroCard> heroesDeck, Stack<PlayCard> cardsDeck) GenerateDecks()
     {
-        var cards = new List<ICard>();
+        
         var roles = new List<RoleCard>();
-        var heroes = new List<IHeroCard>();
+        var heroes = new List<HeroCard>();
+        var cards = new List<PlayCard>();
 
         //Добавлене оружия
-        var volcanic1 = new GunCard(CardType.Clubs, "Вулканик", 10, 1);
+        var volcanic1 = new PlayCard("Вулканик", 10, CardType.Clubs, PlayCardType.Volcanic, true, 1);
         cards.Add(volcanic1);
-        var volcanic2 = new GunCard(CardType.Spades, "Вулканик", 10, 1);
+        var volcanic2 = new PlayCard("Вулканик", 10, CardType.Spades, PlayCardType.Volcanic, true, 1);
         cards.Add(volcanic2);
-        var skofild1 = new GunCard(CardType.Clubs, "Скофилд", 11, 2);
-        cards.Add(skofild1);
-        var skofild2 = new GunCard(CardType.Clubs, "Скофилд", 12, 2);
-        cards.Add(skofild2);
-        var skofild3 = new GunCard(CardType.Spades, "Скофилд", 13, 2);
-        cards.Add(skofild3);
-        var remington = new GunCard(CardType.Clubs, "Ремингтон", 13, 3);
+        var schofield1 = new PlayCard("Скофилд", 11, CardType.Clubs, PlayCardType.Schofield, true, 2);
+        cards.Add(schofield1);
+        var schofield2 = new PlayCard("Скофилд", 12, CardType.Clubs, PlayCardType.Schofield, true, 2);
+        cards.Add(schofield2);
+        var schofield3 = new PlayCard("Скофилд", 13, CardType.Spades, PlayCardType.Schofield, true, 2);
+        cards.Add(schofield3);
+        var remington = new PlayCard("Ремингтон", 13, CardType.Clubs, PlayCardType.Remington, true, 3);
         cards.Add(remington);
-        var karabin = new GunCard(CardType.Clubs, "Карабин", 14, 2);
-        cards.Add(karabin);
-        var vinchester = new GunCard(CardType.Spades, "Винчестер", 8, 2);
-        cards.Add(vinchester);
+        var carbine = new PlayCard("Карабин", 14, CardType.Clubs, PlayCardType.Carbine, true, 4);
+        cards.Add(carbine);
+        var winchester = new PlayCard("Винчестер", 8, CardType.Spades, PlayCardType.Winchester, true, 5);
+        cards.Add(winchester);
 
         //Добавление других постоянных карт
         var mustang1 = new PlayCard("Мустанг", 8, CardType.Hearts,
@@ -49,9 +50,9 @@ public class GeneratorService
         cards.Add(barrel2);
 
         //Добавление героев
-        heroes.AddRange(new IHeroCard[]
+        heroes.AddRange(new HeroCard[]
         {
-            new Billy(), new Eyes(), new James(), new Jane(), new Joe(), new Kit(), new Snake(), new Tom(), new Tyko()
+            new Billy(), new Eyes(), new James(), new Jane(), new Joe(), new Kit(), new Snake(), new Tom(), new Tuco()
         });
 
         //Добавлене разовых карт
@@ -168,7 +169,7 @@ public class GeneratorService
         var renegade = new RoleCard(RoleType.Renegade, false);
         roles.Add(renegade);
         
-        var cardsDeck = new Stack<ICard>();
+        var cardsDeck = new Stack<PlayCard>();
         cards = cards.OrderBy(x => _random.Next()).ToList();
         foreach (var card in cards)
             cardsDeck.Push(card);
@@ -178,7 +179,7 @@ public class GeneratorService
         foreach (var role in roles)
             rolesDeck.Push(role);
         
-        var heroesDeck = new Stack<IHeroCard>();
+        var heroesDeck = new Stack<HeroCard>();
         heroes = heroes.OrderBy(x => _random.Next()).ToList();
         foreach (var hero in heroes)
             heroesDeck.Push(hero);

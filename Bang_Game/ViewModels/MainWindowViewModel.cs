@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -12,53 +10,29 @@ namespace Bang_Game.ViewModels;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
-    private readonly XClient _client;
+    public Player Player { get; }
 
-    public ReactiveCommand<string, Unit> ConnectCommand { get; }
+    public ReactiveCommand<Unit, Unit> ConnectCommand { get; }
+    
+    public ReactiveCommand<Unit,Unit> EndTurnCommand { get; }
 
     public MainWindowViewModel()
     {
         Initialize();
-        _client = new XClient();
-        _client.PlayersReceivedEvent += Update;
-        ConnectCommand = ReactiveCommand.Create<string>(Connect);
-        _playersList = new ObservableCollection<Player>();
+        Player = new Player();
+        ConnectCommand = ReactiveCommand.Create(Connect);
+        EndTurnCommand = ReactiveCommand.Create(EndTurn);
     }
 
-    private void Connect(string name) => Task.Run(() => _client.ConnectAsync(name));
+    private void EndTurn() => Player.EndTurn();
 
-    private ObservableCollection<Player>? _playersList;
-
-    private void Update(List<Player> players)
-    {
-        foreach (var player in players.Where(player => !PlayersList!.Select(x => x.Name).Contains(player.Name)))
-        {
-            PlayersList!.Add(player);
-        }
-    }
-
-    public new event PropertyChangedEventHandler PropertyChanged = null!;
-
-    private void OnPropertyChanged(string propertyName) =>
-        PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-    public ObservableCollection<Player>? PlayersList
-    {
-        get => _playersList;
-        set
-        {
-            if (value == null) return;
-            _playersList = value;
-            OnPropertyChanged(nameof(PlayersList));
-        }
-    }
+    private void Connect() => Task.Run(() => Player.ConnectAsync());
 
     private void Initialize()
     {
         var files = Directory.GetFiles("../../../Assets/Rules/");
         var images = files.Select(x => new RulesImage(new FileInfo(x).FullName));
         RuleImages = new ObservableCollection<RulesImage>(images);
-        _playersList = new ObservableCollection<Player>();
     }
 
     public static string Greeting => "Добро пожаловать в Бэнг!";

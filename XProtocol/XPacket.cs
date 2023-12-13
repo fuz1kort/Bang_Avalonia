@@ -46,11 +46,7 @@ public class XPacket
 
         var jsonString = JsonConvert.SerializeObject(obj);
 
-        // var jsonString = JsonSerializer.Serialize(obj);
         var bytes = Encoding.UTF8.GetBytes(jsonString);
-
-        if (bytes.Length > byte.MaxValue)
-            throw new Exception("Object is too big. Max length is 255 bytes.");
 
         field.FieldSize = (byte)bytes.Length;
         field.Contents = bytes;
@@ -91,7 +87,7 @@ public class XPacket
         return packet.ToArray();
     }
 
-    public static XPacket Parse(byte[] packet) //bool markAsEncrypted = false
+    public static XPacket Parse(byte[] packet)
     {
         /*
          * Минимальный размер пакета - 7 байт
@@ -111,10 +107,6 @@ public class XPacket
                 packet[1] != 0xAA &&
                 packet[2] != 0xFF)
                 return null!;
-            // else
-            // {
-            //     encrypted = true;
-            // }
         }
 
         var mIndex = packet.Length - 1;
@@ -129,17 +121,12 @@ public class XPacket
         var type = packet[3];
         var subtype = packet[4];
 
-        // var xpacket = new XPacket {PacketType = type, PacketSubtype = subtype, Protected = markAsEncrypted};
-
         var xpacket = new XPacket { PacketType = type, PacketSubtype = subtype };
 
         var fields = packet.Skip(5).ToArray();
 
         while (true)
         {
-            // if (fields.Length == 2) // Остались последние два байта, завершающие пакет.
-            //     return encrypted ? DecryptPacket(xpacket) : xpacket;
-
             if (fields.Length == 2) // Остались последние два байта, завершающие пакет.
                 return xpacket;
 
@@ -158,37 +145,4 @@ public class XPacket
             fields = fields.Skip(2 + size).ToArray();
         }
     }
-
-    // private byte[] GetValueRaw(byte id)
-    // {
-    //     var field = GetField(id);
-    //
-    //     if (field == null)
-    //         throw new Exception($"Field with ID {id} wasn't found.");
-    //
-    //     return field.Contents;
-    // }
-    //
-    // private void SetValueRaw(byte id, byte[] rawData)
-    // {
-    //     var field = GetField(id);
-    //
-    //     if (field == null!)
-    //     {
-    //         field = new XPacketField
-    //         {
-    //             FieldId = id
-    //         };
-    //
-    //         Fields.Add(field);
-    //     }
-    //
-    //     if (rawData.Length > byte.MaxValue)
-    //     {
-    //         throw new Exception("Object is too big. Max length is 255 bytes.");
-    //     }
-    //
-    //     field.FieldSize = (byte) rawData.Length;
-    //     field.Contents = rawData;
-    // }
 }

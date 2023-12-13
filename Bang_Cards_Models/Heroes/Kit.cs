@@ -1,7 +1,10 @@
 ﻿namespace Bang_Cards_Models.Heroes;
 
-public class Kit: IHeroCard
+public class Kit: HeroCard
 {
-    public string HeroName { get; set; } = "Кит Карсон";
-    public byte HeroHp { get; set; } = 4;
+    public Kit()
+    {
+        HeroName = "Кит Карсон";
+        HeroHp = 4;
+    }
 }

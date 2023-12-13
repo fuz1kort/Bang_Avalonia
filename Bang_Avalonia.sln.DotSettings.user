@@ -3,4 +3,5 @@
   &lt;Assembly Path="C:\Users\Marat\.nuget\packages\avalonia\11.0.5\ref\net6.0\Avalonia.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Avalonia/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Balou/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Balou/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Tuco/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

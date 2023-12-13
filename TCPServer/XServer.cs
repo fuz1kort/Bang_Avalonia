@@ -11,15 +11,14 @@ internal class XServer
 
     internal static readonly List<ConnectedClient> Clients = new();
 
-    private bool _full;
     private bool _listening;
     private bool _stopListening;
 
-    private static Stack<ICard> _cardsDeck = new();
-    private static Stack<IHeroCard> _heroesDeck = new();
+    private static Stack<PlayCard> _cardsDeck = new();
+    private static Stack<HeroCard> _heroesDeck = new();
     private static Stack<RoleCard> _rolesDeck = new();
-    private static Stack<ICard> _reset = new();
-    private static int _activePlayerId;
+    private static Stack<PlayCard> _reset = new();
+    private int _activePlayerId;
 
     public Task StartAsync()
     {
@@ -28,12 +27,12 @@ internal class XServer
             if (_listening)
                 throw new Exception("Server is already listening incoming requests.");
 
-            _socket.Bind(new IPEndPoint(IPAddress.Any, 4910));
+            _socket.Bind(new IPEndPoint(IPAddress.Any, 1410));
             _socket.Listen(10);
 
             _listening = true;
 
-            Console.WriteLine("Server have been started");
+            Console.WriteLine("Server has been started");
             var stopThread = new Thread(() =>
             {
                 while (_listening)
@@ -63,39 +62,36 @@ internal class XServer
 
     public void AcceptClients()
     {
-        while (!_full)
+        while (true)
         {
             if (_stopListening)
                 return;
 
-            Socket client;
-
-            try
-            {
-                client = _socket.Accept();
-            }
-            catch
-            {
-                return;
-            }
-
-            Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
-
-            var c = new ConnectedClient(client, (byte)Clients.Count);
-            Clients.Add(c);
-            if (Clients.Count == 4)
-                _full = true;
-        }
-
-        InitializeGame();
-        StartGame();
-
-        while (_full)
-        {
             if (Clients.Count < 4)
             {
-                _full = false;
+                Socket client;
+
+                try
+                {
+                    client = _socket.Accept();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Thread.Sleep(10000);
+                    continue;
+                }
+
+                Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
+
+                var c = new ConnectedClient(client, (byte)Clients.Count);
+
+                Clients.Add(c);
             }
+
+
+            if (Clients.All(x => x.IsReady) && Clients.Count == 4)
+                break;
         }
     }
 
@@ -107,30 +103,40 @@ internal class XServer
         _cardsDeck = generated.Item3;
     }
 
-    private static void StartGame()
+    public Task StartGameAsync()
     {
+        InitializeGame();
+
         foreach (var client in Clients)
         {
             var role = _rolesDeck.Pop();
             var hero = _heroesDeck.Pop();
-            List<ICard> cards = new();
-            for (var i = 0; i < 6; i++)
+            List<PlayCard> cards = new();
+            for (var i = 0; i < hero.HeroHp; i++)
                 cards.Add(_cardsDeck.Pop());
             if (role.RoleType is RoleType.Sheriff)
             {
                 _activePlayerId = Clients.IndexOf(client);
-                client.SendCardSet(role, hero, cards, true);
+                hero.HeroHp += 1;
+                cards.Add(_cardsDeck.Pop());
+                client.SendBeginCardSet(role, hero, cards);
             }
-            
+
             else
-                client.SendCardSet(role, hero, cards, false);
+                client.SendBeginCardSet(role, hero, cards);
+
         }
-        
+
         while (true)
         {
             var activePlayer = Clients[_activePlayerId % 4];
-            activePlayer.Turn = true;
-            //Где-то ходит
+            activePlayer.SendTurn();
+            while (true)
+            {
+                if (!activePlayer.Turn)
+                    break;
+            }
+            Console.WriteLine($"{activePlayer.GetName()} has finished his turn");
             _activePlayerId += 1;
         }
     }

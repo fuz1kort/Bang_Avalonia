@@ -79,17 +79,17 @@
                 VerticalAlignment="Center" Background="#E64E4E4E" Width="350">
             <StackPanel>
                 <TextBlock Margin="20 15" Text="Nickname:" Foreground="White" />
-                <TextBox Watermark="Введите свой никнейм" Margin="10" x:Name="Nickname" />
+                <TextBox Watermark="Введите свой никнейм" Margin="10" x:Name="Nickname" Text="{Binding Player.Name}" />
                 <Border>
                     <Button Content="Подключиться" Classes="OnBackgroundImage" Click="PlayerJoin_OnClick"
-                            Command="{Binding ConnectCommand}" CommandParameter="{Binding Text, ElementName=Nickname}" />
+                            Command="{Binding ConnectCommand}" />
                 </Border>
             </StackPanel>
         </Border>
 
         <Grid RowDefinitions="1*,17*" x:Name="GameGrid" IsVisible="False">
             <Grid Grid.Row="0" Background="Gray" VerticalAlignment="Top" Height="45">
-                <ListBox ItemsSource="{Binding PlayersList}"
+                <ListBox ItemsSource="{Binding Player.PlayersList}"
                          x:Name="PlayersListBox"
                          HorizontalAlignment="Left"
                          VerticalAlignment="Stretch"
@@ -112,6 +112,9 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Button x:Name="EndMoveButton" Command="{Binding EndTurnCommand}" IsEnabled="{Binding Player.Turn}" Background="White">Закончить ход</Button>
             </Grid>
         </Grid>
     </Grid>

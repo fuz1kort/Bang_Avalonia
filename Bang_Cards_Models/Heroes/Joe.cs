@@ -1,7 +1,10 @@
 ﻿namespace Bang_Cards_Models.Heroes;
 
-public class Joe: IHeroCard
+public class Joe: HeroCard
 {
-    public string HeroName { get; set; } = "Неуловимый Джо";
-    public byte HeroHp { get; set; } = 3;
+    public Joe()
+    {
+        HeroName = "Неуловимый Джо";
+        HeroHp = 3;
+    }
 }

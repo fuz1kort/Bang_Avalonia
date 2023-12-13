@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -32,8 +31,7 @@ public partial class MainWindow : Window
     private void PlayerJoin_OnClick(object? sender, RoutedEventArgs e)
     {
         NickInput.IsVisible = false;
-        var name = Nickname.Text;
         GameGrid.IsVisible = true;
-        Background = null;
+        // Background = null;
     }
 }

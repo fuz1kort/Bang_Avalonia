@@ -1,7 +1,10 @@
 ﻿namespace Bang_Cards_Models.Heroes;
 
-public class Eyes: IHeroCard
+public class Eyes: HeroCard
 {
-    public string HeroName { get; set; } = "Ангельские Глазки";
-    public byte HeroHp { get; set; } = 4;
+    public Eyes()
+    {
+        HeroName = "Ангельские Глазки";
+        HeroHp = 4;
+    }
 }
