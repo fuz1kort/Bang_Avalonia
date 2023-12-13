@@ -72,7 +72,7 @@ public static class XPacketConverter
         return instance;
     }
 
-    private static List<Tuple<FieldInfo, byte>> GetFields(Type t)
+    private static List<Tuple<FieldInfo, byte>> GetFields(IReflect t)
     {
         return t.GetFields(BindingFlags.Instance |
                            BindingFlags.NonPublic |

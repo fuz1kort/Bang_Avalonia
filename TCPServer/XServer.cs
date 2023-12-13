@@ -13,11 +13,13 @@ internal class XServer
 
     private bool _listening;
     private bool _stopListening;
+    private bool _isGameOver;
 
     private static Stack<PlayCard> _cardsDeck = new();
     private static Stack<HeroCard> _heroesDeck = new();
     private static Stack<RoleCard> _rolesDeck = new();
-    private static Stack<PlayCard> _reset = new();
+    // private static Stack<PlayCard> _reset = new();
+    
     private int _activePlayerId;
 
     public Task StartAsync()
@@ -95,12 +97,12 @@ internal class XServer
         }
     }
 
-    private void InitializeGame()
+    private static void InitializeGame()
     {
-        var generated = new GeneratorService().GenerateDecks();
-        _rolesDeck = generated.Item1;
-        _heroesDeck = generated.Item2;
-        _cardsDeck = generated.Item3;
+        var (rolesDeck, heroesDeck, cardsDeck) = new GeneratorService().GenerateDecks();
+        _rolesDeck = rolesDeck;
+        _heroesDeck = heroesDeck;
+        _cardsDeck = cardsDeck;
     }
 
     public Task StartGameAsync()
@@ -126,7 +128,9 @@ internal class XServer
                 client.SendBeginCardSet(role, hero, cards);
         }
 
-        while (true)
+        _isGameOver = false;
+
+        while (!_isGameOver)
         {
             var activePlayer = Clients[_activePlayerId % 4];
             activePlayer.SendTurn();
@@ -136,8 +140,10 @@ internal class XServer
                     break;
             }
 
-            Console.WriteLine($"{activePlayer.GetName()} has finished his turn");
+            Console.WriteLine($"Player {activePlayer.GetName()} has finished his turn");
             _activePlayerId += 1;
         }
+
+        return Task.CompletedTask;
     }
 }

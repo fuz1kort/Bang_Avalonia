@@ -4,5 +4,5 @@ public enum RoleType
 {
     Sheriff,
     Bandit,
-    Renegade,
+    Renegade
 }

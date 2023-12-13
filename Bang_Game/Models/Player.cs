@@ -259,7 +259,7 @@ public sealed class Player : INotifyPropertyChanged
         PlayersList = new ObservableCollection<Player>(playersList);
     }
 
-    private void ProcessConnection(XPacket packet)
+    private static void ProcessConnection(XPacket packet)
     {
         var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
 

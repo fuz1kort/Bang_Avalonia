@@ -8,7 +8,7 @@ public class RoleCard
         IsOpened = isOpened;
     }
 
-    public RoleType RoleType { get; set; }
+    public RoleType RoleType { get; }
     
     // public string? RoleDescription { get; set; }
     

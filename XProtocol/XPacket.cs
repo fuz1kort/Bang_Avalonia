@@ -8,7 +8,7 @@ public class XPacket
     public byte PacketType { get; private init; }
     public byte PacketSubtype { get; private init; }
     private List<XPacketField> Fields { get; } = new();
-    private bool ChangeHeaders => false;
+    private static bool ChangeHeaders => false;
 
     private XPacket()
     {
@@ -26,7 +26,7 @@ public class XPacket
         if (field == null)
             throw new Exception($"Field with ID {id} wasn't found.");
 
-        var jsonString = Encoding.UTF8.GetString(field.Contents);
+        var jsonString = Encoding.UTF8.GetString(field.Contents!);
         return JsonConvert.DeserializeObject<T>(jsonString)!;
     }
 
@@ -78,7 +78,7 @@ public class XPacket
         foreach (var field in fields)
         {
             packet.Write(new[] { field.FieldId, field.FieldSize }, 0, 2);
-            packet.Write(field.Contents, 0, field.Contents.Length);
+            packet.Write(field.Contents!, 0, field.Contents!.Length);
         }
 
         // Записываем конец пакета

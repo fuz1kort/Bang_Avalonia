@@ -34,9 +34,9 @@ internal class ConnectedClient
 
     private List<PlayCard>? Cards { get; set; }
 
-    internal bool Turn { get; set; }
+    internal bool Turn { get; private set; }
 
-    internal bool IsReady { get; set; }
+    internal bool IsReady { get; private set; }
 
     public ConnectedClient(Socket client, byte id)
     {
@@ -85,6 +85,10 @@ internal class ConnectedClient
                 ProcessEndTurn();
                 break;
             case XPacketType.Unknown:
+                break;
+            case XPacketType.Players:
+                break;
+            case XPacketType.BeginSet:
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
@@ -175,6 +179,5 @@ internal class ConnectedClient
             new XPacketTurn());
         var bytePacket = packet.ToPacket();
         QueuePacketSend(bytePacket);
-        Console.WriteLine(bytePacket.Length);
     }
 }

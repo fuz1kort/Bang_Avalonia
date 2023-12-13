@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bang_Cards_Models")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a4af70ffb440cbd327200f74c9ef5c68cf9dd2ff")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bang_Cards_Models")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bang_Cards_Models")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

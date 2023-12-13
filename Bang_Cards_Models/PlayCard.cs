@@ -17,11 +17,11 @@ public class PlayCard
     {
     }
 
-    public string? Name { get; set; }
-    public byte Number { get; set; }
-    public CardType CardType { get; set; }
-    public PlayCardType PlayCardType { get; set; }
-    public bool IsConstant { get; set; }
+    public string? Name { get; }
+    public byte Number { get; }
+    public CardType CardType { get; }
+    public PlayCardType PlayCardType { get; }
+    public bool IsConstant { get; }
     
     public byte ShotRange { get; set; }
 }
