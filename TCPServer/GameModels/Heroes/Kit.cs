@@ -1,4 +1,4 @@
-﻿namespace Bang_Game.Models.Heroes;
+﻿namespace TCPServer.GameModels.Heroes;
 
 public class Kit: IHeroCard
 {

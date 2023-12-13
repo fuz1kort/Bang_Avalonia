@@ -1,4 +1,4 @@
-﻿namespace Bang_Game.Models;
+﻿namespace Bang_Game.Models.GameModels;
 
 public enum ERoles
 {

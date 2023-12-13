@@ -40,7 +40,7 @@ public class XClient
             Thread.Sleep(100);
 
 
-            Player = new Player(name, 0);
+            Player = new Player(0,name, 0);
 
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, new XPacketBeginPlayer(name: name))
                 .ToPacket());
@@ -123,7 +123,7 @@ public class XClient
     {
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
-        var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2)).ToList();
+        var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2, x.Item3)).ToList();
         PlayersReceivedEvent!.Invoke(playersList);
     }
 

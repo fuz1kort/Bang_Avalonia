@@ -1,18 +1,23 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using TCPServer.GameModels;
+using TCPServer.Services;
 
 namespace TCPServer;
 
 internal class XServer
 {
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-    // ReSharper disable once CollectionNeverQueried.Local
+    
     internal static readonly List<ConnectedClient> Clients = new();
 
     private bool _full;
     private bool _listening;
     private bool _stopListening;
+
+    private Stack<ICard> _deck = new();
+    private List<IHeroCard> _heroes = new();
+    private List<RoleCard> _roles = new();
 
     public Task StartAsync()
     {
@@ -60,7 +65,7 @@ internal class XServer
         {
             if (_stopListening)
                 return;
-            
+
             Socket client;
 
             try
@@ -74,19 +79,34 @@ internal class XServer
 
             Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
-            var c = new ConnectedClient(client);
+            var c = new ConnectedClient(client, (byte)Clients.Count);
             Clients.Add(c);
             if (Clients.Count == 4)
                 _full = true;
         }
 
+        InitializeGame();
+        StartGame();
+
         while (_full)
         {
             if (Clients.Count < 4)
+            {
                 _full = false;
-            
+            }
         }
     }
 
+    private void InitializeGame()
+    {
+        var generated = new GeneratorService().GenerateDecks();
+        _roles = generated.Item1;
+        _heroes = generated.Item2;
+        _deck = generated.Item3;
+    }
 
+
+    private void StartGame()
+    {
+    }
 }

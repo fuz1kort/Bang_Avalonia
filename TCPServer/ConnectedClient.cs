@@ -18,15 +18,17 @@ internal class ConnectedClient
     };
 
     private readonly Random _random = new();
+    
+    private byte Id { get; set; }
 
     private string Name { get; set; }
 
     private uint Rgb { get; set; }
 
-    public ConnectedClient(Socket client)
+    public ConnectedClient(Socket client, byte id)
     {
         Client = client;
-
+        Id = id;
         Name = "NoName";
         Rgb = 128128128;
 
@@ -67,8 +69,6 @@ internal class ConnectedClient
                 break;
             case XPacketType.Unknown:
                 break;
-            // case XPacketType.Players:
-            //     break;
             case XPacketType.Players:
                 break;
             default:
@@ -96,7 +96,7 @@ internal class ConnectedClient
         xPacketBeginPlayer.Rgb = Rgb;
         Colors.RemoveAt(randomNum);
 
-        Console.WriteLine($"Connected player with name: {Name}" +
+        Console.WriteLine($"Connected player with name: {xPacketBeginPlayer.Name}" +
                           $"\nGiven color: {randomColor}");
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.BeginPlayer, xPacketBeginPlayer).ToPacket());
@@ -104,7 +104,7 @@ internal class ConnectedClient
         SendPlayers();
     }
 
-    private (string, uint) GetPlayerParameters() => (Name, Rgb);
+    private (byte,string, uint) GetPlayerParameters() => (Id,Name, Rgb);
 
     private static void SendPlayers()
     {

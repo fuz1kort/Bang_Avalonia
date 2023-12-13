@@ -1,4 +1,4 @@
-﻿namespace Bang_Game.Models.Heroes;
+﻿namespace Bang_Game.Models.GameModels.Heroes;
 
 public class Jane: IHeroCard
 {

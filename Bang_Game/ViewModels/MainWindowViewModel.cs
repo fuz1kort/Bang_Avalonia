@@ -56,16 +56,16 @@ public sealed class MainWindowViewModel : ViewModelBase
     private void Initialize()
     {
         var files = Directory.GetFiles("../../../Assets/Rules/");
-        var images = files.Select(x => new RuleImage(new FileInfo(x).FullName));
-        RuleImages = new ObservableCollection<RuleImage>(images);
+        var images = files.Select(x => new RulesImage(new FileInfo(x).FullName));
+        RuleImages = new ObservableCollection<RulesImage>(images);
         _playersList = new ObservableCollection<Player>();
     }
 
     public static string Greeting => "Добро пожаловать в Бэнг!";
 
-    private ObservableCollection<RuleImage>? _ruleImages;
+    private ObservableCollection<RulesImage>? _ruleImages;
 
-    public ObservableCollection<RuleImage>? RuleImages
+    public ObservableCollection<RulesImage>? RuleImages
     {
         get => _ruleImages;
         set
