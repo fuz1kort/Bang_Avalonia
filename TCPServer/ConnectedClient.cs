@@ -59,6 +59,7 @@ internal class ConnectedClient
         {
             var buff = new byte[1024];
             await Client.ReceiveAsync(buff);
+            
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
 
             buff = decryptedBuff.TakeWhile((b, i) =>

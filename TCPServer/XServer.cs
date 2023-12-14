@@ -132,7 +132,6 @@ internal class XServer
         {
             var activePlayer = Clients[_activePlayerId % 4];
             activePlayer.SendTurn();
-            Console.WriteLine("nice");
             while (true)
             {
                 if (!activePlayer.Turn)

@@ -381,8 +381,6 @@ public sealed class Player : INotifyPropertyChanged
             
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
             
-            Console.WriteLine(decryptedBuff.Length);
-            
             buff = decryptedBuff.TakeWhile((b, i) =>
             {
                 if (b != 0xFF) return true;
