@@ -68,7 +68,7 @@ internal class XServer
             if (_stopListening)
                 return;
 
-            if (Clients.Count < 1)
+            if (Clients.Count < 4)
             {
                 Socket client;
 
@@ -91,7 +91,7 @@ internal class XServer
             }
 
 
-            if (Clients.All(x => x.IsReady) && Clients.Count == 1)
+            if (Clients.All(x => x.IsReady) && Clients.Count == 4)
                 break;
         }
     }
