@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Bang_Cards_Models\Bang_Cards_Models.csproj" />
       <ProjectReference Include="..\XProtocol\XProtocol.csproj" />
     </ItemGroup>
 

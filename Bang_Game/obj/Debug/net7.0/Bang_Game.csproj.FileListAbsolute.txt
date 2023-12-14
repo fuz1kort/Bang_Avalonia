@@ -277,8 +277,6 @@ C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\obj\Debug\net7.0\Ba
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\obj\Debug\net7.0\Bang_Game.genruntimeconfig.cache
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\obj\Debug\net7.0\ref\Bang_Game.dll
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\bin\Debug\net7.0\Newtonsoft.Json.dll
-C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\bin\Debug\net7.0\Bang_Cards_Models.dll
-C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\bin\Debug\net7.0\Bang_Cards_Models.pdb
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\bin\Debug\net7.0\Newtonsoft.Json.dll
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\bin\Debug\net7.0\Bang_Cards_Models.dll
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\Bang_Game\bin\Debug\net7.0\Bang_Cards_Models.pdb

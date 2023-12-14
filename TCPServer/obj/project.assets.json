@@ -129,21 +129,10 @@
           "lib/netcoreapp2.0/_._": {}
         }
       },
-      "Bang_Cards_Models/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v7.0",
-        "compile": {
-          "bin/placeholder/Bang_Cards_Models.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Bang_Cards_Models.dll": {}
-        }
-      },
       "XProtocol/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
-          "Bang_Cards_Models": "1.0.0",
           "Newtonsoft.Json": "13.0.3"
         },
         "compile": {
@@ -514,11 +503,6 @@
         "version.txt"
       ]
     },
-    "Bang_Cards_Models/1.0.0": {
-      "type": "project",
-      "path": "../Bang_Cards_Models/Bang_Cards_Models.csproj",
-      "msbuildProject": "../Bang_Cards_Models/Bang_Cards_Models.csproj"
-    },
     "XProtocol/1.0.0": {
       "type": "project",
       "path": "../XProtocol/XProtocol.csproj",
@@ -528,28 +512,27 @@
   "projectFileDependencyGroups": {
     "net7.0": [
       "Avalonia >= 11.0.5",
-      "Bang_Cards_Models >= 1.0.0",
       "XProtocol >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gafar\\.nuget\\packages\\": {},
+    "C:\\Users\\Marat\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gafar\\source\\repos\\fuz1kort\\Bang_Avalonia\\TCPServer\\TCPServer.csproj",
+      "projectUniqueName": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\TCPServer\\TCPServer.csproj",
       "projectName": "TCPServer",
-      "projectPath": "C:\\Users\\gafar\\source\\repos\\fuz1kort\\Bang_Avalonia\\TCPServer\\TCPServer.csproj",
-      "packagesPath": "C:\\Users\\gafar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gafar\\source\\repos\\fuz1kort\\Bang_Avalonia\\TCPServer\\obj\\",
+      "projectPath": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\TCPServer\\TCPServer.csproj",
+      "packagesPath": "C:\\Users\\Marat\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\TCPServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\gafar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Marat\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -565,11 +548,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\gafar\\source\\repos\\fuz1kort\\Bang_Avalonia\\Bang_Cards_Models\\Bang_Cards_Models.csproj": {
-              "projectPath": "C:\\Users\\gafar\\source\\repos\\fuz1kort\\Bang_Avalonia\\Bang_Cards_Models\\Bang_Cards_Models.csproj"
-            },
-            "C:\\Users\\gafar\\source\\repos\\fuz1kort\\Bang_Avalonia\\XProtocol\\XProtocol.csproj": {
-              "projectPath": "C:\\Users\\gafar\\source\\repos\\fuz1kort\\Bang_Avalonia\\XProtocol\\XProtocol.csproj"
+            "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\XProtocol\\XProtocol.csproj": {
+              "projectPath": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\XProtocol\\XProtocol.csproj"
             }
           }
         }

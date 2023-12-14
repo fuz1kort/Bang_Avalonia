@@ -1,6 +1,5 @@
 ﻿using System.Net.Sockets;
 using Avalonia.Media;
-using Bang_Cards_Models;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -28,11 +27,15 @@ internal class ConnectedClient
 
     private uint Rgb { get; set; }
 
-    private RoleCard? RoleCard { get; set; }
+    private byte RoleType { get; set; }
 
-    private HeroCard? HeroCard { get; set; }
+    private string? HeroName { get; set; }
+    
+    private byte Hp { get; set; }
 
-    private List<PlayCard>? Cards { get; set; }
+    public byte GetHp() => Hp;
+
+    private List<byte>? Cards { get; set; }
 
     internal bool Turn { get; private set; }
 
@@ -56,11 +59,12 @@ internal class ConnectedClient
         {
             var buff = new byte[1024];
             await Client.ReceiveAsync(buff);
+            var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
 
-            buff = buff.TakeWhile((b, i) =>
+            buff = decryptedBuff.TakeWhile((b, i) =>
             {
                 if (b != 0xFF) return true;
-                return buff[i + 1] != 0;
+                return decryptedBuff[i + 1] != 0;
             }).Concat(new byte[] { 0xFF, 0 }).ToArray();
 
             var parsed = XPacket.Parse(buff);
@@ -88,21 +92,32 @@ internal class ConnectedClient
                 break;
             case XPacketType.Players:
                 break;
-            case XPacketType.BeginSet:
+            case XPacketType.BeginCardsSet:
+                break;
+            case XPacketType.RoleHero:
+                break;
+            case XPacketType.Hp:
+                ProcessSettingHp(packet);
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
     }
 
+    private void ProcessSettingHp(XPacket packet)
+    {
+        var xPacketHp = XPacketConverter.Deserialize<XPacketHp>(packet);
+        Hp = xPacketHp.Hp;
+    }
+
     private void ProcessEndTurn() => Turn = false;
 
     private void ProcessConnection(XPacket packet)
     {
-        var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
-        connection.IsSuccessful = true;
+        var xPacketConnection = XPacketConverter.Deserialize<XPacketConnection>(packet);
+        xPacketConnection.IsSuccessful = true;
 
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, connection).ToPacket());
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, xPacketConnection).ToPacket());
     }
 
     private void ProcessNewPlayer(XPacket packet)
@@ -143,7 +158,8 @@ internal class ConnectedClient
                 continue;
 
             var packet = _packetSendingQueue.Dequeue();
-            await Client.SendAsync(packet);
+            var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
+            await Client.SendAsync(encryptedPacket);
 
             await Task.Delay(100);
         }
@@ -161,13 +177,11 @@ internal class ConnectedClient
             client.QueuePacketSend(bytePacket);
     }
 
-    public void SendBeginCardSet(RoleCard roleCard, HeroCard heroCard, List<PlayCard> cards)
+    public void SendBeginCardsSet(List<byte>? cards)
     {
-        RoleCard = roleCard;
-        HeroCard = heroCard;
         Cards = cards;
-        var packet = XPacketConverter.Serialize(XPacketType.BeginSet,
-            new XPacketBeginSet(roleCard, heroCard, cards));
+        var packet = XPacketConverter.Serialize(XPacketType.BeginCardsSet,
+            new XPacketBeginSetCards(cards));
         var bytePacket = packet.ToPacket();
         QueuePacketSend(bytePacket);
     }
@@ -177,6 +191,15 @@ internal class ConnectedClient
         Turn = true;
         var packet = XPacketConverter.Serialize(XPacketType.Turn,
             new XPacketTurn());
+        var bytePacket = packet.ToPacket();
+        QueuePacketSend(bytePacket);
+    }
+
+    public void SendRoleHero(byte roleType, string? heroName)
+    {
+        RoleType = roleType;
+        HeroName = heroName;
+        var packet = XPacketConverter.Serialize(XPacketType.RoleHero, new XPacketRoleHero(roleType, heroName));
         var bytePacket = packet.ToPacket();
         QueuePacketSend(bytePacket);
     }

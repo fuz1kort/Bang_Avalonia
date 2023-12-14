@@ -9,8 +9,10 @@ public static class XPacketTypeManager
         RegisterType(XPacketType.Connection, 1, 0);
         RegisterType(XPacketType.NewPlayer, 2, 0);
         RegisterType(XPacketType.Players, 3, 0);
-        RegisterType(XPacketType.BeginSet, 4, 0);
-        RegisterType(XPacketType.Turn, 5, 0);
+        RegisterType(XPacketType.Turn, 4, 0);
+        RegisterType(XPacketType.BeginCardsSet, 5, 0);
+        RegisterType(XPacketType.RoleHero, 5, 1);
+        RegisterType(XPacketType.Hp, 5, 2);
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)
