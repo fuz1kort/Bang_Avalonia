@@ -112,9 +112,13 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </Grid>
-            <Grid Grid.Row="1">
-                <Button x:Name="EndMoveButton" Command="{Binding EndTurnCommand}" IsEnabled="{Binding Player.Turn}" Background="White">Закончить ход</Button>
+                <Button x:Name="EndMoveButton" Command="{Binding EndTurnCommand}" IsEnabled="{Binding Player.Turn}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="#9B1212"
+                        Foreground="White"
+                        Margin="0 0 15 0"
+                        Content="Закончить ход" />
             </Grid>
         </Grid>
     </Grid>

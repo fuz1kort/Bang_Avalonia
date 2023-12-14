@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 
 namespace Bang_Game.Views;
 
@@ -32,6 +33,6 @@ public partial class MainWindow : Window
     {
         NickInput.IsVisible = false;
         GameGrid.IsVisible = true;
-        // Background = null;
+        Background = Brushes.White;
     }
 }

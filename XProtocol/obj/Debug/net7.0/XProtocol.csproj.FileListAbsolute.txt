@@ -26,3 +26,7 @@ C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net7.0\XP
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\bin\Debug\net7.0\Bang_Cards_Models.dll
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\bin\Debug\net7.0\Bang_Cards_Models.pdb
 C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net7.0\XProtocol.csproj.CopyComplete
+C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\XProtocol\bin\Debug\net7.0\Bang_Cards_Models.dll
+C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\XProtocol\bin\Debug\net7.0\Bang_Cards_Models.pdb
+C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net7.0\XProtocol.csproj.AssemblyReference.cache
+C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\XProtocol\obj\Debug\net7.0\XProtocol.csproj.CopyComplete
