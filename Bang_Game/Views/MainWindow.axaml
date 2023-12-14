@@ -120,6 +120,20 @@
                         Margin="0 0 15 0"
                         Content="Закончить ход" />
             </Grid>
+            <Grid Grid.Row="1">
+                <Grid x:Name="FirstPlayer">
+                    
+                </Grid>
+                <Grid x:Name="SecondPlayer">
+                    
+                </Grid>
+                <Grid x:Name="ThirdPlayer">
+                    
+                </Grid>
+                <Grid x:Name="FourthPlayer">
+                    
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
