@@ -181,7 +181,7 @@ internal class ConnectedClient
     {
         Cards = cards;
         var packet = XPacketConverter.Serialize(XPacketType.BeginCardsSet,
-            new XPacketBeginSetCards(cards));
+            new XPacketBeginSetCards(cards!));
         var bytePacket = packet.ToPacket();
         QueuePacketSend(bytePacket);
     }

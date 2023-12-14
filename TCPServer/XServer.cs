@@ -68,7 +68,7 @@ internal class XServer
             if (_stopListening)
                 return;
 
-            if (Clients.Count < 4)
+            if (Clients.Count < 1)
             {
                 Socket client;
 
@@ -91,7 +91,7 @@ internal class XServer
             }
 
 
-            if (Clients.All(x => x.IsReady) && Clients.Count == 4)
+            if (Clients.All(x => x.IsReady) && Clients.Count == 1)
                 break;
         }
     }
@@ -128,11 +128,11 @@ internal class XServer
         }
 
         _isGameOver = false;
-
         while (!_isGameOver)
         {
             var activePlayer = Clients[_activePlayerId % 4];
             activePlayer.SendTurn();
+            Console.WriteLine("nice");
             while (true)
             {
                 if (!activePlayer.Turn)

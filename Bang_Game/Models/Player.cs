@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Avalonia.Media;
+using Bang_Game.Models.Cards;
+using Bang_Game.Models.Cards.Heroes;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,9 +11,6 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Media;
-using Bang_Game.Models.Cards;
-using Bang_Game.Models.Cards.Heroes;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -103,7 +103,7 @@ public sealed class Player : INotifyPropertyChanged
         get => _cards;
         set
         {
-            _cards = value;
+            _cards = value; ;
             OnPropertyChanged();
         }
     }
@@ -214,7 +214,7 @@ public sealed class Player : INotifyPropertyChanged
             false);
         _playCards[++id] = panic1;
         var panic2 = new PlayCard(id, "Паника", 11, CardType.Hearts,
-            PlayCardType.Panic,
+            PlayCardType.Panic, 
             false);
         _playCards[++id] = panic2;
         var panic3 = new PlayCard(id, "Паника", 12, CardType.Hearts,
@@ -378,7 +378,10 @@ public sealed class Player : INotifyPropertyChanged
         {
             var buff = new byte[1024];
             await _socket!.ReceiveAsync(buff);
+            
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
+            
+            Console.WriteLine(decryptedBuff.Length);
             
             buff = decryptedBuff.TakeWhile((b, i) =>
             {
@@ -404,6 +407,7 @@ public sealed class Player : INotifyPropertyChanged
                 ProcessCreatingPlayer(packet);
                 break;
             case XPacketType.Players:
+                
                 ProcessGettingPlayers(packet);
                 break;
             case XPacketType.BeginCardsSet:
@@ -426,7 +430,7 @@ public sealed class Player : INotifyPropertyChanged
     {
         var packetHeroName = XPacketConverter.Deserialize<XPacketRoleHero>(packet);
         RoleCard = _roleCards[packetHeroName.RoleType];
-        HeroCard = _heroCards[packetHeroName.HeroName];
+        HeroCard = _heroCards[packetHeroName.HeroName!];
         Hp = HeroCard.HeroHp;
         if (RoleCard.RoleType == RoleType.Sheriff)
             Hp += 1;
