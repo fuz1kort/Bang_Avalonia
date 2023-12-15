@@ -437,11 +437,7 @@ public sealed class Player : INotifyPropertyChanged
         QueuePacketSend(bytePacketHp);
     }
 
-    private void ProcessStartingTurn()
-    {
-        Thread.Sleep(500);
-        Turn = true;
-    }
+    private void ProcessStartingTurn() => Turn = true;
 
     private void ProcessGettingBeginCardsSet(XPacket packet)
     {
