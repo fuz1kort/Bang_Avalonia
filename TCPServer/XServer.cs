@@ -68,7 +68,7 @@ internal class XServer
             if (_stopListening)
                 return;
 
-            if (Clients.Count < 4)
+            if (Clients.Count < 1)
             {
                 Socket client;
 
@@ -91,7 +91,7 @@ internal class XServer
             }
 
 
-            if (Clients.All(x => x.IsReady) && Clients.Count == 4)
+            if (Clients.All(x => x.IsReady) && Clients.Count == 1)
                 break;
         }
     }
@@ -120,11 +120,12 @@ internal class XServer
                 cards.Add(_cardsDeck.Pop());
             if (role == 0)
             {
-                _activePlayerId = Clients.IndexOf(client);
+                //_activePlayerId = Clients.IndexOf(client);
                 cards.Add(_cardsDeck.Pop());
             }
             
             client.SendBeginCardsSet(cards);
+            _activePlayerId = 0;
         }
 
         _isGameOver = false;
@@ -132,6 +133,8 @@ internal class XServer
         {
             var activePlayer = Clients[_activePlayerId % 4];
             activePlayer.SendTurn();
+            var activePlayerName = activePlayer.GetName();
+            Console.WriteLine($"{activePlayerName}'s turn");
             while (true)
             {
                 if (!activePlayer.Turn)

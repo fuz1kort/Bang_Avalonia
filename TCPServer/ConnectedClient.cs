@@ -57,7 +57,7 @@ internal class ConnectedClient
     {
         while (true)
         {
-            var buff = new byte[1024];
+            var buff = new byte[256];
             await Client.ReceiveAsync(buff);
             
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
@@ -145,8 +145,8 @@ internal class ConnectedClient
 
     private void QueuePacketSend(byte[] packet)
     {
-        if (packet.Length > 1024)
-            throw new Exception("Max packet size is 1024 bytes.");
+        if (packet.Length > 256)
+            throw new Exception("Max packet size is 256 bytes.");
 
         _packetSendingQueue.Enqueue(packet);
     }

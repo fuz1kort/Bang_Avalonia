@@ -135,6 +135,7 @@ public sealed class Player : INotifyPropertyChanged
     public Player()
     {
         Cards = new List<PlayCard>();
+        Turn = false;
         byte id = 0;
         
         var volcanic1 = new PlayCard(id, "Вулканик", 10, CardType.Clubs, PlayCardType.Volcanic, true, 1);
@@ -376,7 +377,7 @@ public sealed class Player : INotifyPropertyChanged
     {
         while (true)
         {
-            var buff = new byte[1024];
+            var buff = new byte[256];
             await _socket!.ReceiveAsync(buff);
             
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
@@ -404,8 +405,7 @@ public sealed class Player : INotifyPropertyChanged
             case XPacketType.NewPlayer:
                 ProcessCreatingPlayer(packet);
                 break;
-            case XPacketType.Players:
-                
+            case XPacketType.Players:  
                 ProcessGettingPlayers(packet);
                 break;
             case XPacketType.BeginCardsSet:
@@ -437,8 +437,7 @@ public sealed class Player : INotifyPropertyChanged
         QueuePacketSend(bytePacketHp);
     }
 
-    private void ProcessStartingTurn()
-        => Turn = true;
+    private void ProcessStartingTurn() => Turn = true;
 
     private void ProcessGettingBeginCardsSet(XPacket packet)
     {
@@ -446,7 +445,6 @@ public sealed class Player : INotifyPropertyChanged
         var packetCards = packetBeginCardsSet.Cards;
         foreach (var packetCardId in packetCards!) 
             Cards!.Add(_playCards[packetCardId]);
-        Turn = false;
     }
 
     private void ProcessGettingPlayers(XPacket packet)
@@ -477,8 +475,8 @@ public sealed class Player : INotifyPropertyChanged
 
     private void QueuePacketSend(byte[] packet)
     {
-        if (packet.Length > 1024)
-            throw new Exception("Max packet size is 1024 bytes.");
+        if (packet.Length > 256)
+            throw new Exception("Max packet size is 256 bytes.");
 
         _packetSendingQueue.Enqueue(packet);
     }
