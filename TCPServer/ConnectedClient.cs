@@ -181,6 +181,7 @@ internal class ConnectedClient
         var xPacketProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
         var property = typeof(ConnectedClient).GetProperty(xPacketProperty.PropertyName!);
         property!.SetValue(this, Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!));
+        //TODO onPropertyChange
     }
 
     private void ProcessEndTurn() => Turn = false;

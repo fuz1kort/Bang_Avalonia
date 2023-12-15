@@ -68,7 +68,7 @@ internal class XServer
             if (_stopListening)
                 return;
 
-            if (Clients.Count < 1)
+            if (Clients.Count < 4)
             {
                 Socket client;
 
@@ -85,13 +85,13 @@ internal class XServer
 
                 Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
-                var c = new ConnectedClient(client, (byte)(Clients.Count + 1));
+                var c = new ConnectedClient(client, (byte)(Clients.Count));
 
                 Clients.Add(c);
             }
 
 
-            if (Clients.All(x => x.IsReady) && Clients.Count == 1)
+            if (Clients.All(x => x.IsReady) && Clients.Count == 4)
                 break;
         }
     }
@@ -119,17 +119,14 @@ internal class XServer
             for (var i = 0; i < hp; i++)
                 cards.Add(_cardsDeck.Pop());
             if (role == 0)
-            {
-                // _activePlayerId = Clients.IndexOf(client);
-                cards.Add(_cardsDeck.Pop());
-            }
+                _activePlayerId = Clients.IndexOf(client);
 
             client.SendBeginCardsSet(cards);
         }
 
         _isGameOver = false;
 
-        _activePlayerId = 0;
+        //_activePlayerId = 0;
 
         while (!_isGameOver)
         {

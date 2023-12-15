@@ -131,7 +131,6 @@ public sealed class Player : INotifyPropertyChanged
         set
         {
             _cardsCount = value;
-            Update(nameof(CardsCount), _cardsCount);
             OnPropertyChanged();
         }
     }
@@ -151,6 +150,7 @@ public sealed class Player : INotifyPropertyChanged
             }
             else
                 _cards = value;
+            CardsCount = (byte)_cards!.Count;
         }
     }
 
