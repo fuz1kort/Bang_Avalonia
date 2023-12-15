@@ -140,8 +140,6 @@ internal class ConnectedClient
 
         SendPlayers();
 
-        Thread.Sleep(100);
-
         IsReady = true;
     }
 

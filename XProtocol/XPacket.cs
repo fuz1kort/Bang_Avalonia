@@ -104,8 +104,8 @@ public class XPacket
 
         var type = packet[3];
         var subtype = packet[4];
-        
-        var xPacket = Create(type, subtype);
+
+        var xPacket = new XPacket { PacketType = type, PacketSubtype = subtype };
 
         var fields = packet.Skip(5).ToArray();
 

@@ -103,7 +103,7 @@ public sealed class Player : INotifyPropertyChanged
         get => _cards;
         set
         {
-            _cards = value;
+            _cards = value; ;
             OnPropertyChanged();
         }
     }
@@ -439,7 +439,7 @@ public sealed class Player : INotifyPropertyChanged
 
     private void ProcessStartingTurn()
     {
-        Thread.Sleep(100);
+        Thread.Sleep(500);
         Turn = true;
     }
 

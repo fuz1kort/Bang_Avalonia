@@ -113,7 +113,6 @@ internal class XServer
             var role = _rolesDeck.Pop();
             var hero = _heroesDeck.Pop();
             client.SendRoleHero(role, hero);
-            // Thread.Sleep(1000);
             var hp = client.GetHp();
             List<byte> cards = new();
             for (var i = 0; i < hp; i++)
