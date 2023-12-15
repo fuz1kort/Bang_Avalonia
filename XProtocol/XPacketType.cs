@@ -6,6 +6,8 @@ public enum XPacketType
     Connection,
     NewPlayer,
     Players,
-    BeginSet,
-    Turn
+    BeginCardsSet,
+    Turn,
+    RoleHero,
+    Hp
 }

@@ -8,7 +8,7 @@ public class XPacket
     public byte PacketType { get; private init; }
     public byte PacketSubtype { get; private init; }
     private List<XPacketField> Fields { get; } = new();
-    private static bool ChangeHeaders => false;
+    private static bool ChangeHeaders { get; set; }
 
     private XPacket()
     {
@@ -17,7 +17,6 @@ public class XPacket
     private XPacketField GetField(byte id) => Fields.FirstOrDefault(field => field.FieldId == id)!;
 
     public bool HasField(byte id) => GetField(id) != null!;
-
 
     public T GetValue<T>(byte id)
     {
@@ -45,7 +44,6 @@ public class XPacket
         }
 
         var jsonString = JsonConvert.SerializeObject(obj);
-
         var bytes = Encoding.UTF8.GetBytes(jsonString);
 
         field.FieldSize = (byte)bytes.Length;
@@ -71,17 +69,14 @@ public class XPacket
                 ? new byte[] { 0x95, 0xAA, 0xFF, PacketType, PacketSubtype }
                 : new byte[] { 0xAF, 0xAA, 0xAF, PacketType, PacketSubtype }, 0, 5);
 
-        // Сортируем поля по ID
         var fields = Fields.OrderBy(field => field.FieldId);
 
-        // Записываем поля
         foreach (var field in fields)
         {
             packet.Write(new[] { field.FieldId, field.FieldSize }, 0, 2);
             packet.Write(field.Contents!, 0, field.Contents!.Length);
         }
 
-        // Записываем конец пакета
         packet.Write(new byte[] { 0xFF, 0x00 }, 0, 2);
 
         return packet.ToArray();
@@ -103,15 +98,14 @@ public class XPacket
         }
 
         var mIndex = packet.Length - 1;
-
         if (packet[mIndex - 1] != 0xFF ||
             packet[mIndex] != 0x00)
             return null!;
 
         var type = packet[3];
         var subtype = packet[4];
-
-        var xPacket = new XPacket { PacketType = type, PacketSubtype = subtype };
+        
+        var xPacket = Create(type, subtype);
 
         var fields = packet.Skip(5).ToArray();
 
@@ -119,17 +113,18 @@ public class XPacket
         {
             if (fields.Length == 2)
                 return xPacket;
-
+            
             var id = fields[0];
             var size = fields[1];
 
-            var contents = size != 0 ? fields.Skip(2).Take(size).ToArray() : null;
+            var contents = size != 0 ?
+                fields.Skip(2).Take(size).ToArray() : null;
 
             xPacket.Fields.Add(new XPacketField
             {
                 FieldId = id,
                 FieldSize = size,
-                Contents = contents!
+                Contents = contents
             });
 
             fields = fields.Skip(2 + size).ToArray();

@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using Bang_Cards_Models;
 using TCPServer.Services;
 
 namespace TCPServer;
@@ -15,9 +14,9 @@ internal class XServer
     private bool _stopListening;
     private bool _isGameOver;
 
-    private static Stack<PlayCard> _cardsDeck = new();
-    private static Stack<HeroCard> _heroesDeck = new();
-    private static Stack<RoleCard> _rolesDeck = new();
+    private static Stack<byte> _cardsDeck = new();
+    private static Stack<string?> _heroesDeck = new();
+    private static Stack<byte> _rolesDeck = new();
     // private static Stack<PlayCard> _reset = new();
     
     private int _activePlayerId;
@@ -113,27 +112,28 @@ internal class XServer
         {
             var role = _rolesDeck.Pop();
             var hero = _heroesDeck.Pop();
-            List<PlayCard> cards = new();
-            for (var i = 0; i < hero.HeroHp; i++)
+            client.SendRoleHero(role, hero);
+            // Thread.Sleep(1000);
+            var hp = client.GetHp();
+            List<byte> cards = new();
+            for (var i = 0; i < hp; i++)
                 cards.Add(_cardsDeck.Pop());
-            if (role.RoleType is RoleType.Sheriff)
+            if (role == 0)
             {
                 _activePlayerId = Clients.IndexOf(client);
-                hero.HeroHp += 1;
                 cards.Add(_cardsDeck.Pop());
-                client.SendBeginCardSet(role, hero, cards);
             }
-
-            else
-                client.SendBeginCardSet(role, hero, cards);
+            
+            client.SendBeginCardsSet(cards);
         }
 
         _isGameOver = false;
-
         while (!_isGameOver)
         {
             var activePlayer = Clients[_activePlayerId % 4];
             activePlayer.SendTurn();
+            var activePlayerName = activePlayer.GetName();
+            Console.WriteLine($"{activePlayerName}'s turn");
             while (true)
             {
                 if (!activePlayer.Turn)

@@ -122,7 +122,7 @@
             </Grid>
             <Grid Grid.Row="1">
                 <Grid x:Name="FirstPlayer">
-                    
+                    <!-- <TextBlock Text="{Binding Player.Cards.Count}"/> -->
                 </Grid>
                 <Grid x:Name="SecondPlayer">
                     
