@@ -8,8 +8,10 @@ public class XPacketRoleHero
     [XField(1)] public byte RoleType;
 
     [XField(2)] public string? HeroName;
-    
-    public XPacketRoleHero() {}
+
+    public XPacketRoleHero()
+    {
+    }
 
     public XPacketRoleHero(byte roleType, string? heroName)
     {

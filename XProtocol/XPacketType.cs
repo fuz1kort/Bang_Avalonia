@@ -4,9 +4,10 @@ public enum XPacketType
 {
     Unknown,
     Connection,
-    NewPlayer,
-    Players,
-    BeginCardsSet,
+    PlayersForList,
+    PlayersInfo,
+    UpdatedPlayerProperty,
+    Cards,
     Turn,
     RoleHero,
     Hp

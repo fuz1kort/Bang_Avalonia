@@ -1,5 +1,4 @@
-﻿using Avalonia.Media;
-using Bang_Game.Models.Cards;
+﻿using Bang_Game.Models.Cards;
 using Bang_Game.Models.Cards.Heroes;
 using System;
 using System.Collections.Generic;
@@ -20,9 +19,9 @@ namespace Bang_Game.Models;
 public sealed class Player : INotifyPropertyChanged
 {
     private readonly Dictionary<byte, RoleCard> _roleCards = new();
-    private readonly Dictionary<string, HeroCard> _heroCards = new ();
+    private readonly Dictionary<string, HeroCard> _heroCards = new();
     private readonly Dictionary<byte, PlayCard> _playCards = new();
-    
+
     private byte _id;
 
     public byte Id
@@ -60,17 +59,17 @@ public sealed class Player : INotifyPropertyChanged
     }
 
     private byte _hp;
-    
+
     public byte Hp
     {
         get => _hp;
         set
         {
             _hp = value;
+            Update(nameof(Hp), _hp);
             OnPropertyChanged();
         }
     }
-    
 
     private RoleCard? _roleCard;
 
@@ -96,6 +95,47 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
+
+    private List<PlayCard>? _openedCards;
+
+    public List<PlayCard>? OpenedCards
+    {
+        get => _openedCards;
+        set
+        {
+            _openedCards = value;
+            Update(nameof(OpenedCards), _openedCards!);
+            OnPropertyChanged();
+        }
+    }
+
+    //Для других игроков
+
+    private bool _isSheriff;
+
+    public bool IsSheriff
+    {
+        get => _isSheriff;
+        set
+        {
+            _isSheriff = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private byte _cardsCount;
+
+    public byte CardsCount
+    {
+        get => _cardsCount;
+        set
+        {
+            _cardsCount = value;
+            Update(nameof(CardsCount), _cardsCount);
+            OnPropertyChanged();
+        }
+    }
+
     private List<PlayCard>? _cards;
 
     public List<PlayCard>? Cards
@@ -103,8 +143,14 @@ public sealed class Player : INotifyPropertyChanged
         get => _cards;
         set
         {
-            _cards = value; ;
-            OnPropertyChanged();
+            if (_cards != null)
+            {
+                _cards = value;
+                Update(nameof(Cards), _cards!);
+                OnPropertyChanged();
+            }
+            else
+                _cards = value;
         }
     }
 
@@ -125,11 +171,11 @@ public sealed class Player : INotifyPropertyChanged
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    private Player(byte id, string? name, uint rgb)
+    private Player(byte id, string? name, string colorString)
     {
         Id = id;
         Name = name;
-        ColorString = Color.FromUInt32(rgb).ToString();
+        ColorString = colorString;
     }
 
     public Player()
@@ -137,7 +183,7 @@ public sealed class Player : INotifyPropertyChanged
         Cards = new List<PlayCard>();
         Turn = false;
         byte id = 0;
-        
+
         var volcanic1 = new PlayCard(id, "Вулканик", 10, CardType.Clubs, PlayCardType.Volcanic, true, 1);
         _playCards[++id] = volcanic1;
         var volcanic2 = new PlayCard(id, "Вулканик", 10, CardType.Spades, PlayCardType.Volcanic, true, 1);
@@ -171,7 +217,7 @@ public sealed class Player : INotifyPropertyChanged
         var barrel2 = new PlayCard(id, "Бочка", 13, CardType.Spades,
             PlayCardType.Barrel, true);
         _playCards[++id] = barrel2;
-        
+
         var wellsFargo = new PlayCard(id, "Уэллс Фарго", 3, CardType.Hearts,
             PlayCardType.WellsFargo,
             false);
@@ -181,7 +227,7 @@ public sealed class Player : INotifyPropertyChanged
             PlayCardType.Stagecoach,
             false);
         _playCards[++id] = stagecoach1;
-        
+
         var stagecoach2 = new PlayCard(id, "Дилижанс", 9, CardType.Spades,
             PlayCardType.Stagecoach,
             false);
@@ -202,7 +248,7 @@ public sealed class Player : INotifyPropertyChanged
             var catBalou = new PlayCard(id, "Красотка", (byte)i, CardType.Diamonds,
                 PlayCardType.CatBalou,
                 false);
-            _playCards[(byte)(++id+i-9)] = catBalou;
+            _playCards[++id] = catBalou;
         }
 
         var catBalou4 = new PlayCard(id, "Красотка", 13, CardType.Hearts,
@@ -215,7 +261,7 @@ public sealed class Player : INotifyPropertyChanged
             false);
         _playCards[++id] = panic1;
         var panic2 = new PlayCard(id, "Паника", 11, CardType.Hearts,
-            PlayCardType.Panic, 
+            PlayCardType.Panic,
             false);
         _playCards[++id] = panic2;
         var panic3 = new PlayCard(id, "Паника", 12, CardType.Hearts,
@@ -232,7 +278,7 @@ public sealed class Player : INotifyPropertyChanged
             var beer = new PlayCard(id, "Пиво", (byte)i, CardType.Hearts,
                 PlayCardType.Beer,
                 false);
-            _playCards[(byte)(++id+i-6)] = beer;
+            _playCards[++id] = beer;
         }
 
         for (var i = 10; i < 15; i++)
@@ -240,7 +286,7 @@ public sealed class Player : INotifyPropertyChanged
             var missed = new PlayCard(id, "Мимо!", (byte)i, CardType.Clubs,
                 PlayCardType.Missed,
                 false);
-            _playCards[(byte)(++id+i-10)] = missed;
+            _playCards[++id] = missed;
         }
 
         for (var i = 2; i < 9; i++)
@@ -248,7 +294,7 @@ public sealed class Player : INotifyPropertyChanged
             var missed = new PlayCard(id, "Мимо!", (byte)i, CardType.Spades,
                 PlayCardType.Missed,
                 false);
-            _playCards[(byte)(++id+i-2)] = missed;
+            _playCards[++id] = missed;
         }
 
         var bang1 = new PlayCard(id, "Бэнг!", 14, CardType.Spades,
@@ -261,7 +307,7 @@ public sealed class Player : INotifyPropertyChanged
             var bang = new PlayCard(id, "Бэнг!", (byte)i, CardType.Diamonds,
                 PlayCardType.Bang,
                 false);
-            _playCards[(byte)(++id+i-2)] = bang;
+            _playCards[++id] = bang;
         }
 
         for (var i = 2; i < 10; i++)
@@ -269,7 +315,7 @@ public sealed class Player : INotifyPropertyChanged
             var bang = new PlayCard(id, "Бэнг!", (byte)i, CardType.Clubs,
                 PlayCardType.Bang,
                 false);
-            _playCards[(byte)(++id+i-2)] = bang;
+            _playCards[++id] = bang;
         }
 
         for (var i = 12; i < 15; i++)
@@ -277,7 +323,7 @@ public sealed class Player : INotifyPropertyChanged
             var bang = new PlayCard(id, "Бэнг!", (byte)i, CardType.Hearts,
                 PlayCardType.Bang,
                 false);
-            _playCards[(byte)(++id+i-12)] = bang;
+            _playCards[++id] = bang;
         }
 
         var sheriff = new RoleCard(RoleType.Sheriff, true);
@@ -288,7 +334,7 @@ public sealed class Player : INotifyPropertyChanged
         _roleCards[(byte)bandit2.RoleType] = bandit2;
         var renegade = new RoleCard(RoleType.Renegade, false);
         _roleCards[(byte)renegade.RoleType] = renegade;
-        
+
         var billy = new Billy();
         _heroCards[billy.HeroName!] = billy;
         var eyes = new Eyes();
@@ -340,13 +386,11 @@ public sealed class Player : INotifyPropertyChanged
                     IsSuccessful = false
                 }).ToPacket());
 
-            Thread.Sleep(100);
+            Thread.Sleep(300);
 
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.NewPlayer, new XPacketNewPlayer
-                {
-                    Name = Name,
-                    Rgb = 0
-                })
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
+                    new XPacketUpdatedPlayerProperty(Id, nameof(Name), Type.GetType(Name!.GetType().ToString())!,
+                        Name!))
                 .ToPacket());
 
             while (true)
@@ -377,11 +421,11 @@ public sealed class Player : INotifyPropertyChanged
     {
         while (true)
         {
-            var buff = new byte[256];
+            var buff = new byte[512];
             await _socket!.ReceiveAsync(buff);
-            
+
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
-            
+
             buff = decryptedBuff.TakeWhile((b, i) =>
             {
                 if (b != 0xFF) return true;
@@ -402,22 +446,26 @@ public sealed class Player : INotifyPropertyChanged
             case XPacketType.Connection:
                 ProcessConnection(packet);
                 break;
-            case XPacketType.NewPlayer:
-                ProcessCreatingPlayer(packet);
+            case XPacketType.UpdatedPlayerProperty:
+                ProcessUpdatingProperty(packet);
                 break;
-            case XPacketType.Players:  
+            case XPacketType.PlayersForList:
                 ProcessGettingPlayers(packet);
                 break;
-            case XPacketType.BeginCardsSet:
-                ProcessGettingBeginCardsSet(packet);
+            case XPacketType.Cards:
+                ProcessGettingCardsSet(packet);
                 break;
             case XPacketType.Turn:
-                ProcessStartingTurn();
-                break;
-            case XPacketType.Unknown:
+                ProcessStartingTurn(packet);
                 break;
             case XPacketType.RoleHero:
                 ProcessGettingRoleHero(packet);
+                break;
+            case XPacketType.Unknown:
+                break;
+            case XPacketType.PlayersInfo:
+            //TODO
+            case XPacketType.Hp:
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
@@ -429,27 +477,29 @@ public sealed class Player : INotifyPropertyChanged
         var packetHeroName = XPacketConverter.Deserialize<XPacketRoleHero>(packet);
         RoleCard = _roleCards[packetHeroName.RoleType];
         HeroCard = _heroCards[packetHeroName.HeroName!];
-        Hp = HeroCard.HeroHp;
-        if (RoleCard.RoleType == RoleType.Sheriff)
-            Hp += 1;
-        var packetHp = XPacketConverter.Serialize(XPacketType.Hp, new XPacketHp(Hp));
-        var bytePacketHp = packetHp.ToPacket();
-        QueuePacketSend(bytePacketHp);
+        IsSheriff = RoleCard!.RoleType == RoleType.Sheriff;
+        var hp = HeroCard!.HeroHp;
+        if (IsSheriff)
+            hp += 1;
+        Hp = hp;
     }
 
-    private void ProcessStartingTurn() => Turn = true;
+    private void ProcessStartingTurn(XPacket packet) => Turn = true;
 
-    private void ProcessGettingBeginCardsSet(XPacket packet)
+    private void ProcessGettingCardsSet(XPacket packet)
     {
-        var packetBeginCardsSet = XPacketConverter.Deserialize<XPacketBeginSetCards>(packet);
+        var packetBeginCardsSet = XPacketConverter.Deserialize<XPacketCards>(packet);
         var packetCards = packetBeginCardsSet.Cards;
-        foreach (var packetCardId in packetCards!) 
+        foreach (var packetCardId in packetCards!)
+        {
             Cards!.Add(_playCards[packetCardId]);
+            CardsCount++;
+        }
     }
 
     private void ProcessGettingPlayers(XPacket packet)
     {
-        var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
+        var packetPlayer = XPacketConverter.Deserialize<XPacketPlayersForList>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2, x.Item3)).ToList();
         PlayersList = new ObservableCollection<Player>(playersList);
@@ -462,21 +512,18 @@ public sealed class Player : INotifyPropertyChanged
         if (connection.IsSuccessful) Console.WriteLine("Handshake successful!");
     }
 
-    private void ProcessCreatingPlayer(XPacket packet)
+    private void ProcessUpdatingProperty(XPacket packet)
     {
-        var packetPlayer = XPacketConverter.Deserialize<XPacketNewPlayer>(packet);
-        var newColorUint = packetPlayer.Rgb;
-        var color = Color.FromUInt32(newColorUint);
-        ColorString = color.ToString();
-
-        Console.WriteLine($"Your Nickname is {Name}");
-        Console.WriteLine($"Your color is {ColorString}");
+        var xPacketProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
+        var property = typeof(Player).GetProperty(xPacketProperty.PropertyName!);
+        property!.SetValue(this, Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!));
+        OnPropertyChanged(property.Name);
     }
 
     private void QueuePacketSend(byte[] packet)
     {
-        if (packet.Length > 256)
-            throw new Exception("Max packet size is 256 bytes.");
+        if (packet.Length > 512)
+            throw new Exception("Max packet size is 512 bytes.");
 
         _packetSendingQueue.Enqueue(packet);
     }
@@ -499,10 +546,18 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
+    private void Update(string? objectName, object? obj)
+    {
+        var packet = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
+                new XPacketUpdatedPlayerProperty(Id, objectName, Type.GetType(obj!.GetType().ToString())!, obj))
+            .ToPacket();
+        QueuePacketSend(packet);
+    }
+
     internal void EndTurn()
     {
         Turn = false;
-        var packet = XPacketConverter.Serialize(XPacketType.Turn, new XPacketTurn()).ToPacket();
+        var packet = XPacketConverter.Serialize(XPacketType.Turn, new XPacketMovingTurn()).ToPacket();
         QueuePacketSend(packet);
     }
 }

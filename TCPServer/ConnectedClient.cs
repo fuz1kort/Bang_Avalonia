@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using Avalonia.Media;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
@@ -12,42 +11,113 @@ internal class ConnectedClient
 
     private readonly Queue<byte[]> _packetSendingQueue = new();
 
-    private static readonly List<Color> ColorsList = new()
+    private static readonly List<string> ColorsList = new()
     {
-        Colors.Red, Colors.Yellow, Colors.Green, Colors.Blue
+        "Red", "Yellow", "Green", "Blue"
     };
 
     private readonly Random _random = new();
 
-    private byte Id { get; }
+    public readonly byte Id;
 
-    private string Name { get; set; }
+    private string? _name;
 
-    public string GetName() => Name;
+    public string Name
+    {
+        get => _name!;
+        set
+        {
+            _name = value;
+            var colorsCount = ColorsList.Count;
+            var randomNum = _random.Next(colorsCount);
+            ColorString = ColorsList[randomNum];
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
+                new XPacketUpdatedPlayerProperty(Id, nameof(ColorString),
+                    Type.GetType(ColorString.GetType().ToString())!, ColorString)).ToPacket());
+            ColorsList.RemoveAt(randomNum);
 
-    private uint Rgb { get; set; }
 
-    private byte RoleType { get; set; }
+            //TODO update!!!
+        }
+    }
 
-    private string? HeroName { get; set; }
-    
-    private byte Hp { get; set; }
+    private string? _colorString;
 
-    public byte GetHp() => Hp;
+    public string? ColorString
+    {
+        get => _colorString;
+        set
+        {
+            _colorString = value;
+            SendPlayers();
+            Console.WriteLine($"Connected player with name: {Name}" +
+                              $"\nGiven color: {_colorString}");
+            IsReady = true;
+        }
+    }
 
-    private List<byte>? Cards { get; set; }
+    private byte _hp;
 
-    internal bool Turn { get; private set; }
+    public byte Hp
+    {
+        get => _hp;
+        set { _hp = value; }
+    }
 
-    internal bool IsReady { get; private set; }
+    private byte? _roleType;
+
+    public byte? RoleType
+    {
+        get => _roleType;
+        set { _roleType = value; }
+    }
+
+    private string? _heroName;
+
+    public string? HeroName
+    {
+        get => _heroName;
+        set { _heroName = value; }
+    }
+
+
+    private List<byte>? _openedCards;
+
+    public List<byte>? OpenedCards
+    {
+        get => _openedCards;
+        set { _openedCards = value; }
+    }
+
+    private List<byte>? _cards;
+
+    public List<byte>? Cards
+    {
+        get => _cards;
+        set { _cards = value; }
+    }
+
+    private bool _turn;
+
+    public bool Turn
+    {
+        get => _turn;
+        set => _turn = value;
+    }
+
+    private bool _isReady;
+
+    public bool IsReady
+    {
+        get => _isReady;
+        set => _isReady = value;
+    }
 
     public ConnectedClient(Socket client, byte id)
     {
         Client = client;
 
         Id = id;
-        Name = "NoName";
-        Rgb = 128128128;
 
         Task.Run(ReceivePacketsAsync);
         Task.Run(SendPacketsAsync);
@@ -57,9 +127,9 @@ internal class ConnectedClient
     {
         while (true)
         {
-            var buff = new byte[256];
+            var buff = new byte[512];
             await Client.ReceiveAsync(buff);
-            
+
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
 
             buff = decryptedBuff.TakeWhile((b, i) =>
@@ -83,32 +153,34 @@ internal class ConnectedClient
             case XPacketType.Connection:
                 ProcessConnection(packet);
                 break;
-            case XPacketType.NewPlayer:
-                ProcessNewPlayer(packet);
+            case XPacketType.UpdatedPlayerProperty:
+                ProcessUpdatingProperty(packet);
                 break;
             case XPacketType.Turn:
                 ProcessEndTurn();
                 break;
             case XPacketType.Unknown:
                 break;
-            case XPacketType.Players:
+            case XPacketType.PlayersForList:
                 break;
-            case XPacketType.BeginCardsSet:
+            case XPacketType.Cards:
+                //TODO сделать получение карт
                 break;
             case XPacketType.RoleHero:
                 break;
             case XPacketType.Hp:
-                ProcessSettingHp(packet);
+                ProcessUpdatingProperty(packet);
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
     }
 
-    private void ProcessSettingHp(XPacket packet)
+    private void ProcessUpdatingProperty(XPacket packet)
     {
-        var xPacketHp = XPacketConverter.Deserialize<XPacketHp>(packet);
-        Hp = xPacketHp.Hp;
+        var xPacketProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
+        var property = typeof(ConnectedClient).GetProperty(xPacketProperty.PropertyName!);
+        property!.SetValue(this, Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!));
     }
 
     private void ProcessEndTurn() => Turn = false;
@@ -119,34 +191,15 @@ internal class ConnectedClient
         xPacketConnection.IsSuccessful = true;
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, xPacketConnection).ToPacket());
-    }
-
-    private void ProcessNewPlayer(XPacket packet)
-    {
-        var xPacketBeginPlayer = XPacketConverter.Deserialize<XPacketNewPlayer>(packet);
-        Name = xPacketBeginPlayer.Name!;
-
-        var colorsCount = ColorsList.Count;
-        var randomNum = _random.Next(colorsCount);
-        var randomColor = ColorsList[randomNum];
-        Rgb = randomColor.ToUInt32();
-        xPacketBeginPlayer.Rgb = Rgb;
-        ColorsList.RemoveAt(randomNum);
-
-        Console.WriteLine($"Connected player with name: {xPacketBeginPlayer.Name}" +
-                          $"\nGiven color: {randomColor}");
-
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.NewPlayer, xPacketBeginPlayer).ToPacket());
-
-        SendPlayers();
-
-        IsReady = true;
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
+            new XPacketUpdatedPlayerProperty(Id, nameof(Id), Type.GetType(Id.GetType().ToString())!, Id)).ToPacket());
     }
 
     private void QueuePacketSend(byte[] packet)
     {
-        if (packet.Length > 256)
-            throw new Exception("Max packet size is 256 bytes.");
+        if (packet.Length > 512)
+            throw new Exception("Max packet size is 512 bytes.");
+
 
         _packetSendingQueue.Enqueue(packet);
     }
@@ -160,40 +213,46 @@ internal class ConnectedClient
 
             var packet = _packetSendingQueue.Dequeue();
             var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
+
             await Client.SendAsync(encryptedPacket);
 
             await Task.Delay(100);
         }
     }
 
-    private (byte, string, uint) GetPlayerParameters() => (Id, Name, Rgb);
+    private (byte, string, string) GetPlayerParameters() => (Id, Name, ColorString!);
 
     private static void SendPlayers()
     {
         var players = XServer.Clients.Select(x => x.GetPlayerParameters()).ToList();
-        var packet = XPacketConverter.Serialize(XPacketType.Players,
-            new XPacketPlayers { Players = players });
+        var packet = XPacketConverter.Serialize(XPacketType.PlayersForList,
+            new XPacketPlayersForList { Players = players });
         var bytePacket = packet.ToPacket();
         foreach (var client in XServer.Clients)
             client.QueuePacketSend(bytePacket);
     }
 
-    public void SendBeginCardsSet(List<byte>? cards)
+    public void SendBeginCardsSet(List<byte> cards)
     {
         Cards = cards;
-        var packet = XPacketConverter.Serialize(XPacketType.BeginCardsSet,
-            new XPacketBeginSetCards(cards!));
+        var packet = XPacketConverter.Serialize(XPacketType.Cards,
+            new XPacketCards(cards));
         var bytePacket = packet.ToPacket();
         QueuePacketSend(bytePacket);
     }
 
-    public void SendTurn()
+    public void SendTurnAndCardsDefault(List<byte> cards)
     {
         Turn = true;
-        var packet = XPacketConverter.Serialize(XPacketType.Turn,
-            new XPacketTurn());
-        var bytePacket = packet.ToPacket();
-        QueuePacketSend(bytePacket);
+        var cardsPacket = XPacketConverter.Serialize(XPacketType.Cards,
+            new XPacketCards(cards));
+        var byteCardsPacket = cardsPacket.ToPacket();
+        QueuePacketSend(byteCardsPacket);
+
+        var turnPacket = XPacketConverter.Serialize(XPacketType.Turn,
+            new XPacketMovingTurn());
+        var byteTurnPacket = turnPacket.ToPacket();
+        QueuePacketSend(byteTurnPacket);
     }
 
     public void SendRoleHero(byte roleType, string? heroName)

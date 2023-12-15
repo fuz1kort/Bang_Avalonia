@@ -18,7 +18,7 @@ internal class XServer
     private static Stack<string?> _heroesDeck = new();
     private static Stack<byte> _rolesDeck = new();
     // private static Stack<PlayCard> _reset = new();
-    
+
     private int _activePlayerId;
 
     public Task StartAsync()
@@ -85,7 +85,7 @@ internal class XServer
 
                 Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
-                var c = new ConnectedClient(client, (byte)Clients.Count);
+                var c = new ConnectedClient(client, (byte)(Clients.Count + 1));
 
                 Clients.Add(c);
             }
@@ -113,27 +113,53 @@ internal class XServer
             var role = _rolesDeck.Pop();
             var hero = _heroesDeck.Pop();
             client.SendRoleHero(role, hero);
-            Thread.Sleep(1000);
-            var hp = client.GetHp();
+            Thread.Sleep(500);
+            var hp = client.Hp;
             List<byte> cards = new();
             for (var i = 0; i < hp; i++)
                 cards.Add(_cardsDeck.Pop());
             if (role == 0)
             {
-                //_activePlayerId = Clients.IndexOf(client);
+                // _activePlayerId = Clients.IndexOf(client);
                 cards.Add(_cardsDeck.Pop());
             }
-            
+
             client.SendBeginCardsSet(cards);
-            _activePlayerId = 0;
         }
 
         _isGameOver = false;
+
+        _activePlayerId = 0;
+
         while (!_isGameOver)
         {
             var activePlayer = Clients[_activePlayerId % 4];
-            activePlayer.SendTurn();
-            var activePlayerName = activePlayer.GetName();
+            //switch (activePlayer.HeroName)
+            //{
+            //    case "Туко":
+            //        //TODO
+            //        break;
+            //    case "Джесси Джеймс":
+            //        //TODO
+            //        break;
+            //    case "Кит Карсон":
+            //        //TODO
+            //        break;
+            //    case "Бешенный Пёс":
+            //        //TODO
+            //        break;
+            //    default:
+            var cards = new List<byte>
+            {
+                _cardsDeck.Pop(),
+                _cardsDeck.Pop()
+            };
+
+            activePlayer.SendTurnAndCardsDefault(cards);
+            //break;
+            //}
+
+            var activePlayerName = activePlayer.Name;
             Console.WriteLine($"{activePlayerName}'s turn");
             while (true)
             {
@@ -141,7 +167,7 @@ internal class XServer
                     break;
             }
 
-            Console.WriteLine($"Player {activePlayer.GetName()} has finished his turn");
+            Console.WriteLine($"Player {activePlayer.Name} has finished his turn");
             _activePlayerId += 1;
         }
 

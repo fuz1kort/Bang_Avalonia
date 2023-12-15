@@ -113,12 +113,11 @@ public class XPacket
         {
             if (fields.Length == 2)
                 return xPacket;
-            
+
             var id = fields[0];
             var size = fields[1];
 
-            var contents = size != 0 ?
-                fields.Skip(2).Take(size).ToArray() : null;
+            var contents = size != 0 ? fields.Skip(2).Take(size).ToArray() : null;
 
             xPacket.Fields.Add(new XPacketField
             {
