@@ -113,19 +113,17 @@ internal class XServer
             var role = _rolesDeck.Pop();
             var hero = _heroesDeck.Pop();
             client.SendRoleHero(role, hero);
-            Thread.Sleep(1000);
             var hp = client.GetHp();
             List<byte> cards = new();
             for (var i = 0; i < hp; i++)
                 cards.Add(_cardsDeck.Pop());
             if (role == 0)
             {
-                //_activePlayerId = Clients.IndexOf(client);
+                _activePlayerId = Clients.IndexOf(client);
                 cards.Add(_cardsDeck.Pop());
             }
             
             client.SendBeginCardsSet(cards);
-            _activePlayerId = 0;
         }
 
         _isGameOver = false;
