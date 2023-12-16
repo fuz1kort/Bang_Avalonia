@@ -16,7 +16,7 @@ using XProtocol.XPackets;
 
 namespace Bang_Game.Models;
 
-public sealed class Player : INotifyPropertyChanged
+public sealed class Player
 {
     private readonly Dictionary<byte, RoleCard> _roleCards = new();
     private readonly Dictionary<string, HeroCard> _heroCards = new();
@@ -76,7 +76,7 @@ public sealed class Player : INotifyPropertyChanged
     public RoleCard? RoleCard
     {
         get => _roleCard;
-        set
+        private set
         {
             _roleCard = value;
             OnPropertyChanged();
@@ -88,7 +88,7 @@ public sealed class Player : INotifyPropertyChanged
     public HeroCard? HeroCard
     {
         get => _heroCard;
-        set
+        private set
         {
             _heroCard = value;
             OnPropertyChanged();
@@ -508,8 +508,9 @@ public sealed class Player : INotifyPropertyChanged
     private static void ProcessConnection(XPacket packet)
     {
         var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
-
-        if (connection.IsSuccessful) Console.WriteLine("Handshake successful!");
+        
+        if (connection.IsSuccessful)
+            Console.WriteLine("Handshake successful!");
     }
 
     private void ProcessUpdatingProperty(XPacket packet)

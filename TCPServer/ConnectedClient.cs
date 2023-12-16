@@ -1,11 +1,13 @@
-﻿using System.Net.Sockets;
+﻿using System.ComponentModel;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
 
 namespace TCPServer;
 
-internal class ConnectedClient
+internal class ConnectedClient: INotifyPropertyChanged
 {
     private Socket Client { get; }
 
@@ -192,6 +194,7 @@ internal class ConnectedClient
         xPacketConnection.IsSuccessful = true;
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, xPacketConnection).ToPacket());
+        
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
             new XPacketUpdatedPlayerProperty(Id, nameof(Id), Type.GetType(Id.GetType().ToString())!, Id)).ToPacket());
     }
@@ -264,4 +267,9 @@ internal class ConnectedClient
         var bytePacket = packet.ToPacket();
         QueuePacketSend(bytePacket);
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) 
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

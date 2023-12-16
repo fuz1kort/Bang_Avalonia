@@ -35,16 +35,5 @@ public sealed class MainWindowViewModel : ViewModelBase
         RuleImages = new ObservableCollection<RulesImage>(images);
     }
 
-    public static string Greeting => "Добро пожаловать в Бэнг!";
-
-    private ObservableCollection<RulesImage>? _ruleImages;
-
-    public ObservableCollection<RulesImage>? RuleImages
-    {
-        get => _ruleImages;
-        set
-        {
-            if (value != null) _ruleImages = value;
-        }
-    }
+    public ObservableCollection<RulesImage>? RuleImages { get; set; }
 }
