@@ -1,13 +1,13 @@
-﻿using System.ComponentModel;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using TCPServer.Services;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
 
 namespace TCPServer;
 
-internal class ConnectedClient: INotifyPropertyChanged
+internal sealed class ConnectedClient
 {
     private Socket Client { get; }
 
@@ -33,17 +33,16 @@ internal class ConnectedClient: INotifyPropertyChanged
             var colorsCount = ColorsList.Count;
             var randomNum = _random.Next(colorsCount);
             ColorString = ColorsList[randomNum];
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
-                new XPacketUpdatedPlayerProperty(Id, nameof(ColorString),
-                    Type.GetType(ColorString.GetType().ToString())!, ColorString)).ToPacket());
+            Update(Id, nameof(ColorString), _colorString);
             ColorsList.RemoveAt(randomNum);
-
-
-            //TODO update!!!
         }
     }
 
     private string? _colorString;
+    private bool _turn;
+    private byte _hp;
+    private List<byte>? _cards;
+    private List<byte>? _openedCards;
 
     public string? ColorString
     {
@@ -58,62 +57,56 @@ internal class ConnectedClient: INotifyPropertyChanged
         }
     }
 
-    private byte _hp;
-
     public byte Hp
     {
         get => _hp;
-        set { _hp = value; }
+        set
+        {
+            _hp = value;
+            Update(Id, nameof(Hp), _hp);
+        }
     }
 
-    private byte? _roleType;
+    public byte? RoleType { get; set; }
 
-    public byte? RoleType
-    {
-        get => _roleType;
-        set { _roleType = value; }
-    }
-
-    private string? _heroName;
-
-    public string? HeroName
-    {
-        get => _heroName;
-        set { _heroName = value; }
-    }
-
-
-    private List<byte>? _openedCards;
+    public string? HeroName { get; set; }
 
     public List<byte>? OpenedCards
     {
         get => _openedCards;
-        set { _openedCards = value; }
+        set
+        {
+            _openedCards = value;
+            Update(Id, nameof(OpenedCards), _openedCards);
+        }
     }
-
-    private List<byte>? _cards;
 
     public List<byte>? Cards
     {
         get => _cards;
-        set { _cards = value; }
+        set
+        {
+            _cards = value;
+            Update(Id, nameof(Cards), _cards);
+        }
     }
-
-    private bool _turn;
 
     public bool Turn
     {
         get => _turn;
-        set => _turn = value;
+        private set
+        {
+            _turn = value;
+            Update(Id, nameof(Turn), _turn);
+        }
     }
 
-    private bool _isReady;
+    public bool IsReady { get; private set; }
 
-    public bool IsReady
-    {
-        get => _isReady;
-        set => _isReady = value;
-    }
+    public event EventHandler<PropertyChangedWithValueEventArgs>? PropertyChanged;
+
+    private void OnPropertyChanged(object value, [CallerMemberName] string? propertyName = null) 
+        => PropertyChanged?.Invoke(this, new PropertyChangedWithValueEventArgs(propertyName, value));
 
     public ConnectedClient(Socket client, byte id)
     {
@@ -173,6 +166,8 @@ internal class ConnectedClient: INotifyPropertyChanged
             case XPacketType.Hp:
                 ProcessUpdatingProperty(packet);
                 break;
+            case XPacketType.PlayersInfo:
+                break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
@@ -182,8 +177,16 @@ internal class ConnectedClient: INotifyPropertyChanged
     {
         var xPacketProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
         var property = typeof(ConnectedClient).GetProperty(xPacketProperty.PropertyName!);
-        property!.SetValue(this, Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!));
-        //TODO onPropertyChange
+        var value = Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!);
+        property!.SetValue(this, value);
+        switch (property.Name)
+        {
+            case "Name":
+                break;
+            default:
+                OnPropertyChanged(value!, property.Name);
+                break;
+        }
     }
 
     private void ProcessEndTurn() => Turn = false;
@@ -203,8 +206,7 @@ internal class ConnectedClient: INotifyPropertyChanged
     {
         if (packet.Length > 512)
             throw new Exception("Max packet size is 512 bytes.");
-
-
+        
         _packetSendingQueue.Enqueue(packet);
     }
 
@@ -222,6 +224,14 @@ internal class ConnectedClient: INotifyPropertyChanged
 
             await Task.Delay(100);
         }
+    }
+    
+    internal void Update(byte id, string? objectName, object? obj)
+    {
+        var packet = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
+                new XPacketUpdatedPlayerProperty(id, objectName, Type.GetType(obj!.GetType().ToString())!, obj))
+            .ToPacket();
+        QueuePacketSend(packet);
     }
 
     private (byte, string, string) GetPlayerParameters() => (Id, Name, ColorString!);
@@ -252,11 +262,6 @@ internal class ConnectedClient: INotifyPropertyChanged
             new XPacketCards(cards));
         var byteCardsPacket = cardsPacket.ToPacket();
         QueuePacketSend(byteCardsPacket);
-
-        var turnPacket = XPacketConverter.Serialize(XPacketType.Turn,
-            new XPacketMovingTurn());
-        var byteTurnPacket = turnPacket.ToPacket();
-        QueuePacketSend(byteTurnPacket);
     }
 
     public void SendRoleHero(byte roleType, string? heroName)
@@ -267,9 +272,4 @@ internal class ConnectedClient: INotifyPropertyChanged
         var bytePacket = packet.ToPacket();
         QueuePacketSend(bytePacket);
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) 
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

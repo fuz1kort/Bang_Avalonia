@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel;
+using System.Net;
 using System.Net.Sockets;
 using TCPServer.Services;
 
@@ -67,32 +68,40 @@ internal class XServer
         {
             if (_stopListening)
                 return;
+            Socket client;
 
-            if (Clients.Count < 4)
+            try
             {
-                Socket client;
-
-                try
-                {
-                    client = _socket.Accept();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    Thread.Sleep(10000);
-                    continue;
-                }
-
-                Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
-
-                var c = new ConnectedClient(client, (byte)(Clients.Count));
-
-                Clients.Add(c);
+                client = _socket.Accept();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Thread.Sleep(10000);
+                continue;
             }
 
+            Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
-            if (Clients.All(x => x.IsReady) && Clients.Count == 4)
+            var c = new ConnectedClient(client, (byte)Clients.Count);
+
+            Clients.Add(c);
+            c.PropertyChanged += Client_PropertyChanged!;
+            
+            if (Clients.Count == 4)
                 break;
+        }
+    }
+
+    private void Client_PropertyChanged(object sender, PropertyChangedWithValueEventArgs e)
+    {
+        var client = sender as ConnectedClient;
+        for (var i = 0; i < Clients.Count; i++)
+        {
+            if(i == client!.Id)
+                continue;
+            
+            Clients[i].Update(client.Id ,e.PropertyName, e.Value);
         }
     }
 
@@ -108,6 +117,12 @@ internal class XServer
     {
         InitializeGame();
 
+        while (true)
+        {
+            if (Clients.All(x => x.IsReady))
+                break;
+        }
+        
         foreach (var client in Clients)
         {
             var role = _rolesDeck.Pop();
@@ -125,8 +140,6 @@ internal class XServer
         }
 
         _isGameOver = false;
-
-        //_activePlayerId = 0;
 
         while (!_isGameOver)
         {

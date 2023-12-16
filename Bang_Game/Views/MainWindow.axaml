@@ -134,6 +134,7 @@
                         <TextBlock Text="{Binding Player.CardsCount}" />
                         <TextBlock Text="{Binding Player.HeroCard.HeroName}" TextWrapping="Wrap" />
                         <TextBlock Text="{Binding Player.RoleCard.RoleType}" />
+                        <TextBlock Text="{Binding Player.IsSheriff}" />
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Column="1" Background="White"></Grid>
