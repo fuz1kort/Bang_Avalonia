@@ -2,6 +2,9 @@
 using System.Net;
 using System.Net.Sockets;
 using TCPServer.Services;
+using XProtocol;
+using XProtocol.Serializer;
+using XProtocol.XPackets;
 
 namespace TCPServer;
 
@@ -9,7 +12,7 @@ internal class XServer
 {
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-    internal static readonly List<ConnectedClient> ConnectedClients = new();
+    private static readonly List<ConnectedClient> ConnectedClients = new();
 
     private bool _listening;
     private bool _stopListening;
@@ -30,7 +33,7 @@ internal class XServer
                 throw new Exception("Server is already listening incoming requests.");
 
             _socket.Bind(new IPEndPoint(IPAddress.Any, 1410));
-            _socket.Listen(10);
+            _socket.Listen(4);
 
             _listening = true;
 
@@ -83,9 +86,10 @@ internal class XServer
 
             Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
-            var c = new ConnectedClient(client, (byte)(ConnectedClients.Count + 1));
+            var c = new ConnectedClient(client, (byte)(ConnectedClients.Count));
 
             ConnectedClients.Add(c);
+
             c.PropertyChanged += Client_PropertyChanged!;
 
             if (ConnectedClients.Count == 2)
@@ -97,8 +101,14 @@ internal class XServer
     {
         var client = sender as ConnectedClient;
         foreach (var connectedClient in ConnectedClients)
-            connectedClient.Update(client!.Id, e.PropertyName,
-                typeof(ConnectedClient).GetProperty(e.PropertyName!)!.GetValue(client));
+        {
+            var id = client!.Id;
+            var propertyName = e.PropertyName;
+            var type = client.GetType();
+            var property = type.GetProperty(e.PropertyName!);
+            var value = property!.GetValue(client);
+            connectedClient.Update(id, propertyName, value);
+        }
     }
 
     private static void InitializeGame()
@@ -109,7 +119,7 @@ internal class XServer
         _cardsDeck = cardsDeck;
     }
 
-    public Task StartGameAsync()
+    public void StartGame()
     {
         InitializeGame();
 
@@ -118,23 +128,23 @@ internal class XServer
             if (!ConnectedClients.All(x => x.IsReady)) continue;
             Thread.Sleep(100);
             break;
-
         }
 
         foreach (var client in ConnectedClients)
         {
-            var role = _rolesDeck.Pop();
             var hero = _heroesDeck.Pop();
-            client.SendRoleHero(role, hero);
+            var role = _rolesDeck.Pop();
+            client.HeroName = hero;
+            client.RoleType = role;
             Thread.Sleep(1000);
             var hp = client.Hp;
-            List<byte> cards = new();
+            var cards = new List<byte>();
             for (var i = 0; i < hp; i++)
                 cards.Add(_cardsDeck.Pop());
+            client.Cards = cards;
+
             // if (role == 0)
             //     _activePlayerId = Clients.IndexOf(client);
-
-            client.SendBeginCardsSet(cards);
         }
 
         _activePlayerId = 0;
@@ -167,7 +177,9 @@ internal class XServer
 
             activePlayer.Turn = true;
 
-            activePlayer.SendStartingCards(cards);
+            cards.AddRange(activePlayer.Cards!);
+
+            activePlayer.Cards = cards;
             //break;
             //}
 
@@ -182,7 +194,5 @@ internal class XServer
             Console.WriteLine($"Player {activePlayer.Name} has finished his turn");
             _activePlayerId += 1;
         }
-
-        return Task.CompletedTask;
     }
 }

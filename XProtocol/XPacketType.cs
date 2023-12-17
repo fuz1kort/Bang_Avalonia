@@ -5,13 +5,8 @@ public enum XPacketType
     Unknown,
     Connection,
     Id,
-    Name,
-    Color,
-    PlayersForList,
-    PlayersInfo,
+    PlayersList,
     UpdatedPlayerProperty,
     Cards,
     Turn,
-    RoleHero,
-    Hp
 }

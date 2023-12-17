@@ -26,7 +26,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     private void EndTurn() => Player.EndTurn();
 
-    private void Connect() => Task.Run(() => Player.ConnectAsync());
+    private void Connect() => Task.Run(() => Player.Connect());
 
     private void Initialize()
     {
