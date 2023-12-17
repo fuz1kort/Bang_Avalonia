@@ -86,24 +86,24 @@ internal class XServer
             var c = new ConnectedClient(client, (byte)Clients.Count);
 
             Clients.Add(c);
-            c.PropertyChanged += Client_PropertyChanged!;
+            // c.PropertyChanged += Client_PropertyChanged!;
             
             if (Clients.Count == 4)
                 break;
         }
     }
 
-    private void Client_PropertyChanged(object sender, PropertyChangedWithValueEventArgs e)
-    {
-        var client = sender as ConnectedClient;
-        for (var i = 0; i < Clients.Count; i++)
-        {
-            if(i == client!.Id)
-                continue;
-            
-            Clients[i].Update(client.Id ,e.PropertyName, e.Value);
-        }
-    }
+    // private void Client_PropertyChanged(object sender, PropertyChangedWithValueEventArgs e)
+    // {
+    //     var client = sender as ConnectedClient;
+    //     for (var i = 0; i < Clients.Count; i++)
+    //     {
+    //         if(i == client!.Id)
+    //             continue;
+    //         
+    //         Clients[i].Update(client.Id ,e.PropertyName, e.Value);
+    //     }
+    // }
 
     private static void InitializeGame()
     {

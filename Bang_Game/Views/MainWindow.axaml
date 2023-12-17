@@ -127,7 +127,7 @@
             </Grid>
             <Grid Grid.Row="1" ColumnDefinitions="1*,16*,1*" VerticalAlignment="Stretch">
                 <Grid Grid.Column="0" Background="Gray">
-                    <StackPanel>
+                     <StackPanel>
                         <TextBlock Text="{Binding Player.Id}" />
                         <TextBlock Text="{Binding Player.Name}" />
                         <TextBlock Text="{Binding Player.Hp}" />

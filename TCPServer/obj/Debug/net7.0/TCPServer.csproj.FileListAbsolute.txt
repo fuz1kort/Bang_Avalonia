@@ -63,6 +63,4 @@ C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Av
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Avalonia.Remote.Protocol.dll
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\MicroCom.Runtime.dll
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Newtonsoft.Json.dll
-C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Bang_Cards_Models.dll
-C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Bang_Cards_Models.pdb
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\obj\Debug\net7.0\Avalonia\Resources.Inputs.cache

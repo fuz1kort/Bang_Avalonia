@@ -22,21 +22,7 @@ internal sealed class ConnectedClient
 
     public readonly byte Id;
 
-    private string? _name;
-
-    public string Name
-    {
-        get => _name!;
-        set
-        {
-            _name = value;
-            var colorsCount = ColorsList.Count;
-            var randomNum = _random.Next(colorsCount);
-            ColorString = ColorsList[randomNum];
-            Update(Id, nameof(ColorString), _colorString);
-            ColorsList.RemoveAt(randomNum);
-        }
-    }
+    public string Name { get; set; }
 
     private string? _colorString;
     private bool _turn;
@@ -154,6 +140,12 @@ internal sealed class ConnectedClient
             case XPacketType.Turn:
                 ProcessEndTurn();
                 break;
+            case XPacketType.Name:
+                ProcessSettingName(packet);
+                break;
+            case XPacketType.Color:
+                ProcessSettingColor(packet);
+                break;
             case XPacketType.Unknown:
                 break;
             case XPacketType.PlayersForList:
@@ -173,20 +165,31 @@ internal sealed class ConnectedClient
         }
     }
 
+    private void ProcessSettingColor(XPacket packet)
+    {
+        var xPacket = XPacketConverter.Deserialize<XPacketNameOrColor>(packet);
+        ColorString = xPacket.NameOrColor;
+    }
+
+    private void ProcessSettingName(XPacket packet)
+    {
+        var xPacket = XPacketConverter.Deserialize<XPacketNameOrColor>(packet);
+        Name = xPacket.NameOrColor!;
+        Update(Id, nameof(Id), Id);
+        var colorsCount = ColorsList.Count;
+        var randomNum = _random.Next(colorsCount);
+        ColorString = ColorsList[randomNum];
+        Update(Id, nameof(ColorString), _colorString);
+        ColorsList.RemoveAt(randomNum);
+    }
+
     private void ProcessUpdatingProperty(XPacket packet)
     {
         var xPacketProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
         var property = typeof(ConnectedClient).GetProperty(xPacketProperty.PropertyName!);
         var value = Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!);
         property!.SetValue(this, value);
-        switch (property.Name)
-        {
-            case "Name":
-                break;
-            default:
-                OnPropertyChanged(value!, property.Name);
-                break;
-        }
+        OnPropertyChanged(value!, property.Name);
     }
 
     private void ProcessEndTurn() => Turn = false;

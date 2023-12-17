@@ -7,6 +7,8 @@ public static class XPacketTypeManager
     static XPacketTypeManager()
     {
         RegisterType(XPacketType.Connection, 1, 0);
+        RegisterType(XPacketType.Name, 1, 1);
+        RegisterType(XPacketType.Color, 1, 2);
         RegisterType(XPacketType.UpdatedPlayerProperty, 2, 0);
         RegisterType(XPacketType.PlayersForList, 3, 0);
         RegisterType(XPacketType.PlayersInfo, 3, 1);

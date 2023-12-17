@@ -66,7 +66,6 @@ public sealed class Player
         set
         {
             _hp = value;
-            Update(nameof(Hp), _hp);
             OnPropertyChanged();
         }
     }
@@ -145,11 +144,12 @@ public sealed class Player
             if (_cards != null)
             {
                 _cards = value;
-                Update(nameof(Cards), _cards!);
+                // Update(nameof(Cards), _cards!);
                 OnPropertyChanged();
             }
             else
                 _cards = value;
+
             CardsCount = (byte)_cards!.Count;
         }
     }
@@ -362,7 +362,6 @@ public sealed class Player
         get => _playersList;
         set
         {
-            if (value == null) return;
             _playersList = value;
             OnPropertyChanged();
         }
@@ -388,9 +387,8 @@ public sealed class Player
 
             Thread.Sleep(300);
 
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
-                    new XPacketUpdatedPlayerProperty(Id, nameof(Name), Type.GetType(Name!.GetType().ToString())!,
-                        Name!))
+            QueuePacketSend(XPacketConverter.Serialize(XPacketType.Name,
+                    new XPacketNameOrColor(Name!))
                 .ToPacket());
 
             while (true)
@@ -446,6 +444,9 @@ public sealed class Player
             case XPacketType.Connection:
                 ProcessConnection(packet);
                 break;
+            case XPacketType.Color:
+                ProcessSettingColor(packet);
+                break;
             case XPacketType.UpdatedPlayerProperty:
                 ProcessUpdatingProperty(packet);
                 break;
@@ -472,6 +473,8 @@ public sealed class Player
         }
     }
 
+
+
     private void ProcessGettingRoleHero(XPacket packet)
     {
         var packetHeroName = XPacketConverter.Deserialize<XPacketRoleHero>(packet);
@@ -482,6 +485,9 @@ public sealed class Player
         if (IsSheriff)
             hp += 1;
         Hp = hp;
+        var hpPacket = new XPacketUpdatedPlayerProperty(Id, nameof(Hp), Hp.GetType(), Hp);
+        var updatedPacket = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty, hpPacket).ToPacket();
+        QueuePacketSend(updatedPacket);
     }
 
     private void ProcessStartingTurn(XPacket packet) => Turn = true;
@@ -508,7 +514,7 @@ public sealed class Player
     private static void ProcessConnection(XPacket packet)
     {
         var connection = XPacketConverter.Deserialize<XPacketConnection>(packet);
-        
+
         if (connection.IsSuccessful)
             Console.WriteLine("Handshake successful!");
     }
@@ -546,11 +552,17 @@ public sealed class Player
             await Task.Delay(100);
         }
     }
+    
+    private void ProcessSettingColor(XPacket packet)
+    {
+        var xPacket = XPacketConverter.Deserialize<XPacketNameOrColor>(packet);
+        ColorString = xPacket.NameOrColor;
+    }
 
     private void Update(string? objectName, object? obj)
     {
         var packet = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
-                new XPacketUpdatedPlayerProperty(Id, objectName, Type.GetType(obj!.GetType().ToString())!, obj))
+                new XPacketUpdatedPlayerProperty(Id, objectName, obj!.GetType(), obj))
             .ToPacket();
         QueuePacketSend(packet);
     }
