@@ -6,8 +6,10 @@ namespace XProtocol.XPackets;
 public class XPacketNameOrColor
 {
     [XField(1)] public string? NameOrColor;
-    
-    public XPacketNameOrColor() {}
+
+    public XPacketNameOrColor()
+    {
+    }
 
     public XPacketNameOrColor(string nameOrColor) => NameOrColor = nameOrColor;
 }

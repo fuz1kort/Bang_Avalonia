@@ -16,7 +16,7 @@ using XProtocol.XPackets;
 
 namespace Bang_Game.Models;
 
-public sealed class Player
+public sealed class Player: INotifyPropertyChanged
 {
     private readonly Dictionary<byte, RoleCard> _roleCards = new();
     private readonly Dictionary<string, HeroCard> _heroCards = new();
@@ -103,7 +103,6 @@ public sealed class Player
         set
         {
             _openedCards = value;
-            Update(nameof(OpenedCards), _openedCards!);
             OnPropertyChanged();
         }
     }
@@ -141,16 +140,8 @@ public sealed class Player
         get => _cards;
         set
         {
-            if (_cards != null)
-            {
-                _cards = value;
-                // Update(nameof(Cards), _cards!);
-                OnPropertyChanged();
-            }
-            else
-                _cards = value;
-
-            CardsCount = (byte)_cards!.Count;
+            _cards = value;
+            OnPropertyChanged();
         }
     }
 
@@ -378,7 +369,6 @@ public sealed class Player
         {
             ConnectAsync("127.0.0.1", 1410);
 
-
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection,
                 new XPacketConnection
                 {
@@ -424,12 +414,12 @@ public sealed class Player
 
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
 
-            buff = decryptedBuff.TakeWhile((b, i) =>
+            var packetBuff = decryptedBuff.TakeWhile((b, i) =>
             {
                 if (b != 0xFF) return true;
                 return decryptedBuff[i + 1] != 0;
             }).Concat(new byte[] { 0xFF, 0 }).ToArray();
-            var parsed = XPacket.Parse(buff);
+            var parsed = XPacket.Parse(packetBuff);
 
             if (parsed != null!) ProcessIncomingPacket(parsed);
         }
@@ -468,12 +458,18 @@ public sealed class Player
             //TODO
             case XPacketType.Hp:
                 break;
+            case XPacketType.Name:
+                break;
+            case XPacketType.Id:
+                ProcessSettingId(packet);
+                break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
     }
 
-
+    private void ProcessSettingId(XPacket packet)
+        => Id = XPacketConverter.Deserialize<XPacketId>(packet).Id;
 
     private void ProcessGettingRoleHero(XPacket packet)
     {
@@ -485,6 +481,7 @@ public sealed class Player
         if (IsSheriff)
             hp += 1;
         Hp = hp;
+        
         var hpPacket = new XPacketUpdatedPlayerProperty(Id, nameof(Hp), Hp.GetType(), Hp);
         var updatedPacket = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty, hpPacket).ToPacket();
         QueuePacketSend(updatedPacket);
@@ -500,6 +497,7 @@ public sealed class Player
         {
             Cards!.Add(_playCards[packetCardId]);
             CardsCount++;
+            OnPropertyChanged(nameof(Cards));
         }
     }
 
@@ -508,7 +506,12 @@ public sealed class Player
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayersForList>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2, x.Item3)).ToList();
-        PlayersList = new ObservableCollection<Player>(playersList);
+        PlayersList = new ObservableCollection<Player>();
+        foreach (var player in playersList)
+        {
+            PlayersList.Add(player.Id == Id ? this : player);
+            OnPropertyChanged(nameof(PlayersList));
+        }
     }
 
     private static void ProcessConnection(XPacket packet)
@@ -518,53 +521,38 @@ public sealed class Player
         if (connection.IsSuccessful)
             Console.WriteLine("Handshake successful!");
     }
+    
+    private void ProcessSettingColor(XPacket packet) 
+        => ColorString = XPacketConverter.Deserialize<XPacketNameOrColor>(packet).NameOrColor;
 
     private void ProcessUpdatingProperty(XPacket packet)
     {
-        var xPacketProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
-        var property = typeof(Player).GetProperty(xPacketProperty.PropertyName!);
-        property!.SetValue(this, Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!));
+        var packetProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
+        var property = typeof(Player).GetProperty(packetProperty.PropertyName!);
+        property!.SetValue(PlayersList![packetProperty.PlayerId - 1], Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
         OnPropertyChanged(property.Name);
     }
 
-    private void QueuePacketSend(byte[] packet)
-    {
-        if (packet.Length > 512)
-            throw new Exception("Max packet size is 512 bytes.");
-
-        _packetSendingQueue.Enqueue(packet);
-    }
+    private void QueuePacketSend(byte[] packet) 
+        => _packetSendingQueue.Enqueue(packet);
 
     private async Task SendPacketsAsync()
     {
         while (true)
         {
             if (_packetSendingQueue.Count == 0)
-            {
-                Thread.Sleep(100);
                 continue;
-            }
 
             var packet = _packetSendingQueue.Dequeue();
             var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
+            
+            if (encryptedPacket.Length > 512)
+                throw new Exception("Max packet size is 512 bytes.");
+            
             await _socket!.SendAsync(encryptedPacket);
 
             await Task.Delay(100);
         }
-    }
-    
-    private void ProcessSettingColor(XPacket packet)
-    {
-        var xPacket = XPacketConverter.Deserialize<XPacketNameOrColor>(packet);
-        ColorString = xPacket.NameOrColor;
-    }
-
-    private void Update(string? objectName, object? obj)
-    {
-        var packet = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
-                new XPacketUpdatedPlayerProperty(Id, objectName, obj!.GetType(), obj))
-            .ToPacket();
-        QueuePacketSend(packet);
     }
 
     internal void EndTurn()

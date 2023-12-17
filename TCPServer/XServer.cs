@@ -9,7 +9,7 @@ internal class XServer
 {
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-    internal static readonly List<ConnectedClient> Clients = new();
+    internal static readonly List<ConnectedClient> ConnectedClients = new();
 
     private bool _listening;
     private bool _stopListening;
@@ -83,27 +83,23 @@ internal class XServer
 
             Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
-            var c = new ConnectedClient(client, (byte)Clients.Count);
+            var c = new ConnectedClient(client, (byte)(ConnectedClients.Count + 1));
 
-            Clients.Add(c);
-            // c.PropertyChanged += Client_PropertyChanged!;
-            
-            if (Clients.Count == 4)
+            ConnectedClients.Add(c);
+            c.PropertyChanged += Client_PropertyChanged!;
+
+            if (ConnectedClients.Count == 2)
                 break;
         }
     }
 
-    // private void Client_PropertyChanged(object sender, PropertyChangedWithValueEventArgs e)
-    // {
-    //     var client = sender as ConnectedClient;
-    //     for (var i = 0; i < Clients.Count; i++)
-    //     {
-    //         if(i == client!.Id)
-    //             continue;
-    //         
-    //         Clients[i].Update(client.Id ,e.PropertyName, e.Value);
-    //     }
-    // }
+    private static void Client_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        var client = sender as ConnectedClient;
+        foreach (var connectedClient in ConnectedClients)
+            connectedClient.Update(client!.Id, e.PropertyName,
+                typeof(ConnectedClient).GetProperty(e.PropertyName!)!.GetValue(client));
+    }
 
     private static void InitializeGame()
     {
@@ -119,31 +115,35 @@ internal class XServer
 
         while (true)
         {
-            if (Clients.All(x => x.IsReady))
-                break;
+            if (!ConnectedClients.All(x => x.IsReady)) continue;
+            Thread.Sleep(100);
+            break;
+
         }
-        
-        foreach (var client in Clients)
+
+        foreach (var client in ConnectedClients)
         {
             var role = _rolesDeck.Pop();
             var hero = _heroesDeck.Pop();
             client.SendRoleHero(role, hero);
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
             var hp = client.Hp;
             List<byte> cards = new();
             for (var i = 0; i < hp; i++)
                 cards.Add(_cardsDeck.Pop());
-            if (role == 0)
-                _activePlayerId = Clients.IndexOf(client);
+            // if (role == 0)
+            //     _activePlayerId = Clients.IndexOf(client);
 
             client.SendBeginCardsSet(cards);
         }
+
+        _activePlayerId = 0;
 
         _isGameOver = false;
 
         while (!_isGameOver)
         {
-            var activePlayer = Clients[_activePlayerId % 4];
+            var activePlayer = ConnectedClients[_activePlayerId % 4];
             //switch (activePlayer.HeroName)
             //{
             //    case "Туко":
@@ -165,7 +165,9 @@ internal class XServer
                 _cardsDeck.Pop()
             };
 
-            activePlayer.SendTurnAndCardsDefault(cards);
+            activePlayer.Turn = true;
+
+            activePlayer.SendStartingCards(cards);
             //break;
             //}
 

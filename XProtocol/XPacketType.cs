@@ -4,6 +4,7 @@ public enum XPacketType
 {
     Unknown,
     Connection,
+    Id,
     Name,
     Color,
     PlayersForList,

@@ -1,13 +1,13 @@
-﻿using System.Net.Sockets;
+﻿using System.ComponentModel;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using TCPServer.Services;
 using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
 
 namespace TCPServer;
 
-internal sealed class ConnectedClient
+internal sealed class ConnectedClient: INotifyPropertyChanged
 {
     private Socket Client { get; }
 
@@ -22,7 +22,7 @@ internal sealed class ConnectedClient
 
     public readonly byte Id;
 
-    public string Name { get; set; }
+    public string Name { get; private set; }
 
     private string? _colorString;
     private bool _turn;
@@ -30,13 +30,12 @@ internal sealed class ConnectedClient
     private List<byte>? _cards;
     private List<byte>? _openedCards;
 
-    public string? ColorString
+    private string? ColorString
     {
         get => _colorString;
         set
         {
             _colorString = value;
-            SendPlayers();
             Console.WriteLine($"Connected player with name: {Name}" +
                               $"\nGiven color: {_colorString}");
             IsReady = true;
@@ -49,7 +48,7 @@ internal sealed class ConnectedClient
         set
         {
             _hp = value;
-            Update(Id, nameof(Hp), _hp);
+            OnPropertyChanged(_hp);
         }
     }
 
@@ -63,7 +62,7 @@ internal sealed class ConnectedClient
         set
         {
             _openedCards = value;
-            Update(Id, nameof(OpenedCards), _openedCards);
+            OnPropertyChanged(_openedCards!);
         }
     }
 
@@ -73,31 +72,38 @@ internal sealed class ConnectedClient
         set
         {
             _cards = value;
-            Update(Id, nameof(Cards), _cards);
+            OnPropertyChanged(_cards!);
         }
     }
 
     public bool Turn
     {
         get => _turn;
-        private set
+        set
         {
             _turn = value;
-            Update(Id, nameof(Turn), _turn);
+            if (value)
+            {
+                var turnPacket = XPacketConverter.Serialize(XPacketType.Turn, new XPacketMovingTurn());
+                var byteTurnPacket = turnPacket.ToPacket();
+                QueuePacketSend(byteTurnPacket);
+            }
+            
+            OnPropertyChanged(_turn);
         }
     }
 
     public bool IsReady { get; private set; }
 
-    public event EventHandler<PropertyChangedWithValueEventArgs>? PropertyChanged;
-
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
     private void OnPropertyChanged(object value, [CallerMemberName] string? propertyName = null) 
-        => PropertyChanged?.Invoke(this, new PropertyChangedWithValueEventArgs(propertyName, value));
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public ConnectedClient(Socket client, byte id)
     {
+        Name = "DefaultName";
         Client = client;
-
         Id = id;
 
         Task.Run(ReceivePacketsAsync);
@@ -144,7 +150,6 @@ internal sealed class ConnectedClient
                 ProcessSettingName(packet);
                 break;
             case XPacketType.Color:
-                ProcessSettingColor(packet);
                 break;
             case XPacketType.Unknown:
                 break;
@@ -160,36 +165,34 @@ internal sealed class ConnectedClient
                 break;
             case XPacketType.PlayersInfo:
                 break;
+            case XPacketType.Id:
+                break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
     }
 
-    private void ProcessSettingColor(XPacket packet)
-    {
-        var xPacket = XPacketConverter.Deserialize<XPacketNameOrColor>(packet);
-        ColorString = xPacket.NameOrColor;
-    }
-
     private void ProcessSettingName(XPacket packet)
     {
-        var xPacket = XPacketConverter.Deserialize<XPacketNameOrColor>(packet);
-        Name = xPacket.NameOrColor!;
-        Update(Id, nameof(Id), Id);
+        var xPacketName = XPacketConverter.Deserialize<XPacketNameOrColor>(packet);
+        Name = xPacketName.NameOrColor!;
+
         var colorsCount = ColorsList.Count;
         var randomNum = _random.Next(colorsCount);
         ColorString = ColorsList[randomNum];
-        Update(Id, nameof(ColorString), _colorString);
         ColorsList.RemoveAt(randomNum);
+
+        var xPacketColor = new XPacketNameOrColor(ColorString);
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Color, xPacketColor).ToPacket());
+        SendPlayers();
     }
 
     private void ProcessUpdatingProperty(XPacket packet)
     {
-        var xPacketProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
-        var property = typeof(ConnectedClient).GetProperty(xPacketProperty.PropertyName!);
-        var value = Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!);
-        property!.SetValue(this, value);
-        OnPropertyChanged(value!, property.Name);
+        var packetProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
+        var property = typeof(ConnectedClient).GetProperty(packetProperty.PropertyName!);
+        property!.SetValue(this, Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
+        OnPropertyChanged(property.Name);
     }
 
     private void ProcessEndTurn() => Turn = false;
@@ -200,18 +203,13 @@ internal sealed class ConnectedClient
         xPacketConnection.IsSuccessful = true;
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.Connection, xPacketConnection).ToPacket());
-        
-        QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
-            new XPacketUpdatedPlayerProperty(Id, nameof(Id), Type.GetType(Id.GetType().ToString())!, Id)).ToPacket());
+
+        QueuePacketSend(XPacketConverter.Serialize(XPacketType.Id,
+            new XPacketId(Id)).ToPacket());
     }
 
     private void QueuePacketSend(byte[] packet)
-    {
-        if (packet.Length > 512)
-            throw new Exception("Max packet size is 512 bytes.");
-        
-        _packetSendingQueue.Enqueue(packet);
-    }
+        => _packetSendingQueue.Enqueue(packet);
 
     private async Task SendPacketsAsync()
     {
@@ -223,12 +221,15 @@ internal sealed class ConnectedClient
             var packet = _packetSendingQueue.Dequeue();
             var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
 
+            if (encryptedPacket.Length > 512)
+                throw new Exception("Max packet size is 512 bytes.");
+
             await Client.SendAsync(encryptedPacket);
 
             await Task.Delay(100);
         }
     }
-    
+
     internal void Update(byte id, string? objectName, object? obj)
     {
         var packet = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
@@ -241,11 +242,11 @@ internal sealed class ConnectedClient
 
     private static void SendPlayers()
     {
-        var players = XServer.Clients.Select(x => x.GetPlayerParameters()).ToList();
+        var players = XServer.ConnectedClients.Select(x => x.GetPlayerParameters()).ToList();
         var packet = XPacketConverter.Serialize(XPacketType.PlayersForList,
             new XPacketPlayersForList { Players = players });
         var bytePacket = packet.ToPacket();
-        foreach (var client in XServer.Clients)
+        foreach (var client in XServer.ConnectedClients)
             client.QueuePacketSend(bytePacket);
     }
 
@@ -258,9 +259,8 @@ internal sealed class ConnectedClient
         QueuePacketSend(bytePacket);
     }
 
-    public void SendTurnAndCardsDefault(List<byte> cards)
+    public void SendStartingCards(List<byte> cards)
     {
-        Turn = true;
         var cardsPacket = XPacketConverter.Serialize(XPacketType.Cards,
             new XPacketCards(cards));
         var byteCardsPacket = cardsPacket.ToPacket();

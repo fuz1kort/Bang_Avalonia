@@ -8,7 +8,7 @@ public class XPacket
     public byte PacketType { get; private init; }
     public byte PacketSubtype { get; private init; }
     private List<XPacketField> Fields { get; } = new();
-    private static bool ChangeHeaders { get; set; }
+    public bool ChangeHeaders { get; set; }
 
     private XPacket()
     {
