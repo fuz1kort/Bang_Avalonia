@@ -2,9 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using TCPServer.Services;
-using XProtocol;
-using XProtocol.Serializer;
-using XProtocol.XPackets;
 
 namespace TCPServer;
 
@@ -12,7 +9,7 @@ internal class XServer
 {
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-    private static readonly List<ConnectedClient> ConnectedClients = new();
+    internal static readonly List<ConnectedClient> ConnectedClients = new();
 
     private bool _listening;
     private bool _stopListening;
@@ -86,9 +83,13 @@ internal class XServer
 
             Console.WriteLine($"[!] Accepted client from {(IPEndPoint)client.RemoteEndPoint!}");
 
-            var c = new ConnectedClient(client, (byte)(ConnectedClients.Count));
+            var c = new ConnectedClient(client, (byte)ConnectedClients.Count);
+
+            var connectedClients = ConnectedClients.Select(x => (x.Id, x.Name, x.ColorString)).ToList();
 
             ConnectedClients.Add(c);
+            
+            c.SendPlayers(connectedClients);
 
             c.PropertyChanged += Client_PropertyChanged!;
 

@@ -137,7 +137,31 @@
                         <TextBlock Text="{Binding Player.IsSheriff}" />
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Column="1" Background="White"></Grid>
+                <Grid Grid.Column="1" Background="White">
+                    <ListBox ItemsSource="{Binding Player.PlayersList}"
+                             x:Name="PlayersOnTable"
+                             VerticalAlignment="Stretch"
+                             MinHeight="45">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+                                    <Ellipse Fill="{Binding ColorString}" Width="10" Height="10" Margin="10 0 10 0"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    </Ellipse>
+                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Foreground="White"
+                                               VerticalAlignment="Center" FontSize="16">
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding Hp}" HorizontalAlignment="Center" Foreground="White"
+                                               VerticalAlignment="Center" FontSize="16" Margin="10 0 10 0">
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding CardsCount}" HorizontalAlignment="Center" Foreground="White"
+                                               VerticalAlignment="Center" FontSize="16" Margin="10 0 10 0">
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
                 <Grid Grid.Column="2" Background="Gray"></Grid>
             </Grid>
         </Grid>
