@@ -33,11 +33,35 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    public string? Name { get; set; }
+    public string? Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            OnPropertyChanged();
+        }
+    }
 
-    public string? ColorString { get; set; }
+    public string? ColorString
+    {
+        get => _colorString;
+        set
+        {
+            _colorString = value;
+            OnPropertyChanged();
+        }
+    }
 
-    public byte Hp { get; set; }
+    public byte Hp
+    {
+        get => _hp;
+        set
+        {
+            _hp = value;
+            OnPropertyChanged();
+        }
+    }
 
     public RoleCard? RoleCard
     {
@@ -73,9 +97,25 @@ public sealed class Player : INotifyPropertyChanged
 
     //Для других игроков
 
-    public bool IsSheriff { get; }
+    public bool IsSheriff
+    {
+        get => _isSheriff;
+        set
+        {
+            _isSheriff = value;
+            OnPropertyChanged();
+        }
+    }
 
-    public byte CardsCount => (byte)Cards!.Count;
+    public byte CardsCount
+    {
+        get => _cardsCount;
+        set
+        {
+            _cardsCount = value;
+            OnPropertyChanged();
+        }
+    }
 
     private List<PlayCard>? _cards;
 
@@ -113,6 +153,7 @@ public sealed class Player : INotifyPropertyChanged
         Id = id;
         Name = name;
         ColorString = colorString;
+        Cards = new List<PlayCard>();
     }
 
     public Player()
@@ -145,6 +186,11 @@ public sealed class Player : INotifyPropertyChanged
     private IPEndPoint? _serverEndPoint;
     private HeroCard? _heroCard;
     private RoleCard? _roleCard;
+    private byte _cardsCount;
+    private byte _hp;
+    private string? _colorString;
+    private bool _isSheriff;
+    private string? _name;
 
     internal void Connect()
     {
@@ -231,43 +277,31 @@ public sealed class Player : INotifyPropertyChanged
                 break;
             case XPacketType.Unknown:
                 break;
-            case XPacketType.Id:
-                ProcessSettingId(packet);
-                break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
     }
 
-    private void ProcessSettingId(XPacket packet)
-    {
-        Id = XPacketConverter.Deserialize<XPacketId>(packet).Id;
-
-        PlayersList![Id] = this;
-    }
-
     private void ProcessStartingTurn(XPacket packet) => Turn = true;
 
-    private void ProcessGettingCardsSet(XPacket packet)
+  private void ProcessGettingCardsSet(XPacket packet)
     {
-        var allCards = XPacketConverter.Deserialize<XPacketBytesList>(packet).BytesList;
-        allCards!.AddRange(Cards!.Select(x => x.Id));
-        Cards = allCards.Select(x => _playCards[x]).ToList();
+        var packetBeginCardsSet = XPacketConverter.Deserialize<XPacketBytesList>(packet);
+        var packetCards = packetBeginCardsSet.BytesList;
+        foreach (var packetCardId in packetCards!)
+        {
+            Cards!.Add(_playCards[packetCardId]);
+            OnPropertyChanged(nameof(Cards));
+            CardsCount++;
+        }
     }
 
     private void ProcessGettingPlayers(XPacket packet)
     {
-        // var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
-        // //TODO Отправка пакета с игроками без данного игрока
-        // foreach (var player in packetPlayer.Players!)
-        // {
-        //     PlayersList![player.Item1].Name = player.Item2;
-        //     PlayersList![player.Item1].ColorString = player.Item3;
-        //     OnPropertyChanged(nameof(PlayersList));
-        // }
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2, x.Item3)).ToList();
+        playersList[Id] = this;
         PlayersList = new ObservableCollection<Player>(playersList);
     }
 
@@ -282,18 +316,26 @@ public sealed class Player : INotifyPropertyChanged
     private void ProcessUpdatingProperty(XPacket packet)
     {
         var packetProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
+        // var property = typeof(Player).GetProperty(xPacketProperty.PropertyName!);
+        // property!.SetValue(this, Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!));
+        // OnPropertyChanged(property.Name);
         
         switch (packetProperty.PropertyName!)
         {
             case "HeroName":
+            {
                 PlayersList![packetProperty.PlayerId].HeroCard = _heroCards[
                     (string)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!];
                 break;
+            }
             case "RoleType":
             {
                 RoleCard = _roleCards[
                     (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!];
-                var hp = HeroCard!.HeroHp;
+                var hp = PlayersList![packetProperty.PlayerId].HeroCard!.HeroHp;
+                if (RoleCard.RoleType == RoleType.Sheriff)
+                    IsSheriff = true;
+                
                 if (IsSheriff)
                     hp += 1;
                 Hp = hp;
@@ -303,12 +345,24 @@ public sealed class Player : INotifyPropertyChanged
                 QueuePacketSend(updatedPacket);
                 break;
             }
+            case "Id":
+            {
+                Id = (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!;
+                break;
+            }
+            case "ColorString":
+            {
+                ColorString = Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)! as string;
+                break;
+            }
             default:
+            {
                 var property = GetType().GetProperty(packetProperty.PropertyName!);
                 property!.SetValue(PlayersList![packetProperty.PlayerId],
                     Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
-                OnPropertyChanged(property.Name);
+                OnPropertyChanged(nameof(PlayersList));
                 break;
+            }
         }
     }
 
@@ -340,4 +394,12 @@ public sealed class Player : INotifyPropertyChanged
         var packet = XPacketConverter.Serialize(XPacketType.Turn, new XPacketMovingTurn()).ToPacket();
         QueuePacketSend(packet);
     }
+    
+    // private void Update(string? objectName, object? obj)
+    // {
+    //     var packet = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
+    //             new XPacketUpdatedPlayerProperty(Id, objectName, Type.GetType(obj!.GetType().ToString())!, obj))
+    //         .ToPacket();
+    //     QueuePacketSend(packet);
+    // }
 }

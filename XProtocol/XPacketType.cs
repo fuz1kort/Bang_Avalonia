@@ -4,9 +4,8 @@ public enum XPacketType
 {
     Unknown,
     Connection,
-    Id,
     PlayersList,
     UpdatedPlayerProperty,
     Cards,
-    Turn,
+    Turn
 }

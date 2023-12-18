@@ -85,15 +85,15 @@ internal class XServer
 
             var c = new ConnectedClient(client, (byte)ConnectedClients.Count);
 
-            var connectedClients = ConnectedClients.Select(x => (x.Id, x.Name, x.ColorString)).ToList();
+            // var connectedClients = ConnectedClients.Select(x => (x.Id, x.Name, x.ColorString)).ToList();
 
             ConnectedClients.Add(c);
             
-            c.SendPlayers(connectedClients);
+            // c.SendPlayers(connectedClients);
 
             c.PropertyChanged += Client_PropertyChanged!;
 
-            if (ConnectedClients.Count == 2)
+            if (ConnectedClients.Count == 4)
                 break;
         }
     }
@@ -137,15 +137,21 @@ internal class XServer
             var role = _rolesDeck.Pop();
             client.HeroName = hero;
             client.RoleType = role;
+                
             Thread.Sleep(1000);
             var hp = client.Hp;
-            var cards = new List<byte>();
             for (var i = 0; i < hp; i++)
-                cards.Add(_cardsDeck.Pop());
-            client.Cards = cards;
+            {
+                client.Cards!.Add(_cardsDeck.Pop());
+                client.CardsCount++;
+            }
 
-            // if (role == 0)
-            //     _activePlayerId = Clients.IndexOf(client);
+            if (role != 0)
+                continue;
+            
+            _activePlayerId = ConnectedClients.IndexOf(client);
+            client.IsSheriff = true;
+
         }
 
         _activePlayerId = 0;
@@ -178,14 +184,15 @@ internal class XServer
 
             activePlayer.Turn = true;
 
-            cards.AddRange(activePlayer.Cards!);
-
-            activePlayer.Cards = cards;
+            foreach (var card in cards)
+            {
+                activePlayer.Cards!.Add(card);
+                activePlayer.CardsCount++;
+            }
             //break;
             //}
-
-            var activePlayerName = activePlayer.Name;
-            Console.WriteLine($"{activePlayerName}'s turn");
+            
+            Console.WriteLine($"{activePlayer.Name}'s turn");
             while (true)
             {
                 if (!activePlayer.Turn)

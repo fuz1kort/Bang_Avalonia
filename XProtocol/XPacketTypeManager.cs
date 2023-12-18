@@ -7,11 +7,10 @@ public static class XPacketTypeManager
     static XPacketTypeManager()
     {
         RegisterType(XPacketType.Connection, 0, 0);
-        RegisterType(XPacketType.Id, 1, 0);
-        RegisterType(XPacketType.UpdatedPlayerProperty, 2, 0);
-        RegisterType(XPacketType.PlayersList, 3, 0);
-        RegisterType(XPacketType.Turn, 4, 0);
-        RegisterType(XPacketType.Cards, 5, 0);
+        RegisterType(XPacketType.UpdatedPlayerProperty, 1, 0);
+        RegisterType(XPacketType.PlayersList, 2, 0);
+        RegisterType(XPacketType.Turn, 3, 0);
+        RegisterType(XPacketType.Cards, 4, 0);
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)
