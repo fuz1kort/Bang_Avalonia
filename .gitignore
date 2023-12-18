@@ -2,6 +2,7 @@
 *.dll
 *.info
 *.info
+<<<<<<< Updated upstream
 *.dll
 Bang_Game/bin
 Bang_Game/obj
@@ -9,3 +10,8 @@ TCPServer/bin
 TCPServer/obj
 XProtocol/bin
 XProtocol/obj
+=======
+Bang_Game/bin/Debug/net7.0/Bang_Game.exe
+*.exe
+*.pdb
+>>>>>>> Stashed changes
