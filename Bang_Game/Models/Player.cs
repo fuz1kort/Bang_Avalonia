@@ -349,7 +349,7 @@ public sealed class Player : INotifyPropertyChanged
             }
             case "ColorString":
             {
-                ColorString = Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)! as string;
+                ColorString = packetProperty.PropertyValue as string;
                 break;
             }
             default:
