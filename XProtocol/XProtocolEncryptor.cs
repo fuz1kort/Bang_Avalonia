@@ -1,6 +1,6 @@
 ﻿namespace XProtocol
 {
-    public class XProtocolEncryptor
+    public static class XProtocolEncryptor
     {
         private static string Key => "14022004";
 

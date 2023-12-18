@@ -85,11 +85,8 @@ internal class XServer
 
             var c = new ConnectedClient(client, (byte)ConnectedClients.Count);
 
-            // var connectedClients = ConnectedClients.Select(x => (x.Id, x.Name, x.ColorString)).ToList();
-
             ConnectedClients.Add(c);
-            
-            // c.SendPlayers(connectedClients);
+
 
             c.PropertyChanged += Client_PropertyChanged!;
 
@@ -137,7 +134,7 @@ internal class XServer
             var role = _rolesDeck.Pop();
             client.HeroName = hero;
             client.RoleType = role;
-                
+
             Thread.Sleep(1000);
             var hp = client.Hp;
             for (var i = 0; i < hp; i++)
@@ -148,13 +145,10 @@ internal class XServer
 
             if (role != 0)
                 continue;
-            
+
             _activePlayerId = ConnectedClients.IndexOf(client);
             client.IsSheriff = true;
-
         }
-
-        _activePlayerId = 0;
 
         _isGameOver = false;
 
@@ -191,7 +185,7 @@ internal class XServer
             }
             //break;
             //}
-            
+
             Console.WriteLine($"{activePlayer.Name}'s turn");
             while (true)
             {

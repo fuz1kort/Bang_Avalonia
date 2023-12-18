@@ -6,11 +6,11 @@ namespace XProtocol.XPackets;
 public class XPacketUpdatedPlayerProperty
 {
     [XField(1)] public byte PlayerId;
-    
+
     [XField(2)] public string? PropertyName;
-    
+
     [XField(3)] public Type? PropertyType;
-    
+
     [XField(4)] public object? PropertyValue;
 
     public XPacketUpdatedPlayerProperty()

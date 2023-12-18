@@ -147,7 +147,7 @@ public sealed class Player : INotifyPropertyChanged
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     private Player(byte id) => Id = id;
-    
+
     private Player(byte id, string name, string colorString)
     {
         Id = id;
@@ -284,7 +284,7 @@ public sealed class Player : INotifyPropertyChanged
 
     private void ProcessStartingTurn(XPacket packet) => Turn = true;
 
-  private void ProcessGettingCardsSet(XPacket packet)
+    private void ProcessGettingCardsSet(XPacket packet)
     {
         var packetBeginCardsSet = XPacketConverter.Deserialize<XPacketBytesList>(packet);
         var packetCards = packetBeginCardsSet.BytesList;
@@ -316,10 +316,7 @@ public sealed class Player : INotifyPropertyChanged
     private void ProcessUpdatingProperty(XPacket packet)
     {
         var packetProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
-        // var property = typeof(Player).GetProperty(xPacketProperty.PropertyName!);
-        // property!.SetValue(this, Convert.ChangeType(xPacketProperty.PropertyValue, xPacketProperty.PropertyType!));
-        // OnPropertyChanged(property.Name);
-        
+
         switch (packetProperty.PropertyName!)
         {
             case "HeroName":
@@ -335,7 +332,7 @@ public sealed class Player : INotifyPropertyChanged
                 var hp = PlayersList![packetProperty.PlayerId].HeroCard!.HeroHp;
                 if (RoleCard.RoleType == RoleType.Sheriff)
                     IsSheriff = true;
-                
+
                 if (IsSheriff)
                     hp += 1;
                 Hp = hp;
@@ -394,12 +391,4 @@ public sealed class Player : INotifyPropertyChanged
         var packet = XPacketConverter.Serialize(XPacketType.Turn, new XPacketMovingTurn()).ToPacket();
         QueuePacketSend(packet);
     }
-    
-    // private void Update(string? objectName, object? obj)
-    // {
-    //     var packet = XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
-    //             new XPacketUpdatedPlayerProperty(Id, objectName, Type.GetType(obj!.GetType().ToString())!, obj))
-    //         .ToPacket();
-    //     QueuePacketSend(packet);
-    // }
 }

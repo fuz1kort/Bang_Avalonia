@@ -21,7 +21,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     private readonly Random _random = new();
 
     public readonly byte Id;
-    
+
     private string? _colorString;
     private bool _turn;
     private byte _hp;
@@ -112,7 +112,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Cards, new XPacketBytesList(_cards!)).ToPacket());
         }
     }
-    
+
     public byte CardsCount
     {
         get => _cardsCount;
@@ -149,7 +149,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         Task.Run(ReceivePackets);
         Task.Run(SendPackets);
     }
-    
+
     private (byte, string, string) GetPlayerParameters() => (Id, Name, ColorString!)!;
 
     private void ReceivePackets()
@@ -213,7 +213,8 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
             default:
             {
                 var property = typeof(ConnectedClient).GetProperty(packetProperty.PropertyName!);
-                property!.SetValue(this, Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
+                property!.SetValue(this,
+                    Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
                 OnPropertyChanged(property.Name);
                 break;
             }
@@ -231,7 +232,6 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
 
         QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
             new XPacketUpdatedPlayerProperty(Id, nameof(Id), Id.GetType(), Id)).ToPacket());
-
     }
 
     private void QueuePacketSend(byte[] packet)
@@ -266,7 +266,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     //     var packetPlayers = XPacketConverter.Serialize(XPacketType.PlayersList, new XPacketPlayers(connectedClients!)).ToPacket();
     //     QueuePacketSend(packetPlayers);
     // }
-    
+
     private static void SendPlayers()
     {
         var players = XServer.ConnectedClients.Select(x => x.GetPlayerParameters()).ToList();

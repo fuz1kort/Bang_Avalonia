@@ -6,10 +6,10 @@ namespace Bang_Game.Models;
 
 public static class CardsGenerator
 {
-    public static Dictionary<byte,PlayCard> GeneratePlayCards()
+    public static Dictionary<byte, PlayCard> GeneratePlayCards()
     {
         var playCards = new Dictionary<byte, PlayCard>();
-        
+
         byte id = 0;
         var volcanic1 = new PlayCard(id, "Вулканик", 10, CardType.Clubs, PlayCardType.Volcanic, true, 1);
         playCards[id++] = volcanic1;
@@ -28,7 +28,6 @@ public static class CardsGenerator
         var winchester = new PlayCard(id, "Винчестер", 8, CardType.Spades, PlayCardType.Winchester, true, 5);
         playCards[id++] = winchester;
 
-        //Добавление других постоянных карт
         var mustang1 = new PlayCard(id, "Мустанг", 8, CardType.Hearts,
             PlayCardType.Mustang, true);
         playCards[id++] = mustang1;
@@ -170,7 +169,7 @@ public static class CardsGenerator
 
         return roleCards;
     }
-    
+
     public static Dictionary<string, HeroCard> GenerateHeroCards()
     {
         var heroCards = new Dictionary<string, HeroCard>();
