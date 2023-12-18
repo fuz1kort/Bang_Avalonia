@@ -2,3 +2,10 @@
 *.dll
 *.info
 *.info
+*.dll
+Bang_Game/bin
+Bang_Game/obj
+TCPServer/bin
+TCPServer/obj
+XProtocol/bin
+XProtocol/obj
