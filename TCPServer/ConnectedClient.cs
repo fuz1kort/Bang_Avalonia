@@ -56,6 +56,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         set
         {
             _colorString = value;
+            SendPlayers();
             OnPropertyChanged();
             IsReady = true;
         }
@@ -147,6 +148,18 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         Task.Run(ReceivePackets);
         Task.Run(SendPackets);
     }
+    
+    private (byte, string, string) GetPlayerParameters() => (Id, Name, ColorString!);
+
+    private static void SendPlayers()
+    {
+        var players = XServer.ConnectedClients.Select(x => x.GetPlayerParameters()).ToList();
+        var packet = XPacketConverter.Serialize(XPacketType.PlayersList,
+            new XPacketPlayers() { Players = players });
+        var bytePacket = packet.ToPacket();
+        foreach (var client in XServer.ConnectedClients)
+            client.QueuePacketSend(bytePacket);
+    }
 
     private void ReceivePackets()
     {
@@ -201,6 +214,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     private void ProcessUpdatingProperty(XPacket packet)
     {
         var packetProperty = XPacketConverter.Deserialize<XPacketUpdatedPlayerProperty>(packet);
+        var propertyName = packetProperty.PropertyName;
         var property = typeof(ConnectedClient).GetProperty(packetProperty.PropertyName!);
         property!.SetValue(this, Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
         OnPropertyChanged(property.Name);
@@ -250,4 +264,10 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         => QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
                 new XPacketUpdatedPlayerProperty(id, objectName, Type.GetType(obj!.GetType().ToString())!, obj))
             .ToPacket());
+
+    public void SendPlayers(List<(byte Id, string? Name, string? ColorString)> connectedClients)
+    {
+        var packetPlayers = XPacketConverter.Serialize(XPacketType.PlayersList, new XPacketPlayers(connectedClients!)).ToPacket();
+        QueuePacketSend(packetPlayers);
+    }
 }

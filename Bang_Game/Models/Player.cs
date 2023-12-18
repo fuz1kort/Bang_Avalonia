@@ -1,5 +1,4 @@
 ﻿using Bang_Game.Models.Cards;
-using Bang_Game.Models.Cards.Heroes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -108,184 +107,24 @@ public sealed class Player : INotifyPropertyChanged
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     private Player(byte id) => Id = id;
+    
+    private Player(byte id, string name, string colorString)
+    {
+        Id = id;
+        Name = name;
+        ColorString = colorString;
+    }
 
     public Player()
     {
         IsSheriff = false;
-        PlayersList = new ObservableCollection<Player>();
+        PlayersList = new ObservableCollection<Player> { new Player(0), new Player(1), new Player(2), new Player(3) };
         Cards = new List<PlayCard>();
         Turn = false;
-        byte id = 0;
 
-        var volcanic1 = new PlayCard(id, "Вулканик", 10, CardType.Clubs, PlayCardType.Volcanic, true, 1);
-        _playCards[id++] = volcanic1;
-        var volcanic2 = new PlayCard(id, "Вулканик", 10, CardType.Spades, PlayCardType.Volcanic, true, 1);
-        _playCards[id++] = volcanic2;
-        var schofield1 = new PlayCard(id, "Скофилд", 11, CardType.Clubs, PlayCardType.Schofield, true, 2);
-        _playCards[id++] = schofield1;
-        var schofield2 = new PlayCard(id, "Скофилд", 12, CardType.Clubs, PlayCardType.Schofield, true, 2);
-        _playCards[id++] = schofield2;
-        var schofield3 = new PlayCard(id, "Скофилд", 13, CardType.Spades, PlayCardType.Schofield, true, 2);
-        _playCards[id++] = schofield3;
-        var remington = new PlayCard(id, "Ремингтон", 13, CardType.Clubs, PlayCardType.Remington, true, 3);
-        _playCards[id++] = remington;
-        var carbine = new PlayCard(id, "Карабин", 14, CardType.Clubs, PlayCardType.Carbine, true, 4);
-        _playCards[id++] = carbine;
-        var winchester = new PlayCard(id, "Винчестер", 8, CardType.Spades, PlayCardType.Winchester, true, 5);
-        _playCards[id++] = winchester;
-
-        //Добавление других постоянных карт
-        var mustang1 = new PlayCard(id, "Мустанг", 8, CardType.Hearts,
-            PlayCardType.Mustang, true);
-        _playCards[id++] = mustang1;
-        var mustang2 = new PlayCard(id, "Мустанг", 9, CardType.Hearts,
-            PlayCardType.Mustang, true);
-        _playCards[id++] = mustang2;
-        var scope = new PlayCard(id, "Прицел", 14, CardType.Spades,
-            PlayCardType.Scope, true);
-        _playCards[id++] = scope;
-        var barrel1 = new PlayCard(id, "Бочка", 12, CardType.Spades,
-            PlayCardType.Barrel, true);
-        _playCards[id++] = barrel1;
-        var barrel2 = new PlayCard(id, "Бочка", 13, CardType.Spades,
-            PlayCardType.Barrel, true);
-        _playCards[id++] = barrel2;
-
-        var wellsFargo = new PlayCard(id, "Уэллс Фарго", 3, CardType.Hearts,
-            PlayCardType.WellsFargo,
-            false);
-        _playCards[id++] = wellsFargo;
-
-        var stagecoach1 = new PlayCard(id, "Дилижанс", 9, CardType.Spades,
-            PlayCardType.Stagecoach,
-            false);
-        _playCards[id++] = stagecoach1;
-
-        var stagecoach2 = new PlayCard(id, "Дилижанс", 9, CardType.Spades,
-            PlayCardType.Stagecoach,
-            false);
-        _playCards[id++] = stagecoach2;
-
-        var gatling = new PlayCard(id, "Гатлинг", 10, CardType.Hearts,
-            PlayCardType.Gatling,
-            false);
-        _playCards[id++] = gatling;
-
-        var saloon = new PlayCard(id, "Салун", 5, CardType.Hearts,
-            PlayCardType.Saloon,
-            false);
-        _playCards[id++] = saloon;
-
-        for (var i = 9; i < 12; i++)
-        {
-            var catBalou = new PlayCard(id, "Красотка", (byte)i, CardType.Diamonds,
-                PlayCardType.CatBalou,
-                false);
-            _playCards[id++] = catBalou;
-        }
-
-        var catBalou4 = new PlayCard(id, "Красотка", 13, CardType.Hearts,
-            PlayCardType.CatBalou,
-            false);
-        _playCards[id++] = catBalou4;
-
-        var panic1 = new PlayCard(id, "Паника", 8, CardType.Diamonds,
-            PlayCardType.Panic,
-            false);
-        _playCards[id++] = panic1;
-        var panic2 = new PlayCard(id, "Паника", 11, CardType.Hearts,
-            PlayCardType.Panic,
-            false);
-        _playCards[id++] = panic2;
-        var panic3 = new PlayCard(id, "Паника", 12, CardType.Hearts,
-            PlayCardType.Panic,
-            false);
-        _playCards[id++] = panic3;
-        var panic4 = new PlayCard(id, "Паника", 14, CardType.Hearts,
-            PlayCardType.Panic,
-            false);
-        _playCards[id++] = panic4;
-
-        for (var i = 6; i < 12; i++)
-        {
-            var beer = new PlayCard(id, "Пиво", (byte)i, CardType.Hearts,
-                PlayCardType.Beer,
-                false);
-            _playCards[id++] = beer;
-        }
-
-        for (var i = 10; i < 15; i++)
-        {
-            var missed = new PlayCard(id, "Мимо!", (byte)i, CardType.Clubs,
-                PlayCardType.Missed,
-                false);
-            _playCards[id++] = missed;
-        }
-
-        for (var i = 2; i < 9; i++)
-        {
-            var missed = new PlayCard(id, "Мимо!", (byte)i, CardType.Spades,
-                PlayCardType.Missed,
-                false);
-            _playCards[id++] = missed;
-        }
-
-        var bang1 = new PlayCard(id, "Бэнг!", 14, CardType.Spades,
-            PlayCardType.Bang,
-            false);
-        _playCards[id++] = bang1;
-
-        for (var i = 2; i < 15; i++)
-        {
-            var bang = new PlayCard(id, "Бэнг!", (byte)i, CardType.Diamonds,
-                PlayCardType.Bang,
-                false);
-            _playCards[id++] = bang;
-        }
-
-        for (var i = 2; i < 10; i++)
-        {
-            var bang = new PlayCard(id, "Бэнг!", (byte)i, CardType.Clubs,
-                PlayCardType.Bang,
-                false);
-            _playCards[id++] = bang;
-        }
-
-        for (var i = 12; i < 15; i++)
-        {
-            var bang = new PlayCard(id, "Бэнг!", (byte)i, CardType.Hearts,
-                PlayCardType.Bang,
-                false);
-            _playCards[id++] = bang;
-        }
-
-        var sheriff = new RoleCard(RoleType.Sheriff, true);
-        _roleCards[(byte)sheriff.RoleType] = sheriff;
-        var bandit1 = new RoleCard(RoleType.Bandit, false);
-        _roleCards[(byte)bandit1.RoleType] = bandit1;
-        var bandit2 = new RoleCard(RoleType.Bandit, false);
-        _roleCards[(byte)bandit2.RoleType] = bandit2;
-        var renegade = new RoleCard(RoleType.Renegade, false);
-        _roleCards[(byte)renegade.RoleType] = renegade;
-
-        var billy = new Billy();
-        _heroCards[billy.HeroName!] = billy;
-        var eyes = new Eyes();
-        _heroCards[eyes.HeroName!] = eyes;
-        var james = new James();
-        _heroCards[james.HeroName!] = james;
-        var jane = new Jane();
-        _heroCards[jane.HeroName!] = jane;
-        var joe = new Joe();
-        _heroCards[joe.HeroName!] = joe;
-        var kit = new Kit();
-        _heroCards[kit.HeroName!] = kit;
-        var snake = new Snake();
-        _heroCards[snake.HeroName!] = snake;
-        var tom = new Tom();
-        _heroCards[tom.HeroName!] = tom;
-        var tuco = new Tuco();
-        _heroCards[tuco.HeroName!] = tuco;
+        _playCards = CardsGenerator.GeneratePlayCards();
+        _heroCards = CardsGenerator.GenerateHeroCards();
+        _roleCards = CardsGenerator.GenerateRoleCards();
     }
 
     private ObservableCollection<Player>? _playersList;
@@ -403,12 +242,8 @@ public sealed class Player : INotifyPropertyChanged
     private void ProcessSettingId(XPacket packet)
     {
         Id = XPacketConverter.Deserialize<XPacketId>(packet).Id;
-        for (var i = 0; i < Id; i++)
-        {
-            PlayersList!.Add(new Player((byte)i));
-        }
-        
-        PlayersList!.Add(this);
+
+        PlayersList![Id] = this;
     }
 
     private void ProcessStartingTurn(XPacket packet) => Turn = true;
@@ -422,13 +257,18 @@ public sealed class Player : INotifyPropertyChanged
 
     private void ProcessGettingPlayers(XPacket packet)
     {
-        var packetPlayer = XPacketConverter.Deserialize<XPacketBytesList>(packet);
-        PlayersList = new ObservableCollection<Player>();
-        foreach (var id in packetPlayer.BytesList!.Where(id => id != Id))
-        {
-            PlayersList.Add(new Player(id));
-            OnPropertyChanged(nameof(PlayersList));
-        }
+        // var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
+        // //TODO Отправка пакета с игроками без данного игрока
+        // foreach (var player in packetPlayer.Players!)
+        // {
+        //     PlayersList![player.Item1].Name = player.Item2;
+        //     PlayersList![player.Item1].ColorString = player.Item3;
+        //     OnPropertyChanged(nameof(PlayersList));
+        // }
+        var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
+        var playersFromPacket = packetPlayer.Players;
+        var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2, x.Item3)).ToList();
+        PlayersList = new ObservableCollection<Player>(playersList);
     }
 
     private static void ProcessConnection(XPacket packet)
