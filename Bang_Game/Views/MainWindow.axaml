@@ -127,7 +127,7 @@
             </Grid>
             <Grid Grid.Row="1" ColumnDefinitions="1*,16*,1*" VerticalAlignment="Stretch">
                 <Grid Grid.Column="0" Background="Gray">
-                     <StackPanel>
+                    <StackPanel>
                         <TextBlock Text="{Binding Player.Id}" />
                         <TextBlock Text="{Binding Player.Name}" />
                         <TextBlock Text="{Binding Player.Hp}" />
@@ -138,31 +138,88 @@
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Column="1" Background="White">
-                    <ListBox ItemsSource="{Binding Player.PlayersList}"
-                             x:Name="PlayersOnTable"
-                             VerticalAlignment="Stretch"
-                             MinHeight="45">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
-                                    <Ellipse Fill="{Binding ColorString}" Width="10" Height="10" Margin="10 0 10 0"
-                                             HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    </Ellipse>
-                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Foreground="White"
-                                               VerticalAlignment="Center" FontSize="16">
-                                    </TextBlock>
-                                    <TextBlock Text="{Binding Hp}" HorizontalAlignment="Center" Foreground="White"
-                                               VerticalAlignment="Center" FontSize="16" Margin="10 0 10 0">
-                                    </TextBlock>
-                                    <TextBlock Text="{Binding CardsCount}" HorizontalAlignment="Center" Foreground="White"
-                                               VerticalAlignment="Center" FontSize="16" Margin="10 0 10 0">
-                                    </TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <Grid ColumnDefinitions="1*,2*,1*" RowDefinitions="1*,2*,1*">
+                        <Grid Grid.Row="0" Grid.Column="1">
+                            <StackPanel Background="DarkGray">
+                                <Ellipse Fill="{Binding Player.PlayersList[0].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center">
+                                </Ellipse>
+                                <TextBlock Text="{Binding Player.PlayersList[0].Name}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[0].Hp}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[0].CardsCount}"
+                                           HorizontalAlignment="Center" Foreground="Black">
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Grid.Column="0">
+                            <StackPanel Background="DarkGray">
+                                <Ellipse Fill="{Binding Player.PlayersList[1].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center">
+                                </Ellipse>
+                                <TextBlock Text="{Binding Player.PlayersList[1].Name}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[1].Hp}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[1].CardsCount}"
+                                           HorizontalAlignment="Center" Foreground="Black">
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Grid.Column="1">
+                            <StackPanel Background="BurlyWood">
+                                <TextBlock Text="Deck"
+                                           HorizontalAlignment="Center" Foreground="Black">
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Grid.Column="2">
+                            <StackPanel Background="DarkGray">
+                                <Ellipse Fill="{Binding Player.PlayersList[3].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center">
+                                </Ellipse>
+                                <TextBlock Text="{Binding Player.PlayersList[3].Name}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[3].Hp}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[3].CardsCount}"
+                                           HorizontalAlignment="Center" Foreground="Black">
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="2" Grid.Column="1">
+                            <StackPanel Background="DarkGray">
+                                <Ellipse Fill="{Binding Player.PlayersList[2].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center">
+                                </Ellipse>
+                                <TextBlock Text="{Binding Player.PlayersList[2].Name}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[2].Hp}" HorizontalAlignment="Center"
+                                           Foreground="Black">
+                                </TextBlock>
+                                <TextBlock Text="{Binding Player.PlayersList[2].CardsCount}"
+                                           HorizontalAlignment="Center" Foreground="Black">
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid Grid.Column="2" Background="Gray"></Grid>
+                
+                <Grid Grid.Column="2" Background="Gray">
+                    
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

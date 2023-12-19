@@ -33,7 +33,7 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    public string? Name
+    public string Name
     {
         get => _name;
         set
@@ -43,7 +43,7 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    public string? ColorString
+    public string ColorString
     {
         get => _colorString;
         set
@@ -63,7 +63,7 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    public RoleCard? RoleCard
+    public RoleCard RoleCard
     {
         get => _roleCard;
         private set
@@ -73,7 +73,7 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    public HeroCard? HeroCard
+    public HeroCard HeroCard
     {
         get => _heroCard;
         private set
@@ -83,9 +83,9 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    private List<PlayCard>? _openedCards;
+    private List<PlayCard> _openedCards = null!;
 
-    public List<PlayCard>? OpenedCards
+    public List<PlayCard> OpenedCards
     {
         get => _openedCards;
         set
@@ -117,12 +117,12 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    private List<PlayCard>? _cards;
+    private readonly List<PlayCard> _cards = null!;
 
-    public List<PlayCard>? Cards
+    public List<PlayCard> Cards
     {
         get => _cards;
-        set
+        init
         {
             _cards = value;
             OnPropertyChanged();
@@ -136,6 +136,7 @@ public sealed class Player : INotifyPropertyChanged
         get => _turn;
         set
         {
+            //TODO Сделать отмену окончания хода, если карт больше чем HP
             _turn = value;
             OnPropertyChanged();
         }
@@ -168,9 +169,9 @@ public sealed class Player : INotifyPropertyChanged
         _roleCards = CardsGenerator.GenerateRoleCards();
     }
 
-    private ObservableCollection<Player>? _playersList;
+    private ObservableCollection<Player> _playersList = null!;
 
-    public ObservableCollection<Player>? PlayersList
+    public ObservableCollection<Player> PlayersList
     {
         get => _playersList;
         set
@@ -184,13 +185,13 @@ public sealed class Player : INotifyPropertyChanged
 
     private Socket? _socket;
     private IPEndPoint? _serverEndPoint;
-    private HeroCard? _heroCard;
-    private RoleCard? _roleCard;
+    private HeroCard _heroCard = null!;
+    private RoleCard _roleCard = null!;
     private byte _cardsCount;
     private byte _hp;
-    private string? _colorString;
+    private string _colorString = null!;
     private bool _isSheriff;
-    private string? _name;
+    private string _name = null!;
 
     internal void Connect()
     {
@@ -207,7 +208,7 @@ public sealed class Player : INotifyPropertyChanged
             Thread.Sleep(300);
 
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
-                    new XPacketUpdatedPlayerProperty(Id, nameof(Name), Name!.GetType(), Name))
+                    new XPacketUpdatedPlayerProperty(Id, nameof(Name), Name.GetType(), Name))
                 .ToPacket());
 
             while (true)
@@ -290,7 +291,7 @@ public sealed class Player : INotifyPropertyChanged
         var packetCards = packetBeginCardsSet.BytesList;
         foreach (var packetCardId in packetCards!)
         {
-            Cards!.Add(_playCards[packetCardId]);
+            Cards.Add(_playCards[packetCardId]);
             OnPropertyChanged(nameof(Cards));
             CardsCount++;
         }
@@ -321,7 +322,7 @@ public sealed class Player : INotifyPropertyChanged
         {
             case "HeroName":
             {
-                PlayersList![packetProperty.PlayerId].HeroCard = _heroCards[
+                PlayersList[packetProperty.PlayerId].HeroCard = _heroCards[
                     (string)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!];
                 break;
             }
@@ -329,7 +330,7 @@ public sealed class Player : INotifyPropertyChanged
             {
                 RoleCard = _roleCards[
                     (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!];
-                var hp = PlayersList![packetProperty.PlayerId].HeroCard!.HeroHp;
+                var hp = PlayersList[packetProperty.PlayerId].HeroCard.HeroHp;
                 if (RoleCard.RoleType == RoleType.Sheriff)
                     IsSheriff = true;
 
@@ -349,13 +350,13 @@ public sealed class Player : INotifyPropertyChanged
             }
             case "ColorString":
             {
-                ColorString = packetProperty.PropertyValue as string;
+                ColorString = (packetProperty.PropertyValue as string)!;
                 break;
             }
             default:
             {
                 var property = GetType().GetProperty(packetProperty.PropertyName!);
-                property!.SetValue(PlayersList![packetProperty.PlayerId],
+                property!.SetValue(PlayersList[packetProperty.PlayerId],
                     Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
                 OnPropertyChanged(nameof(PlayersList));
                 break;
