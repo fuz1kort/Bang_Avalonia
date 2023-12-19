@@ -9,3 +9,8 @@ TCPServer/bin
 TCPServer/obj
 XProtocol/bin
 XProtocol/obj
+*.user
+Bang_Game/obj/Debug/net7.0/Bang_Game.AssemblyInfo.cs
+*.info
+*.cache
+TCPServer/obj/Debug/net7.0/TCPServer.AssemblyInfo.cs
