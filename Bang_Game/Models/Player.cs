@@ -160,7 +160,7 @@ public sealed class Player : INotifyPropertyChanged
     public Player()
     {
         IsSheriff = false;
-        PlayersList = new ObservableCollection<Player> { new Player(0), new Player(1), new Player(2), new Player(3) };
+        PlayersList = new ObservableCollection<Player> { new(0), new(1), new(2), new(3) };
         Cards = new List<PlayCard>();
         Turn = false;
 

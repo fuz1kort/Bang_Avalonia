@@ -25,7 +25,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     private string? _colorString;
     private bool _turn;
     private byte _hp;
-    private List<byte>? _cards;
+    private readonly List<byte>? _cards;
     private List<byte>? _openedCards;
     private string? _name;
     private byte? _roleType;
@@ -106,7 +106,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     public List<byte>? Cards
     {
         get => _cards;
-        set
+        private init
         {
             _cards = value;
             QueuePacketSend(XPacketConverter.Serialize(XPacketType.Cards, new XPacketBytesList(_cards!)).ToPacket());
