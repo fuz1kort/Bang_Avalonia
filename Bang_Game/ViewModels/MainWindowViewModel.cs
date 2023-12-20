@@ -21,20 +21,13 @@ public sealed class MainWindowViewModel : ViewModelBase
         Initialize();
         Player = new Player();
         ConnectCommand = ReactiveCommand.Create(Connect);
-        EndTurnCommand = ReactiveCommand.Create(TryEndTurn);
-    }
-
-    private void TryEndTurn()
-    {
-        if(Player.CardsCount <= Player.Hp)
-            EndTurn();
+        EndTurnCommand = ReactiveCommand.Create(EndTurn);
     }
 
     private void EndTurn()
     {
-        // if(Player.CardsCount > Player.Hp)
-        
-        Player.EndTurn();
+        if(Player.CardsCount <= Player.Hp)
+            Player.EndTurn();
     }
 
     private void Connect() => Task.Run(() => Player.Connect());

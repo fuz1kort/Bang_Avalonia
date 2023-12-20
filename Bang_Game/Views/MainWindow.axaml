@@ -81,7 +81,9 @@
                 <TextBlock Margin="20 15" Text="Nickname:" Foreground="White" />
                 <TextBox Watermark="Введите свой никнейм" Margin="10" x:Name="Nickname" Text="{Binding Player.Name}" />
                 <Border>
-                    <Button Content="Подключиться" Classes="OnBackgroundImage" Click="PlayerJoin_OnClick"
+                    <Button Content="Подключиться" IsEnabled="{Binding ElementName=Nickname, Path=Text.Length}"
+                            Classes="OnBackgroundImage"
+                            Click="PlayerJoin_OnClick"
                             Command="{Binding ConnectCommand}" />
                 </Border>
             </StackPanel>
@@ -141,35 +143,33 @@
                     <Grid ColumnDefinitions="1*,2*,1*" RowDefinitions="1*,2*,1*">
                         <Grid Grid.Row="0" Grid.Column="1">
                             <StackPanel Background="DarkGray">
-                                <Ellipse Fill="{Binding Player.PlayersList[0].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
-                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                </Ellipse>
+                                <Ellipse Fill="{Binding Player.PlayersList[0].ColorString}" Width="10" Height="10"
+                                         Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <TextBlock Text="{Binding Player.PlayersList[0].Name}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[0].Hp}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[0].CardsCount}"
-                                           HorizontalAlignment="Center" Foreground="Black">
-                                </TextBlock>
+                                           HorizontalAlignment="Center" Foreground="Black" />
+                                <TextBlock IsVisible="{Binding Player.PlayersList[0].IsSheriff}" Text="Шериф"
+                                           Foreground="Black" />
                             </StackPanel>
                         </Grid>
 
                         <Grid Grid.Row="1" Grid.Column="0">
                             <StackPanel Background="DarkGray">
-                                <Ellipse Fill="{Binding Player.PlayersList[1].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
-                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                </Ellipse>
+                                <Ellipse Fill="{Binding Player.PlayersList[1].ColorString}" Width="10" Height="10"
+                                         Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <TextBlock Text="{Binding Player.PlayersList[1].Name}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[1].Hp}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[1].CardsCount}"
-                                           HorizontalAlignment="Center" Foreground="Black">
-                                </TextBlock>
+                                           HorizontalAlignment="Center" Foreground="Black" />
+                                <TextBlock IsVisible="{Binding Player.PlayersList[1].IsSheriff}" Text="Шериф"
+                                           Foreground="Black" />
                             </StackPanel>
                         </Grid>
 
@@ -183,42 +183,40 @@
 
                         <Grid Grid.Row="1" Grid.Column="2">
                             <StackPanel Background="DarkGray">
-                                <Ellipse Fill="{Binding Player.PlayersList[3].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
-                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                </Ellipse>
+                                <Ellipse Fill="{Binding Player.PlayersList[3].ColorString}" Width="10" Height="10"
+                                         Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <TextBlock Text="{Binding Player.PlayersList[3].Name}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[3].Hp}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[3].CardsCount}"
-                                           HorizontalAlignment="Center" Foreground="Black">
-                                </TextBlock>
+                                           HorizontalAlignment="Center" Foreground="Black" />
+                                <TextBlock IsVisible="{Binding Player.PlayersList[3].IsSheriff}" Text="Шериф"
+                                           Foreground="Black" />
                             </StackPanel>
                         </Grid>
 
                         <Grid Grid.Row="2" Grid.Column="1">
                             <StackPanel Background="DarkGray">
-                                <Ellipse Fill="{Binding Player.PlayersList[2].ColorString}" Width="10" Height="10" Margin="10 10 10 10"
-                                         HorizontalAlignment="Center" VerticalAlignment="Center">
-                                </Ellipse>
+                                <Ellipse Fill="{Binding Player.PlayersList[2].ColorString}" Width="10" Height="10"
+                                         Margin="10 10 10 10"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <TextBlock Text="{Binding Player.PlayersList[2].Name}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[2].Hp}" HorizontalAlignment="Center"
-                                           Foreground="Black">
-                                </TextBlock>
+                                           Foreground="Black" />
                                 <TextBlock Text="{Binding Player.PlayersList[2].CardsCount}"
-                                           HorizontalAlignment="Center" Foreground="Black">
-                                </TextBlock>
+                                           HorizontalAlignment="Center" Foreground="Black" />
+                                <TextBlock IsVisible="{Binding Player.PlayersList[2].IsSheriff}" Text="Шериф"
+                                           Foreground="Black" />
                             </StackPanel>
                         </Grid>
                     </Grid>
                 </Grid>
-                
+
                 <Grid Grid.Column="2" Background="Gray">
-                    
+
                 </Grid>
             </Grid>
         </Grid>

@@ -6,6 +6,6 @@ public enum XPacketType
     Connection,
     PlayersList,
     UpdatedPlayerProperty,
-    Cards,
+    Card,
     Turn
 }

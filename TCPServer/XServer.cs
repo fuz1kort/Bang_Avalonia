@@ -137,11 +137,8 @@ internal class XServer
 
             Thread.Sleep(1000);
             var hp = client.Hp;
-            for (var i = 0; i < hp; i++)
-            {
-                client.Cards!.Add(_cardsDeck.Pop());
-                client.CardsCount++;
-            }
+            for (var i = 0; i < hp; i++) 
+                client.GiveCard(_cardsDeck.Pop());
 
             if (role != 0)
                 continue;
@@ -151,6 +148,8 @@ internal class XServer
         }
 
         _isGameOver = false;
+
+        // _activePlayerId = 0;
 
         while (!_isGameOver)
         {
@@ -176,13 +175,10 @@ internal class XServer
                 _cardsDeck.Pop()
             };
 
-            activePlayer.Turn = true;
+            activePlayer.StartTurn();
 
-            foreach (var card in cards)
-            {
-                activePlayer.Cards!.Add(card);
-                activePlayer.CardsCount++;
-            }
+            foreach (var card in cards) 
+                activePlayer.GiveCard(card);
             //break;
             //}
 

@@ -25,12 +25,12 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     private string? _colorString;
     private bool _turn;
     private byte _hp;
-    private readonly List<byte>? _cards;
     private List<byte>? _openedCards;
     private string? _name;
     private byte? _roleType;
     private string? _heroName;
     private byte _cardsCount;
+    private bool _isSheriff;
 
     public string? Name
     {
@@ -71,7 +71,15 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    public bool IsSheriff { get; set; }
+    public bool IsSheriff
+    {
+        get => _isSheriff;
+        set
+        {
+            _isSheriff = value;
+            OnPropertyChanged();
+        }
+    }
 
     public byte? RoleType
     {
@@ -103,15 +111,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    public List<byte>? Cards
-    {
-        get => _cards;
-        private init
-        {
-            _cards = value;
-            QueuePacketSend(XPacketConverter.Serialize(XPacketType.Cards, new XPacketBytesList(_cards!)).ToPacket());
-        }
-    }
+    public List<byte>? Cards { get; private init; }
 
     public byte CardsCount
     {
@@ -192,7 +192,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
                 break;
             case XPacketType.PlayersList:
                 break;
-            case XPacketType.Cards:
+            case XPacketType.Card:
                 //TODO сделать получение карт
                 break;
             default:
@@ -261,12 +261,6 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
                 new XPacketUpdatedPlayerProperty(id, objectName, obj!.GetType(), obj))
             .ToPacket());
 
-    // public void SendPlayers(List<(byte Id, string? Name, string? ColorString)> connectedClients)
-    // {
-    //     var packetPlayers = XPacketConverter.Serialize(XPacketType.PlayersList, new XPacketPlayers(connectedClients!)).ToPacket();
-    //     QueuePacketSend(packetPlayers);
-    // }
-
     private static void SendPlayers()
     {
         var players = XServer.ConnectedClients.Select(x => x.GetPlayerParameters()).ToList();
@@ -275,5 +269,20 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         var bytePacket = packet.ToPacket();
         foreach (var client in XServer.ConnectedClients)
             client.QueuePacketSend(bytePacket);
+    }
+
+    public void GiveCard(byte cardId)
+    {
+        Cards!.Add(cardId);
+        CardsCount++;
+        var packerCard = XPacketConverter.Serialize(XPacketType.Card, new XPacketCard(cardId)).ToPacket();
+        QueuePacketSend(packerCard);
+    }
+
+    public void StartTurn()
+    {
+        Turn = true;
+        var packetTurn = XPacketConverter.Serialize(XPacketType.Turn, new XPacketMovingTurn()).ToPacket();
+        QueuePacketSend(packetTurn);
     }
 }

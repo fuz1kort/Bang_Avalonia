@@ -38,6 +38,7 @@ public sealed class Player : INotifyPropertyChanged
         get => _name;
         set
         {
+            if (value.Contains(' ')) return;
             _name = value;
             OnPropertyChanged();
         }
@@ -95,8 +96,6 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    //Для других игроков
-
     public bool IsSheriff
     {
         get => _isSheriff;
@@ -136,7 +135,6 @@ public sealed class Player : INotifyPropertyChanged
         get => _turn;
         set
         {
-            //TODO Сделать отмену окончания хода, если карт больше чем HP
             _turn = value;
             OnPropertyChanged();
         }
@@ -159,10 +157,8 @@ public sealed class Player : INotifyPropertyChanged
 
     public Player()
     {
-        IsSheriff = false;
         PlayersList = new ObservableCollection<Player> { new(0), new(1), new(2), new(3) };
         Cards = new List<PlayCard>();
-        Turn = false;
 
         _playCards = CardsGenerator.GeneratePlayCards();
         _heroCards = CardsGenerator.GenerateHeroCards();
@@ -270,8 +266,8 @@ public sealed class Player : INotifyPropertyChanged
             case XPacketType.PlayersList:
                 ProcessGettingPlayers(packet);
                 break;
-            case XPacketType.Cards:
-                ProcessGettingCardsSet(packet);
+            case XPacketType.Card:
+                ProcessGettingCard(packet);
                 break;
             case XPacketType.Turn:
                 ProcessStartingTurn(packet);
@@ -285,16 +281,12 @@ public sealed class Player : INotifyPropertyChanged
 
     private void ProcessStartingTurn(XPacket packet) => Turn = true;
 
-    private void ProcessGettingCardsSet(XPacket packet)
+    private void ProcessGettingCard(XPacket packet)
     {
-        var packetBeginCardsSet = XPacketConverter.Deserialize<XPacketBytesList>(packet);
-        var packetCards = packetBeginCardsSet.BytesList;
-        foreach (var packetCardId in packetCards!)
-        {
-            Cards.Add(_playCards[packetCardId]);
-            OnPropertyChanged(nameof(Cards));
-            CardsCount++;
-        }
+        var packetBeginCardsSet = XPacketConverter.Deserialize<XPacketCard>(packet);
+        Cards.Add(_playCards[packetBeginCardsSet.CardId]);
+        CardsCount++;
+        OnPropertyChanged(nameof(Cards));
     }
 
     private void ProcessGettingPlayers(XPacket packet)
@@ -302,8 +294,14 @@ public sealed class Player : INotifyPropertyChanged
         var packetPlayer = XPacketConverter.Deserialize<XPacketPlayers>(packet);
         var playersFromPacket = packetPlayer.Players;
         var playersList = playersFromPacket!.Select(x => new Player(x.Item1, x.Item2, x.Item3)).ToList();
+        foreach (var player in playersList)
+        {
+            PlayersList[player.Id] = playersList[player.Id];
+            OnPropertyChanged(nameof(PlayersList));
+        }
+            
         playersList[Id] = this;
-        PlayersList = new ObservableCollection<Player>(playersList);
+        OnPropertyChanged(nameof(PlayersList));
     }
 
     private static void ProcessConnection(XPacket packet)
