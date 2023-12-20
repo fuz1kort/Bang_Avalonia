@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bang_Game")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7523b4b88f94fb93342cfadf0068af745c81a546")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+035afce99331e4616319c94474ef5b923e4ea2fc")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bang_Game")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bang_Game")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

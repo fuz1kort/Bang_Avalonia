@@ -63,7 +63,7 @@
             <ListBox Name="ListBoxRules" ItemsSource="{Binding RuleImages}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding Bitmap}" Margin="-15" />
+                        <Image Source="{Binding }" Margin="-15" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

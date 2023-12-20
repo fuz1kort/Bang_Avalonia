@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 using Bang_Game.Models;
 using ReactiveUI;
 
@@ -35,9 +36,9 @@ public sealed class MainWindowViewModel : ViewModelBase
     private void Initialize()
     {
         var files = Directory.GetFiles("../../../Assets/Rules/");
-        var images = files.Select(x => new RulesImage(new FileInfo(x).FullName));
-        RuleImages = new ObservableCollection<RulesImage>(images);
+        var images = files.Select(x => new Bitmap(new FileInfo(x).FullName));
+        RuleImages = new ObservableCollection<Bitmap>(images);
     }
 
-    public ObservableCollection<RulesImage>? RuleImages { get; set; }
+    public ObservableCollection<Bitmap>? RuleImages { get; set; }
 }
