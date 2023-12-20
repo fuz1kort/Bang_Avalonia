@@ -83,15 +83,41 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    
+    private PlayCard _scopeCard = null!;
 
-    private List<PlayCard> _openedCards = null!;
-
-    public List<PlayCard> OpenedCards
+    public PlayCard ScopeCard
     {
-        get => _openedCards;
+        get => _scopeCard;
         set
         {
-            _openedCards = value;
+            _scopeCard = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    public byte Distance { get; set; }
+
+    private PlayCard _barrelCard = null!;
+
+    public PlayCard BarrelCard
+    {
+        get => _barrelCard;
+        set
+        {
+            _barrelCard = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    private PlayCard _mustangCard = null!;
+
+    public PlayCard MustangCard
+    {
+        get => _mustangCard;
+        set
+        {
+            _mustangCard = value;
             OnPropertyChanged();
         }
     }
@@ -116,18 +142,6 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    private readonly List<PlayCard> _cards = null!;
-
-    public List<PlayCard> Cards
-    {
-        get => _cards;
-        init
-        {
-            _cards = value;
-            OnPropertyChanged();
-        }
-    }
-
     private bool _turn;
 
     public bool Turn
@@ -136,6 +150,42 @@ public sealed class Player : INotifyPropertyChanged
         set
         {
             _turn = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private PlayCard _gunCard = null!;
+
+    public PlayCard GunCard
+    {
+        get => _gunCard;
+        set
+        {
+            _gunCard = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    private byte _shotRange;
+
+    public byte ShotRange
+    {
+        get => _shotRange;
+        set
+        {
+            _shotRange = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private PlayCard _activeCard = null!;
+
+    public PlayCard ActiveCard
+    {
+        get => _activeCard;
+        set
+        {
+            _activeCard = value;
             OnPropertyChanged();
         }
     }
@@ -152,13 +202,13 @@ public sealed class Player : INotifyPropertyChanged
         Id = id;
         Name = name;
         ColorString = colorString;
-        Cards = new List<PlayCard>();
+        Distance = 0;
     }
 
     public Player()
     {
         PlayersList = new ObservableCollection<Player> { new(0), new(1), new(2), new(3) };
-        Cards = new List<PlayCard>();
+        Name = "";
 
         _playCards = CardsGenerator.GeneratePlayCards();
         _heroCards = CardsGenerator.GenerateHeroCards();
@@ -188,7 +238,8 @@ public sealed class Player : INotifyPropertyChanged
     private string _colorString = null!;
     private bool _isSheriff;
     private string _name = null!;
-
+    public readonly List<PlayCard> Cards = new();
+    
     internal void Connect()
     {
         try
@@ -235,7 +286,7 @@ public sealed class Player : INotifyPropertyChanged
     {
         while (true)
         {
-            var buff = new byte[512];
+            var buff = new byte[1024];
             _socket!.Receive(buff);
 
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
@@ -351,6 +402,18 @@ public sealed class Player : INotifyPropertyChanged
                 ColorString = (packetProperty.PropertyValue as string)!;
                 break;
             }
+            case "ActiveCard":
+            case "ScopeCard":
+            case "BarrelCard":
+            case "MustangCard":
+            case "GunCard":
+            {
+                var property = GetType().GetProperty(packetProperty.PropertyName!);
+                property!.SetValue(PlayersList[packetProperty.PlayerId],
+                    _playCards[(byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!]);
+                OnPropertyChanged(nameof(PlayersList));
+                break;
+            }
             default:
             {
                 var property = GetType().GetProperty(packetProperty.PropertyName!);
@@ -375,8 +438,8 @@ public sealed class Player : INotifyPropertyChanged
             var packet = _packetSendingQueue.Dequeue();
             var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
 
-            if (encryptedPacket.Length > 512)
-                throw new Exception("Max packet size is 512 bytes.");
+            if (encryptedPacket.Length > 1024)
+                throw new Exception("Max packet size is 1024 bytes.");
 
             _socket!.Send(encryptedPacket);
 
@@ -388,6 +451,12 @@ public sealed class Player : INotifyPropertyChanged
     {
         Turn = false;
         var packet = XPacketConverter.Serialize(XPacketType.Turn, new XPacketMovingTurn()).ToPacket();
+        QueuePacketSend(packet);
+    }
+
+    internal void SendCard(PlayCard playCard)
+    {
+        var packet = XPacketConverter.Serialize(XPacketType.Card, new XPacketCard(playCard.Id)).ToPacket();
         QueuePacketSend(packet);
     }
 }

@@ -11,6 +11,7 @@ public static class XPacketTypeManager
         RegisterType(XPacketType.PlayersList, 2, 0);
         RegisterType(XPacketType.Turn, 3, 0);
         RegisterType(XPacketType.Card, 4, 0);
+        RegisterType(XPacketType.OpenedCard, 4, 1);
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)

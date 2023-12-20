@@ -21,16 +21,16 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     private readonly Random _random = new();
 
     public readonly byte Id;
-
     private string? _colorString;
     private bool _turn;
     private byte _hp;
-    private List<byte>? _openedCards;
     private string? _name;
     private byte? _roleType;
     private string? _heroName;
     private byte _cardsCount;
     private bool _isSheriff;
+    private byte _shotRange;
+    private byte _distance;
 
     public string? Name
     {
@@ -71,6 +71,16 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
+    public byte Distance
+    {
+        get => _distance;
+        set
+        {
+            _distance = value;
+            OnPropertyChanged();
+        }
+    }
+    
     public bool IsSheriff
     {
         get => _isSheriff;
@@ -87,7 +97,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         set
         {
             _roleType = value;
-            Update(Id, nameof(RoleType), _roleType);
+            UpdatePlayerProperty(Id, nameof(RoleType), _roleType);
         }
     }
 
@@ -101,17 +111,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    public List<byte>? OpenedCards
-    {
-        get => _openedCards;
-        set
-        {
-            _openedCards = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public List<byte>? Cards { get; private init; }
+    private List<byte>? Cards { get; init; }
 
     public byte CardsCount
     {
@@ -126,9 +126,81 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     public bool Turn
     {
         get => _turn;
-        set
+        private set
         {
             _turn = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private byte _activeCard;
+
+    public byte ActiveCard
+    {
+        get => _activeCard;
+        set
+        {
+            _activeCard = value;
+            if(value != 100)
+                OnPropertyChanged();
+        }
+    }
+
+    private byte _scopeCard;
+
+    public byte ScopeCard
+    {
+        get => _scopeCard;
+        set
+        {
+            _scopeCard = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private byte _barrelCard;
+
+    public byte BarrelCard
+    {
+        get => _barrelCard;
+        set
+        {
+            _barrelCard = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private byte _mustangCard;
+
+    public byte MustangCard
+    {
+        get => _mustangCard;
+        set
+        {
+            _mustangCard = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    private byte _gunCard;
+
+    public byte GunCard
+    {
+        get => _gunCard;
+        set
+        {
+            _gunCard = value;
+            ShotRange = value == 10 ? (byte)1 : (byte)2;
+            OnPropertyChanged();
+        }
+    }
+
+    public byte ShotRange
+    {
+        get => _shotRange;
+        set
+        {
+            _shotRange = value;
             OnPropertyChanged();
         }
     }
@@ -150,13 +222,11 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         Task.Run(SendPackets);
     }
 
-    private (byte, string, string) GetPlayerParameters() => (Id, Name, ColorString!)!;
-
     private void ReceivePackets()
     {
         while (true)
         {
-            var buff = new byte[512];
+            var buff = new byte[1024];
             Client.Receive(buff);
 
             var decryptedBuff = XProtocolEncryptor.Decrypt(buff);
@@ -193,11 +263,19 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
             case XPacketType.PlayersList:
                 break;
             case XPacketType.Card:
-                //TODO сделать получение карт
+                ProcessGettingActiveCard(packet);
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
+    }
+
+    private void ProcessGettingActiveCard(XPacket packet)
+    {
+        var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
+        Cards!.Remove(packetCard.CardId);
+        CardsCount--;
+        ActiveCard = packetCard.CardId;
     }
 
     private void ProcessUpdatingProperty(XPacket packet)
@@ -247,8 +325,8 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
             var packet = _packetSendingQueue.Dequeue();
             var encryptedPacket = XProtocolEncryptor.Encrypt(packet);
 
-            if (encryptedPacket.Length > 512)
-                throw new Exception("Max packet size is 512 bytes.");
+            if (encryptedPacket.Length > 1024)
+                throw new Exception("Max packet size is 1024 bytes.");
 
             Client.Send(encryptedPacket);
 
@@ -256,10 +334,12 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    internal void Update(byte id, string? objectName, object? obj)
+    internal void UpdatePlayerProperty(byte id, string? objectName, object? obj)
         => QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
                 new XPacketUpdatedPlayerProperty(id, objectName, obj!.GetType(), obj))
             .ToPacket());
+    
+    private (byte, string, string) GetPlayerParameters() => (Id, Name, ColorString!)!;
 
     private static void SendPlayers()
     {

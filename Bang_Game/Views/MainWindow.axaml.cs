@@ -15,6 +15,8 @@ public partial class MainWindow : Window
         GreetingPage.IsVisible = false;
         MainMenuPage.IsVisible = true;
         RulesPage.IsVisible = false;
+        NickInput.IsVisible = false;
+        Nickname.Text = "";
     }
 
     private void Rules_OnClick(object? sender, RoutedEventArgs e)

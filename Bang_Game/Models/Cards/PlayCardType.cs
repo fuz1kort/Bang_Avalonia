@@ -16,7 +16,4 @@ public enum PlayCardType
     Barrel,
     Volcanic,
     Schofield,
-    Remington,
-    Carbine,
-    Winchester
 }

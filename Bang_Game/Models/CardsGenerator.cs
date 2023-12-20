@@ -10,7 +10,7 @@ public static class CardsGenerator
     {
         var playCards = new Dictionary<byte, PlayCard>();
 
-        byte id = 0;
+        byte id = 1;
         var volcanic1 = new PlayCard(id, "Вулканик", 10, CardType.Clubs, PlayCardType.Volcanic, true, 1);
         playCards[id++] = volcanic1;
         var volcanic2 = new PlayCard(id, "Вулканик", 10, CardType.Spades, PlayCardType.Volcanic, true, 1);
@@ -21,12 +21,6 @@ public static class CardsGenerator
         playCards[id++] = schofield2;
         var schofield3 = new PlayCard(id, "Скофилд", 13, CardType.Spades, PlayCardType.Schofield, true, 2);
         playCards[id++] = schofield3;
-        var remington = new PlayCard(id, "Ремингтон", 13, CardType.Clubs, PlayCardType.Remington, true, 3);
-        playCards[id++] = remington;
-        var carbine = new PlayCard(id, "Карабин", 14, CardType.Clubs, PlayCardType.Carbine, true, 4);
-        playCards[id++] = carbine;
-        var winchester = new PlayCard(id, "Винчестер", 8, CardType.Spades, PlayCardType.Winchester, true, 5);
-        playCards[id++] = winchester;
 
         var mustang1 = new PlayCard(id, "Мустанг", 8, CardType.Hearts,
             PlayCardType.Mustang, true);
@@ -158,6 +152,7 @@ public static class CardsGenerator
     public static Dictionary<byte, RoleCard> GenerateRoleCards()
     {
         var roleCards = new Dictionary<byte, RoleCard>();
+
         var sheriff = new RoleCard(RoleType.Sheriff, true);
         roleCards[(byte)sheriff.RoleType] = sheriff;
         var bandit1 = new RoleCard(RoleType.Bandit, false);
@@ -173,6 +168,7 @@ public static class CardsGenerator
     public static Dictionary<string, HeroCard> GenerateHeroCards()
     {
         var heroCards = new Dictionary<string, HeroCard>();
+
         var billy = new Billy();
         heroCards[billy.HeroName!] = billy;
         var eyes = new Eyes();
@@ -191,6 +187,20 @@ public static class CardsGenerator
         heroCards[tom.HeroName!] = tom;
         var tuco = new Tuco();
         heroCards[tuco.HeroName!] = tuco;
+        var butch = new Butch();
+        heroCards[butch.HeroName!] = butch;
+        var dog = new Dog();
+        heroCards[dog.HeroName!] = dog;
+        var jango = new Jango();
+        heroCards[jango.HeroName!] = jango;
+        var luke = new Luke();
+        heroCards[luke.HeroName!] = luke;
+        var noname = new Noname();
+        heroCards[noname.HeroName!] = noname;
+        var rosie = new Rosie();
+        heroCards[rosie.HeroName!] = rosie;
+        var susie = new Susie();
+        heroCards[susie.HeroName!] = susie;
 
         return heroCards;
     }

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
+using TCPServer.Models;
 using TCPServer.Services;
 
 namespace TCPServer;
@@ -90,7 +91,7 @@ internal class XServer
 
             c.PropertyChanged += Client_PropertyChanged!;
 
-            if (ConnectedClients.Count == 4)
+            if (ConnectedClients.Count == 1)
                 break;
         }
     }
@@ -105,7 +106,7 @@ internal class XServer
             var type = client.GetType();
             var property = type.GetProperty(e.PropertyName!);
             var value = property!.GetValue(client);
-            connectedClient.Update(id, propertyName, value);
+            connectedClient.UpdatePlayerProperty(id, propertyName, value);
         }
     }
 
@@ -154,21 +155,7 @@ internal class XServer
         while (!_isGameOver)
         {
             var activePlayer = ConnectedClients[_activePlayerId % 4];
-            //switch (activePlayer.HeroName)
-            //{
-            //    case "Туко":
-            //        //TODO
-            //        break;
-            //    case "Джесси Джеймс":
-            //        //TODO
-            //        break;
-            //    case "Кит Карсон":
-            //        //TODO
-            //        break;
-            //    case "Бешенный Пёс":
-            //        //TODO
-            //        break;
-            //    default:
+
             var cards = new List<byte>
             {
                 _cardsDeck.Pop(),
@@ -179,15 +166,86 @@ internal class XServer
 
             foreach (var card in cards) 
                 activePlayer.GiveCard(card);
-            //break;
-            //}
 
             Console.WriteLine($"{activePlayer.Name}'s turn");
-            while (true)
+            do
             {
-                if (!activePlayer.Turn)
+                if (activePlayer.ActiveCard == 100) 
+                    continue;
+                
+                var cardId = activePlayer.ActiveCard;
+                switch (cardId)
+                {
+                    case (byte)PlayCardType.Beer:
+                    {
+                        activePlayer.Hp += 1;
+                        break;
+                    }
+                    case (byte)PlayCardType.Schofield:
+                    case (byte)PlayCardType.Volcanic:
+                    {
+                        activePlayer.GunCard = cardId;
+                        break;
+                    }
+                    case (byte)PlayCardType.Scope:
+                    {
+                        activePlayer.ShotRange += 1;
+                        activePlayer.ScopeCard = cardId;
+                        break;
+                    }
+                    case (byte)PlayCardType.Mustang:
+                    {
+                        activePlayer.Distance += 1;
+                        activePlayer.MustangCard = cardId;
+                        break;
+                    }
+                    case (byte)PlayCardType.Barrel:
+                    {
+                        activePlayer.BarrelCard = cardId;
+                        break;
+                    }
+                    case (byte)PlayCardType.Stagecoach:
+                    {
+                        activePlayer.GiveCard(_cardsDeck.Pop());
+                        activePlayer.GiveCard(_cardsDeck.Pop());
+                        break;
+                    }
+                    case (byte)PlayCardType.WellsFargo:
+                    {
+                        activePlayer.GiveCard(_cardsDeck.Pop());
+                        activePlayer.GiveCard(_cardsDeck.Pop());
+                        activePlayer.GiveCard(_cardsDeck.Pop());
+                        break;
+                    }
+                    case (byte)PlayCardType.Saloon:
+                    {
+                        foreach (var connectedClient in ConnectedClients) 
+                            connectedClient.UpdatePlayerProperty(connectedClient.Id, nameof(connectedClient.Hp), connectedClient.Hp+1);
+                        break;
+                    }
+                    case (byte)PlayCardType.Bang:
+                        //TODO
+                    {
+                        var id = 0; // переделать
+                        if(ConnectedClients.Count/2 - Math.Abs(activePlayer.Id - id)% ConnectedClients.Count/2 + ConnectedClients[id].Distance <= activePlayer.ShotRange) // В метод Bang у Player
+                            continue;
+                        break;
+                    }
+                    case (byte)PlayCardType.Missed:
+                        //TODO
+                    case (byte)PlayCardType.Panic:
+                    //TODO
+                    case (byte)PlayCardType.CatBalou:
+                    //TODO
+                    case (byte)PlayCardType.Gatling:
+                    //TODO
                     break;
-            }
+                }
+
+                activePlayer.ActiveCard = 100;
+
+            } 
+            while (activePlayer.Turn);
 
             Console.WriteLine($"Player {activePlayer.Name} has finished his turn");
             _activePlayerId += 1;
