@@ -91,7 +91,7 @@ internal class XServer
 
             c.PropertyChanged += Client_PropertyChanged!;
 
-            if (ConnectedClients.Count == 1)
+            if (ConnectedClients.Count == 4)
                 break;
         }
     }
