@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
-using TCPServer.Models;
+using Bang_Game_Models;
+using Bang_Game_Models.Cards;
 using TCPServer.Services;
 
 namespace TCPServer;
@@ -15,6 +16,10 @@ internal class XServer
     private bool _listening;
     private bool _stopListening;
     private bool _isGameOver;
+
+    internal static Dictionary<byte, RoleCard> RoleCards = new();
+    internal static Dictionary<string, HeroCard> HeroCards = new();
+    internal static Dictionary<byte, PlayCard> PlayCards = new();
 
     private static Stack<byte> _cardsDeck = new();
     private static Stack<string?> _heroesDeck = new();
@@ -91,7 +96,7 @@ internal class XServer
 
             c.PropertyChanged += Client_PropertyChanged!;
 
-            if (ConnectedClients.Count == 1)
+            if (ConnectedClients.Count == 4)
                 break;
         }
     }
@@ -116,6 +121,10 @@ internal class XServer
         _rolesDeck = rolesDeck;
         _heroesDeck = heroesDeck;
         _cardsDeck = cardsDeck;
+
+        PlayCards = CardsGenerator.GeneratePlayCards();
+        HeroCards = CardsGenerator.GenerateHeroCards();
+        RoleCards = CardsGenerator.GenerateRoleCards();
     }
 
     private static void SendCard(ConnectedClient connectedClient)
@@ -125,10 +134,10 @@ internal class XServer
             _cardsDeck = new GeneratorService().GetNewDeck(_reset);
             _reset = new Stack<byte>();
         }
-        
+
         connectedClient.GiveCard(_cardsDeck.Pop());
     }
-    
+
     public void StartGame()
     {
         InitializeGame();
@@ -140,7 +149,7 @@ internal class XServer
                 Thread.Sleep(1000);
                 continue;
             }
-            
+
             break;
         }
 
@@ -151,16 +160,16 @@ internal class XServer
             client.HeroName = hero;
             client.RoleType = role;
 
-            Thread.Sleep(1000);
-            var hp = client.Hp;
-            for (var i = 0; i < hp; i++) 
+            client.Hp = HeroCards[hero!].HeroHp;
+            if (role == (byte)RoleType.Sheriff)
+            {
+                _activePlayerId = ConnectedClients.IndexOf(client);
+                client.IsSheriff = true;
+                client.Hp++;
+            }
+
+            for (var i = 0; i < client.Hp; i++)
                 client.GiveCard(_cardsDeck.Pop());
-
-            if (role != 0)
-                continue;
-
-            _activePlayerId = ConnectedClients.IndexOf(client);
-            client.IsSheriff = true;
         }
 
         _isGameOver = false;
@@ -170,107 +179,226 @@ internal class XServer
             // if (ConnectedClients.Count <= 3)
             //     break;
 
-            
+
             var activePlayer = ConnectedClients[_activePlayerId % 4];
-            
+
+            if (activePlayer.Hp == 0)
+            {
+                _activePlayerId++;
+                continue;
+            }
+
             SendCard(activePlayer);
             SendCard(activePlayer);
-            
+
             activePlayer.StartTurn();
-            
 
             Console.WriteLine($"{activePlayer.Name}'s turn");
             do
             {
-                if (activePlayer.CardOnTable == 0) 
-                    continue;
-                
+                if (activePlayer.CardOnTable == 0) continue;
+
+
+                foreach (var client in ConnectedClients)
+                    client.IsReady = false;
+
                 var cardId = activePlayer.CardOnTable;
-                switch (cardId)
+                var card = PlayCards[cardId];
+                switch (card.PlayCardType)
                 {
-                    case (byte)PlayCardType.Beer:
+                    case PlayCardType.Beer:
                     {
                         activePlayer.Hp += 1;
-                        Thread.Sleep(5000);
+                        Thread.Sleep(1500);
                         break;
                     }
-                    case (byte)PlayCardType.Schofield:
-                    case (byte)PlayCardType.Volcanic:
+                    case PlayCardType.Schofield:
+                    case PlayCardType.Volcanic:
+                    case PlayCardType.Remington:
                     {
+                        if (activePlayer.GunCard != 0)
+                            SendCardToReset(activePlayer.GunCard);
                         activePlayer.GunCard = cardId;
-                        Thread.Sleep(3000);
                         break;
                     }
-                    case (byte)PlayCardType.Scope:
+                    case PlayCardType.Scope:
                     {
+                        if (activePlayer.ScopeCard != 0)
+                            SendCardToReset(activePlayer.ScopeCard);
                         activePlayer.ShotRange += 1;
                         activePlayer.ScopeCard = cardId;
-                        Thread.Sleep(3000);
                         break;
                     }
-                    case (byte)PlayCardType.Mustang:
+                    case PlayCardType.Mustang:
                     {
-                        activePlayer.Distance += 1;
+                        if (activePlayer.MustangCard != 0)
+                            SendCardToReset(activePlayer.MustangCard);
                         activePlayer.MustangCard = cardId;
-                        Thread.Sleep(3000);
                         break;
                     }
-                    case (byte)PlayCardType.Barrel:
+                    case PlayCardType.Barrel:
                     {
+                        if (activePlayer.BarrelCard != 0)
+                            SendCardToReset(activePlayer.BarrelCard);
                         activePlayer.BarrelCard = cardId;
-                        Thread.Sleep(3000);
                         break;
                     }
-                    case (byte)PlayCardType.Stagecoach:
+                    case PlayCardType.Stagecoach:
                     {
                         SendCard(activePlayer);
                         SendCard(activePlayer);
+                        Thread.Sleep(1000);
                         break;
                     }
-                    case (byte)PlayCardType.WellsFargo:
+                    case PlayCardType.WellsFargo:
                     {
                         SendCard(activePlayer);
                         SendCard(activePlayer);
                         SendCard(activePlayer);
+                        Thread.Sleep(1000);
                         break;
                     }
-                    case (byte)PlayCardType.Saloon:
+                    case PlayCardType.Saloon:
                     {
-                        foreach (var connectedClient in ConnectedClients) 
-                            connectedClient.UpdatePlayerProperty(connectedClient.Id, nameof(connectedClient.Hp), connectedClient.Hp+1);
-                        Thread.Sleep(3000);
+                        foreach (var connectedClient in ConnectedClients)
+                            connectedClient.UpdatePlayerProperty(connectedClient.Id, nameof(connectedClient.Hp),
+                                (byte)(connectedClient.Hp + 1));
+                        Thread.Sleep(1500);
                         break;
                     }
-                    case (byte)PlayCardType.Bang:
-                        //TODO
+                    case PlayCardType.Bang:
                     {
-                        var id = 0; // переделать
-                        if(ConnectedClients.Count/2 - Math.Abs(activePlayer.Id - id)% ConnectedClients.Count/2 + ConnectedClients[id].Distance <= activePlayer.ShotRange) // В метод Bang у Player
-                            continue;
+                        var id = activePlayer.ToPlayerId;
+                        var player = ConnectedClients[id];
+                        if (player.BarrelCard != 0)
+                        {
+                            var newCard = _cardsDeck.Pop();
+                            if (PlayCards[newCard].CardType == CardType.Hearts)
+                            {
+                                SendCardToReset(player.BarrelCard);
+                                player.BarrelCard = 0;
+                            }
+
+                            SendCardToReset(newCard);
+                        }
+                        else if (player.Cards!.Select(x => PlayCards[x].PlayCardType)
+                                 .Any(x => x == PlayCardType.Missed))
+                        {
+                            var missedCard = player.Cards!.Select(x => PlayCards[x])
+                                .Where(x => x.PlayCardType == PlayCardType.Missed).ToList()[0];
+                            SendCardToReset(missedCard.Id);
+                            player.Cards!.Remove(missedCard.Id);
+                            player.CardsCount--;
+                        }
+                        else
+                            player.Hp--;
+
                         break;
                     }
-                    case (byte)PlayCardType.Missed:
-                        //TODO
-                    case (byte)PlayCardType.Panic:
-                    //TODO
-                    case (byte)PlayCardType.CatBalou:
-                    //TODO
-                    case (byte)PlayCardType.Gatling:
-                    //TODO
-                    break;
+                    case PlayCardType.Panic:
+                    {
+                        var takenCard = ConnectedClients[activePlayer.ToPlayerId].GetRandomCard();
+                        activePlayer.GiveCard(takenCard);
+                        break;
+                    }
+                    case PlayCardType.CatBalou:
+                    {
+                        activePlayer.RemoveCardRandom();
+                        break;
+                    }
+                    case PlayCardType.Gatling:
+                    {
+                        foreach (var player in ConnectedClients.Where(client => client.Id != _activePlayerId))
+                        {
+                            if (player.BarrelCard != 0)
+                            {
+                                var newCard = _cardsDeck.Pop();
+                                if (PlayCards[newCard].CardType == CardType.Hearts)
+                                {
+                                    SendCardToReset(player.BarrelCard);
+                                    player.BarrelCard = 0;
+                                }
+
+                                SendCardToReset(newCard);
+                            }
+                            else if (player.Cards!.Select(x => PlayCards[x].PlayCardType)
+                                     .Any(x => x == PlayCardType.Missed))
+                            {
+                                var missedCard = player.Cards!.Select(x => PlayCards[x])
+                                    .Where(x => x.PlayCardType == PlayCardType.Missed).ToList()[0];
+                                SendCardToReset(missedCard.Id);
+                                player.Cards!.Remove(missedCard.Id);
+                                player.CardsCount--;
+                            }
+                            else
+                                player.Hp--;
+                        }
+
+                        break;
+                    }
+                    default:
+                    {
+                        Thread.Sleep(1500);
+                        break;
+                    }
                 }
-                
-                Thread.Sleep(3000);
-                
+
                 _reset.Push(activePlayer.CardOnTable);
 
                 activePlayer.CardOnTable = 0;
 
-            } 
-            while (activePlayer.Turn);
+                if (activePlayer.IsSheriff &&
+                    ConnectedClients.Where(x => x.Id != _activePlayerId).All(x => x.Hp == 0))
+                {
+                    _isGameOver = true;
+                    foreach (var client in ConnectedClients)
+                    {
+                        if (client.Id == _activePlayerId)
+                            activePlayer.Win();
+                        else
+                            client.Lose();
+                    }
+
+                    break;
+                }
+
+                if (activePlayer.RoleType == (byte)RoleType.Bandit &&
+                    ConnectedClients.Any(x => x is { RoleType: (byte)RoleType.Sheriff, Hp: 0 }))
+                {
+                    _isGameOver = true;
+                    foreach (var client in ConnectedClients)
+                    {
+                        if (client.Id == _activePlayerId)
+                            activePlayer.Win();
+                        else
+                            client.Lose();
+                    }
+
+                    break;
+                }
+
+                if (activePlayer.RoleType != (byte)RoleType.Renegade || ConnectedClients.Any(x => x.Hp != 0)) continue;
+                {
+                    _isGameOver = true;
+                    foreach (var client in ConnectedClients)
+                    {
+                        if (client.Id == _activePlayerId)
+                            activePlayer.Win();
+                        else
+                            client.Lose();
+                    }
+
+                    break;
+                }
+            } while (activePlayer.Turn);
 
             Console.WriteLine($"Player {activePlayer.Name} has finished his turn");
             _activePlayerId += 1;
         }
+    }
+
+    internal static void SendCardToReset(byte id)
+    {
+        _reset.Push(id);
     }
 }

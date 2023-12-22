@@ -10,8 +10,13 @@ public static class XPacketTypeManager
         RegisterType(XPacketType.UpdatedPlayerProperty, 1, 0);
         RegisterType(XPacketType.PlayersList, 2, 0);
         RegisterType(XPacketType.Turn, 3, 0);
-        RegisterType(XPacketType.Card, 4, 0);
-        RegisterType(XPacketType.OpenedCard, 4, 1);
+        RegisterType(XPacketType.BangToPlayer, 3, 1);
+        RegisterType(XPacketType.CardToTable, 4, 0);
+        RegisterType(XPacketType.CardToReset, 4, 1);
+        RegisterType(XPacketType.CardToPlayer, 4, 2);
+        RegisterType(XPacketType.RemoveCard, 4, 3);
+        RegisterType(XPacketType.Win, 5, 0);
+        RegisterType(XPacketType.Lose, 5, 1);
     }
 
     private static void RegisterType(XPacketType type, byte btype, byte bsubtype)

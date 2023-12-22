@@ -30,7 +30,6 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     private byte _cardsCount;
     private bool _isSheriff;
     private byte _shotRange;
-    private byte _distance;
 
     public string? Name
     {
@@ -71,16 +70,6 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    public byte Distance
-    {
-        get => _distance;
-        set
-        {
-            _distance = value;
-            OnPropertyChanged();
-        }
-    }
-    
     public bool IsSheriff
     {
         get => _isSheriff;
@@ -111,7 +100,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    private List<byte>? Cards { get; init; }
+    internal List<byte>? Cards { get; init; }
 
     public byte CardsCount
     {
@@ -144,6 +133,8 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+
+    public byte ToPlayerId { get; set; } = 10;
 
     private byte _scopeCard;
 
@@ -180,7 +171,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     private byte _gunCard;
 
     public byte GunCard
@@ -189,7 +180,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         set
         {
             _gunCard = value;
-            ShotRange = value == 10 ? (byte)1 : (byte)2;
+            ShotRange = XServer.PlayCards[value].ShotRange;
             OnPropertyChanged();
         }
     }
@@ -204,7 +195,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    public bool IsReady { get; private set; }
+    public bool IsReady { get; set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -261,12 +252,24 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
                 break;
             case XPacketType.PlayersList:
                 break;
-            case XPacketType.Card:
+            case XPacketType.CardToTable:
                 ProcessGettingCardOnTable(packet);
                 break;
+            case XPacketType.CardToReset:
+                ProcessSendingCardToReset(packet);
+                break;
+            case XPacketType.CardToPlayer:
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
+    }
+
+    private void ProcessSendingCardToReset(XPacket packet)
+    {
+        var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
+        Cards!.Remove(packetCard.CardId);
+        CardsCount--;
+        XServer.SendCardToReset(packetCard.CardId);
     }
 
     private void ProcessGettingCardOnTable(XPacket packet)
@@ -274,6 +277,8 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
         Cards!.Remove(packetCard.CardId);
         CardsCount--;
+        if (packetCard.ToPlayerId != 10)
+            ToPlayerId = packetCard.ToPlayerId;
         CardOnTable = packetCard.CardId;
     }
 
@@ -337,7 +342,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         => QueuePacketSend(XPacketConverter.Serialize(XPacketType.UpdatedPlayerProperty,
                 new XPacketUpdatedPlayerProperty(id, objectName, obj!.GetType(), obj))
             .ToPacket());
-    
+
     private (byte, string, string) GetPlayerParameters() => (Id, Name, ColorString!)!;
 
     private static void SendPlayers()
@@ -354,14 +359,34 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     {
         Cards!.Add(cardId);
         CardsCount++;
-        var packerCard = XPacketConverter.Serialize(XPacketType.Card, new XPacketCard(cardId)).ToPacket();
+        var packerCard = XPacketConverter.Serialize(XPacketType.CardToPlayer, new XPacketCard(cardId)).ToPacket();
+        QueuePacketSend(packerCard);
+    }
+
+    public void RemoveCardRandom()
+    {
+        var removedCard = Cards![_random.Next(CardsCount)];
+        Cards!.Remove(removedCard);
+        CardsCount--;
+        var packerCard = XPacketConverter.Serialize(XPacketType.RemoveCard, new XPacketCard(removedCard)).ToPacket();
         QueuePacketSend(packerCard);
     }
 
     public void StartTurn()
     {
         Turn = true;
-        var packetTurn = XPacketConverter.Serialize(XPacketType.Turn, new XPacketMovingTurn()).ToPacket();
+        var packetTurn = XPacketConverter.Serialize(XPacketType.Turn, new XPacketEmpty()).ToPacket();
         QueuePacketSend(packetTurn);
     }
+
+    public byte GetRandomCard()
+    {
+        var removedCard = Cards![_random.Next(CardsCount)];
+        Cards!.Remove(removedCard);
+        CardsCount--;
+        return removedCard;
+    }
+
+    public void Win() => QueuePacketSend(XPacketConverter.Serialize(XPacketType.Win, new XPacketEmpty()).ToPacket());
+    public void Lose() => QueuePacketSend(XPacketConverter.Serialize(XPacketType.Lose, new XPacketEmpty()).ToPacket());
 }

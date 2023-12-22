@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPServer", "TCPServer\TCPS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XProtocol", "XProtocol\XProtocol.csproj", "{D789A6BD-9650-40C1-9326-48783DAEA738}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bang_Game_Models", "Bang_Game_Models\Bang_Game_Models.csproj", "{129F73F2-D0D1-4CCA-A4B5-246DBD9BDDD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{D789A6BD-9650-40C1-9326-48783DAEA738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D789A6BD-9650-40C1-9326-48783DAEA738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D789A6BD-9650-40C1-9326-48783DAEA738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{129F73F2-D0D1-4CCA-A4B5-246DBD9BDDD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{129F73F2-D0D1-4CCA-A4B5-246DBD9BDDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{129F73F2-D0D1-4CCA-A4B5-246DBD9BDDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{129F73F2-D0D1-4CCA-A4B5-246DBD9BDDD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

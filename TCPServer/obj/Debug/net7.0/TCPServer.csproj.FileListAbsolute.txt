@@ -64,3 +64,5 @@ C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Av
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\MicroCom.Runtime.dll
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Newtonsoft.Json.dll
 C:\Users\gafar\source\repos\fuz1kort\Bang_Avalonia\TCPServer\obj\Debug\net7.0\Avalonia\Resources.Inputs.cache
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Bang_Game_Models.dll
+C:\Users\Marat\source\repos\fuz1kort\Bang_Avalonia\TCPServer\bin\Debug\net7.0\Bang_Game_Models.pdb

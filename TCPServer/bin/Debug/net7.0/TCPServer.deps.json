@@ -9,6 +9,7 @@
       "TCPServer/1.0.0": {
         "dependencies": {
           "Avalonia": "11.0.5",
+          "Bang_Game_Models": "1.0.0",
           "XProtocol": "1.0.0"
         },
         "runtime": {
@@ -91,6 +92,11 @@
         }
       },
       "System.ComponentModel.Annotations/4.5.0": {},
+      "Bang_Game_Models/1.0.0": {
+        "runtime": {
+          "Bang_Game_Models.dll": {}
+        }
+      },
       "XProtocol/1.0.0": {
         "dependencies": {
           "Newtonsoft.Json": "13.0.3"
@@ -148,6 +154,11 @@
       "sha512": "sha512-UxYQ3FGUOtzJ7LfSdnYSFd7+oEv6M8NgUatatIN2HxNtDdlcvFAf+VIq4Of9cDMJEJC0aSRv/x898RYhB4Yppg==",
       "path": "system.componentmodel.annotations/4.5.0",
       "hashPath": "system.componentmodel.annotations.4.5.0.nupkg.sha512"
+    },
+    "Bang_Game_Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "XProtocol/1.0.0": {
       "type": "project",

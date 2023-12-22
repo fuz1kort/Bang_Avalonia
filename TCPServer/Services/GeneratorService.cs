@@ -9,7 +9,7 @@ public class GeneratorService
         var roles = new List<byte> { 0, 1, 1, 2 };
         var heroes = new List<string?> { "МАЛЫШ БИЛЛИ", "ТУКО", "ТОМ КЕТЧУМ", "БОЛЬШОЙ ЗМЕЙ", "КИТ КАРСОН", "НЕУЛОВИМЫЙ ДЖО", "БЕДОВАЯ ДЖЕЙН", "ДЖЕССИ ДЖЕЙМС", "АНГЕЛЬСКИЕ ГЛАЗКИ", "ДЖАНГО", "ХЛАДНОКРОВНАЯ РОЗИ", "ЧЕЛОВЕК-БЕЗ-ИМЕНИ", "СЮЗИ ЛАФАЙЕТ", "БУТЧ КЭССИДИ", "БЕШЕНЫЙ ПЁС", "СЧАСТЛИВЧИК ЛЮК" };
         var cards = new List<byte>();
-        for (byte id = 1; id < 67; id++) 
+        for (byte id = 1; id < 68; id++) 
             cards.Add(id);
         
         var rolesDeck = new Stack<byte>();

@@ -1460,6 +1460,16 @@
           "lib/net6.0/Tmds.DBus.Protocol.dll": {}
         }
       },
+      "Bang_Game_Models/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "compile": {
+          "bin/placeholder/Bang_Game_Models.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Bang_Game_Models.dll": {}
+        }
+      },
       "XProtocol/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
@@ -4740,6 +4750,11 @@
         "tmds.dbus.protocol.nuspec"
       ]
     },
+    "Bang_Game_Models/1.0.0": {
+      "type": "project",
+      "path": "../Bang_Game_Models/Bang_Game_Models.csproj",
+      "msbuildProject": "../Bang_Game_Models/Bang_Game_Models.csproj"
+    },
     "XProtocol/1.0.0": {
       "type": "project",
       "path": "../XProtocol/XProtocol.csproj",
@@ -4754,6 +4769,7 @@
       "Avalonia.Fonts.Inter >= 11.0.5",
       "Avalonia.ReactiveUI >= 11.0.5",
       "Avalonia.Themes.Fluent >= 11.0.5",
+      "Bang_Game_Models >= 1.0.0",
       "XProtocol >= 1.0.0"
     ]
   },
@@ -4790,6 +4806,9 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
+            "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\Bang_Game_Models\\Bang_Game_Models.csproj": {
+              "projectPath": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\Bang_Game_Models\\Bang_Game_Models.csproj"
+            },
             "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\XProtocol\\XProtocol.csproj": {
               "projectPath": "C:\\Users\\Marat\\source\\repos\\fuz1kort\\Bang_Avalonia\\XProtocol\\XProtocol.csproj"
             }

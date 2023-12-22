@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Bang_Game_Models\Bang_Game_Models.csproj" />
       <ProjectReference Include="..\XProtocol\XProtocol.csproj" />
     </ItemGroup>
 

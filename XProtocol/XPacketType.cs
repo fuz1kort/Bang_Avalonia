@@ -6,7 +6,12 @@ public enum XPacketType
     Connection,
     PlayersList,
     UpdatedPlayerProperty,
-    Card,
-    OpenedCard,
-    Turn
+    CardToTable,
+    CardToReset,
+    CardToPlayer,
+    RemoveCard,
+    BangToPlayer,
+    Turn,
+    Win,
+    Lose
 }
