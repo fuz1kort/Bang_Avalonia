@@ -17,6 +17,28 @@
             <Setter Property="Background" Value="GhostWhite" />
             <Setter Property="Foreground" Value="Black" />
         </Style>
+
+        <Style Selector="TextBlock.TextOnCard">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0, 10, 0, 30 " />
+        </Style>
+
+        <Style Selector="TextBlock.NumberTypeOnCard">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="8" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Margin" Value="3,50,5,5" />
+        </Style>
+        <Style Selector="Button.Card">
+            <Setter Property="Background" Value="Firebrick" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Height" Value="120" />
+            <Setter Property="Width" Value="80" />
+        </Style>
     </Window.Styles>
 
     <Window.Background>
@@ -73,7 +95,7 @@
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left"
                 Click="OpenMainMenu_OnClick"
-                HotKey="Escape"/>
+                HotKey="Escape" />
         </Grid>
 
         <Border CornerRadius="20" x:Name="NickInput" IsVisible="False" HorizontalAlignment="Center"
@@ -87,25 +109,27 @@
                         Classes="OnBackgroundImage"
                         HorizontalAlignment="Left"
                         Click="OpenMainMenu_OnClick"
-                        HotKey="Escape"/>
+                        HotKey="Escape" />
                     <Button
                         Content="Подключиться" IsEnabled="{Binding ElementName=Nickname, Path=Text.Length}"
                         HorizontalAlignment="Right"
                         Classes="OnBackgroundImage"
                         Click="PlayerJoin_OnClick"
-                        Command="{Binding ConnectCommand}"
-                        />
+                        Command="{Binding ConnectCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>
 
-        <Grid RowDefinitions="Auto,17*" x:Name="GameGrid" IsVisible="False" VerticalAlignment="Stretch">
-            <Grid Grid.Row="0" VerticalAlignment="Top" Background="Gray">
+        <Grid RowDefinitions="Auto,17*, Auto" x:Name="GameGrid" IsVisible="False" VerticalAlignment="Stretch">
+            <Grid.Background>
+                <ImageBrush Source="../../../Assets/GameBackground.png" Stretch="Fill" />
+            </Grid.Background>
+            <Grid Grid.Row="0" VerticalAlignment="Top" Background="#0080461C">
                 <ListBox ItemsSource="{Binding Player.PlayersList}"
                          x:Name="PlayersListBox"
                          HorizontalAlignment="Left"
                          VerticalAlignment="Stretch"
-                         Background="Gray"
+                         Background="#4680461C"
                          MinHeight="45"
                          Height="{Binding $parent[Grid].Height}">
                     <ListBox.ItemsPanel>
@@ -137,93 +161,198 @@
                         Margin="0 0 15 0"
                         Content="Закончить ход" />
             </Grid>
-            <Grid Grid.Row="1" ColumnDefinitions="1*,16*,1*" VerticalAlignment="Stretch">
-                <Grid Grid.Column="0" Background="Gray">
+            <Grid Grid.Row="1" ColumnDefinitions="2*,16*" VerticalAlignment="Stretch">
+                <Grid Grid.Column="0" Background="#C880461C">
                     <StackPanel>
-                        <TextBlock Text="{Binding Player.Id}" />
-                        <TextBlock Text="{Binding Player.Name}" />
-                        <TextBlock Text="{Binding Player.Hp}" />
-                        <TextBlock Text="{Binding Player.CardsCount}" />
-                        <TextBlock Text="{Binding Player.HeroCard.HeroName}" TextWrapping="Wrap" />
-                        <TextBlock Text="{Binding Player.RoleCard.RoleType}" />
-                        <TextBlock Text="{Binding Player.IsSheriff}" />
+                        <TextBlock Foreground="White"> Ваш Ник:</TextBlock>
+                        <TextBlock Text="{Binding Player.Name}" Foreground="White" FontWeight="Bold" />
+                        <TextBlock Foreground="White"> Ваш уровень здоровья:</TextBlock>
+                        <TextBlock Text="{Binding Player.Hp}" Foreground="White" FontWeight="Bold" />
+                        <TextBlock Foreground="White"> Ваш герой:</TextBlock>
+                        <TextBlock Text="{Binding Player.HeroCard.HeroName}" Foreground="White" FontWeight="Bold" />
+                        <TextBlock Foreground="White"> Ваша роль:</TextBlock>
+                        <TextBlock Text="{Binding Player.RoleCard.RoleType}" Foreground="White" FontWeight="Bold" />
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Column="1" Background="White">
+                <Grid Grid.Column="1">
                     <Grid ColumnDefinitions="1*,2*,1*" RowDefinitions="1*,2*,1*">
-                        <Grid Grid.Row="0" Grid.Column="1" Background="DarkGray">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Ellipse Fill="{Binding Player.PlayersList[0].ColorString}" Width="10" Height="10"
-                                         Margin="2 2 2 2" VerticalAlignment="Top" HorizontalAlignment="Center" />
-                                <TextBlock Text="{Binding Player.PlayersList[0].Name}"
-                                           Foreground="Black" HorizontalAlignment="Center" />
-                                <TextBlock Text="{Binding Player.PlayersList[0].Hp}"
-                                           Foreground="Black" HorizontalAlignment="Center" />
-                                <TextBlock Text="{Binding Player.PlayersList[0].CardsCount}"
-                                           Foreground="Black" HorizontalAlignment="Center" />
-                                <TextBlock IsVisible="{Binding Player.PlayersList[0].IsSheriff}" Text="Шериф"
-                                           Foreground="Black" HorizontalAlignment="Center" />
-                            </StackPanel>
+                        <Grid Grid.Row="0" Grid.Column="1" Background="#0080461C">
+                            <!-- <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"> -->
+                            <!-- <Ellipse Fill="{Binding Player.PlayersList[0].ColorString}" Width="10" Height="10" -->
+                            <!--          Margin="2 2 2 2" VerticalAlignment="Top" HorizontalAlignment="Center" /> -->
+                            <!-- <TextBlock Text="{Binding Player.PlayersList[0].Name}" -->
+                            <!--            Foreground="White" HorizontalAlignment="Center" /> -->
+                            <!--     <TextBlock Text="{Binding Player.PlayersList[0].Hp}" -->
+                            <!--                Foreground="White" HorizontalAlignment="Center" /> -->
+                            <!--     <TextBlock Text="{Binding Player.PlayersList[0].CardsCount}" -->
+                            <!--                Foreground="White" HorizontalAlignment="Center" /> -->
+                            <!--     <TextBlock IsVisible="{Binding Player.PlayersList[0].IsSheriff}" Text="Шериф" -->
+                            <!--                Foreground="White" HorizontalAlignment="Center" /> -->
+                            <!-- </StackPanel> -->
+                            <Canvas>
+                                <StackPanel Canvas.Right="10" Canvas.Top="0" Orientation="Horizontal">
+                                    <Ellipse Fill="{Binding Player.PlayersList[0].ColorString}" Width="10" Height="10"
+                                             Margin="2 2 2 2" VerticalAlignment="Top" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding Player.PlayersList[0].Name}"
+                                               Foreground="White" HorizontalAlignment="Center" />
+                                </StackPanel>
+                                <Path Stroke="{Binding Player.PlayersList[0].ColorString}" StrokeThickness="3" Canvas.Left="0" Canvas.Top="0" Fill="{Binding Player.PlayersList[0].ColorString}"
+                                      Data="M 21,0 
+              A 10,10 0 0 0 0,20
+              C 5,25 20,35 20,35
+              C 20,35 30,30 40,20
+              A 10,10 0 0 0 19,0
+              " />
+                                <TextBlock Text="{Binding Player.PlayersList[0].Hp}" Foreground="Black" FontWeight="Bold" Canvas.Left="15" Canvas.Top="5"/>
+                                <Image Source="../Assets/Cards/PlayCards/PlayCardBack.jpg" Canvas.Left="15" Canvas.Top="40" Width="40" Height="80"/>
+                                <TextBlock Text="{Binding Player.PlayersList[0].CardsCount}" Foreground="White" FontWeight="Bold" Canvas.Left="28" Canvas.Top="65" FontSize="20"/>
+                                <Button Classes="Card" IsVisible="{Binding Player.PlayersList[0].GunCard.Id}" Width="38" Height="68" Canvas.Left="75" Canvas.Top="45">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Player.PlayersList[0].GunCard.Name}" Classes="TextOnCard" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                            <TextBlock Text="{Binding Player.PlayersList[0].GunCard.Number}"
+                                                       Classes="NumberTypeOnCard" />
+                                            <TextBlock Text="{Binding Player.PlayersList[0].GunCard.CardType}"
+                                                       Classes="NumberTypeOnCard" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Classes="Card" IsVisible="{Binding Player.PlayersList[0].BarrelCard.Id}" Width="38" Height="67" Canvas.Left="135" Canvas.Top="45">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Player.PlayersList[0].BarrelCard.Name}" Classes="TextOnCard" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                            <TextBlock Text="{Binding Player.PlayersList[0].BarrelCard.Number}"
+                                                       Classes="NumberTypeOnCard" />
+                                            <TextBlock Text="{Binding Player.PlayersList[0].BarrelCard.CardType}"
+                                                       Classes="NumberTypeOnCard" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Classes="Card" IsVisible="{Binding Player.PlayersList[0].MustangCard.Id}" Width="38" Height="67" Canvas.Left="195" Canvas.Top="45">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Player.PlayersList[0].MustangCard.Name}" Classes="TextOnCard" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                            <TextBlock Text="{Binding Player.PlayersList[0].MustangCard.Number}"
+                                                       Classes="NumberTypeOnCard" />
+                                            <TextBlock Text="{Binding Player.PlayersList[0].MustangCard.CardType}"
+                                                       Classes="NumberTypeOnCard" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Classes="Card" IsVisible="{Binding Player.PlayersList[0].ScopeCard.Id}" Width="38" Height="67" Canvas.Left="255" Canvas.Top="45">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Player.PlayersList[0].ScopeCard.Name}" Classes="TextOnCard" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                            <TextBlock Text="{Binding Player.PlayersList[0].ScopeCard.Number}"
+                                                       Classes="NumberTypeOnCard" />
+                                            <TextBlock Text="{Binding Player.PlayersList[0].ScopeCard.CardType}"
+                                                       Classes="NumberTypeOnCard" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <TextBlock Canvas.Right="10" Canvas.Top="20" Text="{Binding Player.PlayersList[0].HeroCard.HeroName}" FontSize="12" Foreground="White"/>
+
+                            </Canvas>
                         </Grid>
 
-                        <Grid Grid.Row="1" Grid.Column="0" Background="DarkGray">
+                        <Grid Grid.Row="1" Grid.Column="0" Background="#0080461C">
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
-                                <Ellipse Fill="{Binding Player.PlayersList[1].ColorString}" Width="10" Height="10"
-                                         Margin="2 2 2 2" />
-                                <TextBlock Text="{Binding Player.PlayersList[1].Name}"
-                                           Foreground="Black" />
-                                <TextBlock Text="{Binding Player.PlayersList[1].Hp}"
-                                           Foreground="Black" />
-                                <TextBlock Text="{Binding Player.PlayersList[1].CardsCount}"
-                                           Foreground="Black" />
-                                <TextBlock IsVisible="{Binding Player.PlayersList[1].IsSheriff}" Text="Шериф"
-                                           Foreground="Black" />
-                            </StackPanel>
-                        </Grid>
-
-                        <Grid Grid.Row="1" Grid.Column="1" Background="BurlyWood">
-                            <StackPanel>
-                                <TextBlock Text="Deck"
-                                           HorizontalAlignment="Center" Foreground="Black">
-                                </TextBlock>
-                            </StackPanel>
-                        </Grid>
-
-                        <Grid Grid.Row="1" Grid.Column="2" Background="DarkGray">
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right">
                                 <Ellipse Fill="{Binding Player.PlayersList[3].ColorString}" Width="10" Height="10"
                                          Margin="2 2 2 2" />
                                 <TextBlock Text="{Binding Player.PlayersList[3].Name}"
-                                           Foreground="Black" />
+                                           Foreground="White" />
                                 <TextBlock Text="{Binding Player.PlayersList[3].Hp}"
-                                           Foreground="Black" />
+                                           Foreground="White" />
                                 <TextBlock Text="{Binding Player.PlayersList[3].CardsCount}"
-                                           Foreground="Black" />
+                                           Foreground="White" />
                                 <TextBlock IsVisible="{Binding Player.PlayersList[3].IsSheriff}" Text="Шериф"
-                                           Foreground="Black" />
+                                           Foreground="White" />
                             </StackPanel>
                         </Grid>
 
-                        <Grid Grid.Row="2" Grid.Column="1" Background="DarkGray">
+                        <Grid Grid.Row="1" Grid.Column="1" Background="#B4DEB887">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="Стол" VerticalAlignment="Top" HorizontalAlignment="Center"
+                                           Margin="10,3,10,30" />
+                                <StackPanel HorizontalAlignment="Center">
+                                    <Button Classes="Card" IsVisible="{Binding Player.CardOnTable.Id}"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Player.CardOnTable.Name}" Classes="TextOnCard" />
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                                <TextBlock Text="{Binding Player.CardOnTable.Number}"
+                                                           Classes="NumberTypeOnCard" />
+                                                <TextBlock Text="{Binding Player.CardOnTable.CardType}"
+                                                           Classes="NumberTypeOnCard" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Grid.Column="2" Background="#0080461C">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <Ellipse Fill="{Binding Player.PlayersList[1].ColorString}" Width="10" Height="10"
+                                         Margin="2 2 2 2" />
+                                <TextBlock Text="{Binding Player.PlayersList[1].Name}"
+                                           Foreground="White" />
+                                <TextBlock Text="{Binding Player.PlayersList[1].Hp}"
+                                           Foreground="White" />
+                                <TextBlock Text="{Binding Player.PlayersList[1].CardsCount}"
+                                           Foreground="White" />
+                                <TextBlock IsVisible="{Binding Player.PlayersList[1].IsSheriff}" Text="Шериф"
+                                           Foreground="White" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="2" Grid.Column="1" Background="#0080461C">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Ellipse Fill="{Binding Player.PlayersList[2].ColorString}" Width="10" Height="10"
                                          Margin="2 2 2 2" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
                                 <TextBlock Text="{Binding Player.PlayersList[2].Name}"
-                                           Foreground="Black" HorizontalAlignment="Center" />
+                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
                                 <TextBlock Text="{Binding Player.PlayersList[2].Hp}"
-                                           Foreground="Black" HorizontalAlignment="Center" />
+                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
                                 <TextBlock Text="{Binding Player.PlayersList[2].CardsCount}"
-                                           Foreground="Black" HorizontalAlignment="Center" />
+                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
                                 <TextBlock IsVisible="{Binding Player.PlayersList[2].IsSheriff}" Text="Шериф"
-                                           Foreground="Black" HorizontalAlignment="Center" />
+                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
                             </StackPanel>
                         </Grid>
+
                     </Grid>
                 </Grid>
-
-                <Grid Grid.Column="2" Background="Gray">
-
-                </Grid>
+            </Grid>
+            <Grid Grid.Row="2" Background="#4680461C">
+                <ListBox ItemsSource="{Binding Player.Cards}" MinHeight="100" Background="#4680461C"
+                         SelectionMode="AlwaysSelected">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Button Classes="Card" CommandParameter="{Binding Id}"
+                                    Command="{Binding $parent[Grid].((viewModels:MainWindowViewModel)DataContext).DropCardOnTableCommand}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" Classes="TextOnCard" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                        <TextBlock Text="{Binding Number}"
+                                                   Classes="NumberTypeOnCard" />
+                                        <TextBlock Text="{Binding CardType}"
+                                                   Classes="NumberTypeOnCard" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
         </Grid>
     </Grid>

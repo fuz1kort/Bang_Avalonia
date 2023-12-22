@@ -16,6 +16,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> ConnectCommand { get; }
 
     public ReactiveCommand<Unit, Unit> EndTurnCommand { get; }
+    
+    public ReactiveCommand<byte, Unit> DropCardOnTableCommand { get; }
 
     public MainWindowViewModel()
     {
@@ -23,7 +25,10 @@ public sealed class MainWindowViewModel : ViewModelBase
         Player = new Player();
         ConnectCommand = ReactiveCommand.Create(Connect);
         EndTurnCommand = ReactiveCommand.Create(EndTurn);
+        DropCardOnTableCommand = ReactiveCommand.Create<byte>(DropCardOnTable);
     }
+
+    private void DropCardOnTable(byte idCard) => Player.DropCardOnTable(idCard);
 
     private void EndTurn()
     {

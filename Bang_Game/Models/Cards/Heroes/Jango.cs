@@ -4,7 +4,7 @@ public class Jango : HeroCard
 {
     public Jango()
     {
-        HeroName = "Джанго";
+        HeroName = "ДЖАНГО";
         HeroHp = 3;
     }
 }

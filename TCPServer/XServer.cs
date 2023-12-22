@@ -19,7 +19,7 @@ internal class XServer
     private static Stack<byte> _cardsDeck = new();
     private static Stack<string?> _heroesDeck = new();
     private static Stack<byte> _rolesDeck = new();
-    // private static Stack<PlayCard> _reset = new();
+    private static Stack<byte> _reset = new();
 
     private int _activePlayerId;
 
@@ -91,7 +91,7 @@ internal class XServer
 
             c.PropertyChanged += Client_PropertyChanged!;
 
-            if (ConnectedClients.Count == 4)
+            if (ConnectedClients.Count == 1)
                 break;
         }
     }
@@ -118,14 +118,29 @@ internal class XServer
         _cardsDeck = cardsDeck;
     }
 
+    private static void SendCard(ConnectedClient connectedClient)
+    {
+        if (_cardsDeck.Count == 0)
+        {
+            _cardsDeck = new GeneratorService().GetNewDeck(_reset);
+            _reset = new Stack<byte>();
+        }
+        
+        connectedClient.GiveCard(_cardsDeck.Pop());
+    }
+    
     public void StartGame()
     {
         InitializeGame();
 
         while (true)
         {
-            if (!ConnectedClients.All(x => x.IsReady)) continue;
-            Thread.Sleep(100);
+            if (!ConnectedClients.All(x => x.IsReady))
+            {
+                Thread.Sleep(1000);
+                continue;
+            }
+            
             break;
         }
 
@@ -150,77 +165,80 @@ internal class XServer
 
         _isGameOver = false;
 
-        // _activePlayerId = 0;
-
         while (!_isGameOver)
         {
+            // if (ConnectedClients.Count <= 3)
+            //     break;
+
+            
             var activePlayer = ConnectedClients[_activePlayerId % 4];
-
-            var cards = new List<byte>
-            {
-                _cardsDeck.Pop(),
-                _cardsDeck.Pop()
-            };
-
+            
+            SendCard(activePlayer);
+            SendCard(activePlayer);
+            
             activePlayer.StartTurn();
-
-            foreach (var card in cards) 
-                activePlayer.GiveCard(card);
+            
 
             Console.WriteLine($"{activePlayer.Name}'s turn");
             do
             {
-                if (activePlayer.ActiveCard == 100) 
+                if (activePlayer.CardOnTable == 0) 
                     continue;
                 
-                var cardId = activePlayer.ActiveCard;
+                var cardId = activePlayer.CardOnTable;
                 switch (cardId)
                 {
                     case (byte)PlayCardType.Beer:
                     {
                         activePlayer.Hp += 1;
+                        Thread.Sleep(5000);
                         break;
                     }
                     case (byte)PlayCardType.Schofield:
                     case (byte)PlayCardType.Volcanic:
                     {
                         activePlayer.GunCard = cardId;
+                        Thread.Sleep(3000);
                         break;
                     }
                     case (byte)PlayCardType.Scope:
                     {
                         activePlayer.ShotRange += 1;
                         activePlayer.ScopeCard = cardId;
+                        Thread.Sleep(3000);
                         break;
                     }
                     case (byte)PlayCardType.Mustang:
                     {
                         activePlayer.Distance += 1;
                         activePlayer.MustangCard = cardId;
+                        Thread.Sleep(3000);
                         break;
                     }
                     case (byte)PlayCardType.Barrel:
                     {
                         activePlayer.BarrelCard = cardId;
+                        Thread.Sleep(3000);
                         break;
                     }
                     case (byte)PlayCardType.Stagecoach:
                     {
-                        activePlayer.GiveCard(_cardsDeck.Pop());
-                        activePlayer.GiveCard(_cardsDeck.Pop());
+                        SendCard(activePlayer);
+                        SendCard(activePlayer);
                         break;
                     }
                     case (byte)PlayCardType.WellsFargo:
                     {
-                        activePlayer.GiveCard(_cardsDeck.Pop());
-                        activePlayer.GiveCard(_cardsDeck.Pop());
-                        activePlayer.GiveCard(_cardsDeck.Pop());
+                        SendCard(activePlayer);
+                        SendCard(activePlayer);
+                        SendCard(activePlayer);
                         break;
                     }
                     case (byte)PlayCardType.Saloon:
                     {
                         foreach (var connectedClient in ConnectedClients) 
                             connectedClient.UpdatePlayerProperty(connectedClient.Id, nameof(connectedClient.Hp), connectedClient.Hp+1);
+                        Thread.Sleep(3000);
                         break;
                     }
                     case (byte)PlayCardType.Bang:
@@ -241,8 +259,12 @@ internal class XServer
                     //TODO
                     break;
                 }
+                
+                Thread.Sleep(3000);
+                
+                _reset.Push(activePlayer.CardOnTable);
 
-                activePlayer.ActiveCard = 100;
+                activePlayer.CardOnTable = 0;
 
             } 
             while (activePlayer.Turn);

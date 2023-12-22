@@ -83,7 +83,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     private PlayCard _scopeCard = null!;
 
     public PlayCard ScopeCard
@@ -95,7 +95,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     public byte Distance { get; set; }
 
     private PlayCard _barrelCard = null!;
@@ -109,7 +109,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     private PlayCard _mustangCard = null!;
 
     public PlayCard MustangCard
@@ -165,7 +165,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     private byte _shotRange;
 
     public byte ShotRange
@@ -178,14 +178,14 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    private PlayCard _activeCard = null!;
+    private PlayCard _cardOnTable = null!;
 
-    public PlayCard ActiveCard
+    public PlayCard CardOnTable
     {
-        get => _activeCard;
+        get => _cardOnTable;
         set
         {
-            _activeCard = value;
+            _cardOnTable = value;
             OnPropertyChanged();
         }
     }
@@ -209,6 +209,7 @@ public sealed class Player : INotifyPropertyChanged
     {
         PlayersList = new ObservableCollection<Player> { new(0), new(1), new(2), new(3) };
         Name = "";
+        CardOnTable = new PlayCard();
 
         _playCards = CardsGenerator.GeneratePlayCards();
         _heroCards = CardsGenerator.GenerateHeroCards();
@@ -238,8 +239,9 @@ public sealed class Player : INotifyPropertyChanged
     private string _colorString = null!;
     private bool _isSheriff;
     private string _name = null!;
-    public readonly List<PlayCard> Cards = new();
-    
+
+    public ObservableCollection<PlayCard> Cards { get; set; } = new();
+
     internal void Connect()
     {
         try
@@ -325,6 +327,7 @@ public sealed class Player : INotifyPropertyChanged
                 break;
             case XPacketType.Unknown:
                 break;
+            case XPacketType.OpenedCard:
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
@@ -334,8 +337,8 @@ public sealed class Player : INotifyPropertyChanged
 
     private void ProcessGettingCard(XPacket packet)
     {
-        var packetBeginCardsSet = XPacketConverter.Deserialize<XPacketCard>(packet);
-        Cards.Add(_playCards[packetBeginCardsSet.CardId]);
+        var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
+        Cards.Add(_playCards[packetCard.CardId]);
         CardsCount++;
         OnPropertyChanged(nameof(Cards));
     }
@@ -350,7 +353,7 @@ public sealed class Player : INotifyPropertyChanged
             PlayersList[player.Id] = playersList[player.Id];
             OnPropertyChanged(nameof(PlayersList));
         }
-            
+
         playersList[Id] = this;
         OnPropertyChanged(nameof(PlayersList));
     }
@@ -371,8 +374,9 @@ public sealed class Player : INotifyPropertyChanged
         {
             case "HeroName":
             {
-                PlayersList[packetProperty.PlayerId].HeroCard = _heroCards[
-                    (string)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!];
+                PlayersList[packetProperty.PlayerId].HeroCard = _heroCards[(packetProperty.PropertyValue as string)!];
+                if (packetProperty.PlayerId == Id)
+                    HeroCard = PlayersList[packetProperty.PlayerId].HeroCard;
                 break;
             }
             case "RoleType":
@@ -402,7 +406,12 @@ public sealed class Player : INotifyPropertyChanged
                 ColorString = (packetProperty.PropertyValue as string)!;
                 break;
             }
-            case "ActiveCard":
+            case "CardOnTable":
+            {
+                var value = (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!;
+                CardOnTable = value == 0 ? new PlayCard() : _playCards[value];
+                break;
+            }
             case "ScopeCard":
             case "BarrelCard":
             case "MustangCard":
@@ -412,6 +421,14 @@ public sealed class Player : INotifyPropertyChanged
                 property!.SetValue(PlayersList[packetProperty.PlayerId],
                     _playCards[(byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!]);
                 OnPropertyChanged(nameof(PlayersList));
+                if (packetProperty.PlayerId == Id)
+                {
+                    property.SetValue(this,
+                        _playCards[
+                            (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!]);
+                    OnPropertyChanged(property.Name);
+                }
+
                 break;
             }
             default:
@@ -420,6 +437,13 @@ public sealed class Player : INotifyPropertyChanged
                 property!.SetValue(PlayersList[packetProperty.PlayerId],
                     Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!));
                 OnPropertyChanged(nameof(PlayersList));
+                if (packetProperty.PlayerId == Id)
+                {
+                    property.SetValue(this,
+                        Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!);
+                    OnPropertyChanged(property.Name);
+                }
+
                 break;
             }
         }
@@ -454,9 +478,12 @@ public sealed class Player : INotifyPropertyChanged
         QueuePacketSend(packet);
     }
 
-    internal void SendCard(PlayCard playCard)
+    internal void DropCardOnTable(byte id)
     {
-        var packet = XPacketConverter.Serialize(XPacketType.Card, new XPacketCard(playCard.Id)).ToPacket();
+        Cards.Remove(_playCards[id]);
+        CardsCount--;
+        OnPropertyChanged(nameof(Cards));
+        var packet = XPacketConverter.Serialize(XPacketType.Card, new XPacketCard(id)).ToPacket();
         QueuePacketSend(packet);
     }
 }

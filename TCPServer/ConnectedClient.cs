@@ -133,16 +133,15 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    private byte _activeCard;
+    private byte _cardOnTable;
 
-    public byte ActiveCard
+    public byte CardOnTable
     {
-        get => _activeCard;
+        get => _cardOnTable;
         set
         {
-            _activeCard = value;
-            if(value != 100)
-                OnPropertyChanged();
+            _cardOnTable = value;
+            OnPropertyChanged();
         }
     }
 
@@ -263,19 +262,19 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
             case XPacketType.PlayersList:
                 break;
             case XPacketType.Card:
-                ProcessGettingActiveCard(packet);
+                ProcessGettingCardOnTable(packet);
                 break;
             default:
                 throw new ArgumentException("Получен неизвестный пакет");
         }
     }
 
-    private void ProcessGettingActiveCard(XPacket packet)
+    private void ProcessGettingCardOnTable(XPacket packet)
     {
         var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
         Cards!.Remove(packetCard.CardId);
         CardsCount--;
-        ActiveCard = packetCard.CardId;
+        CardOnTable = packetCard.CardId;
     }
 
     private void ProcessUpdatingProperty(XPacket packet)

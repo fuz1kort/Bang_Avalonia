@@ -7,7 +7,7 @@ public class GeneratorService
     internal (Stack<byte> rolesDeck, Stack<string?> heroesDeck, Stack<byte> cardsDeck) GenerateDecks()
     {
         var roles = new List<byte> { 0, 1, 1, 2 };
-        var heroes = new List<string?> { "Малыш Билли", "Туко", "Том Кетчум", "Большой Змей", "Кит Карсон", "Неуловимый Джо", "Бедовая Джейн", "Джесси Джеймс", "Ангельские Глазки", "Джанго", "Хладнокровная Рози", "Человек-без-имени", "Сюзи Лафайет", "Бутч Кэссиди", "Бешеный Пёс", "Счастливчик Люк" };
+        var heroes = new List<string?> { "МАЛЫШ БИЛЛИ", "ТУКО", "ТОМ КЕТЧУМ", "БОЛЬШОЙ ЗМЕЙ", "КИТ КАРСОН", "НЕУЛОВИМЫЙ ДЖО", "БЕДОВАЯ ДЖЕЙН", "ДЖЕССИ ДЖЕЙМС", "АНГЕЛЬСКИЕ ГЛАЗКИ", "ДЖАНГО", "ХЛАДНОКРОВНАЯ РОЗИ", "ЧЕЛОВЕК-БЕЗ-ИМЕНИ", "СЮЗИ ЛАФАЙЕТ", "БУТЧ КЭССИДИ", "БЕШЕНЫЙ ПЁС", "СЧАСТЛИВЧИК ЛЮК" };
         var cards = new List<byte>();
         for (byte id = 1; id < 67; id++) 
             cards.Add(id);
@@ -29,5 +29,14 @@ public class GeneratorService
 
 
         return (rolesDeck, heroesDeck, cardsDeck);
+    }
+    
+    internal Stack<byte> GetNewDeck(IEnumerable<byte> reset)
+    {
+        var cards = reset.OrderBy(x => _random.Next()).ToList();
+        var newDeck = new Stack<byte>();
+        foreach (var card in cards) 
+            newDeck.Push(card);
+        return newDeck;
     }
 }

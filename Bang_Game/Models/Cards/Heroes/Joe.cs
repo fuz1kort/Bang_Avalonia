@@ -4,7 +4,7 @@ public class Joe: HeroCard
 {
     public Joe()
     {
-        HeroName = "Неуловимый Джо";
+        HeroName = "НЕУЛОВИМЫЙ ДЖО";
         HeroHp = 3;
     }
 }

@@ -4,7 +4,7 @@ public class Snake: HeroCard
 {
     public Snake()
     {
-        HeroName = "Большой Змей";
+        HeroName = "БОЛЬШОЙ ЗМЕЙ";
         HeroHp = 4;
     }
 }

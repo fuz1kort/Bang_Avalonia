@@ -4,7 +4,7 @@ public class Rosie : HeroCard
 {
     public Rosie()
     {
-        HeroName = "Хладнокровная Рози";
+        HeroName = "ХЛАДНОКРОВНАЯ РОЗИ";
         HeroHp = 4;
     }
 }

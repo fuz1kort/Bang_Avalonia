@@ -4,7 +4,7 @@ public class Kit: HeroCard
 {
     public Kit()
     {
-        HeroName = "Кит Карсон";
+        HeroName = "КИТ КАРСОН";
         HeroHp = 4;
     }
 }

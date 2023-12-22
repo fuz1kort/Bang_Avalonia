@@ -4,7 +4,7 @@ public class Butch : HeroCard
 {
     public Butch()
     {
-        HeroName = "Бутч Кэссиди";
+        HeroName = "БУТЧ КЭССИДИ";
         HeroHp = 4;
     }
 }

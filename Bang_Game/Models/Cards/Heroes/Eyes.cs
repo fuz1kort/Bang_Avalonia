@@ -4,7 +4,7 @@ public class Eyes: HeroCard
 {
     public Eyes()
     {
-        HeroName = "Ангельские Глазки";
+        HeroName = "АНГЕЛЬСКИЕ ГЛАЗКИ";
         HeroHp = 4;
     }
 }

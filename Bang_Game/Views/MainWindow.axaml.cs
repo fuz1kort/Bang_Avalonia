@@ -35,6 +35,6 @@ public partial class MainWindow : Window
     {
         NickInput.IsVisible = false;
         GameGrid.IsVisible = true;
-        Background = Brushes.White;
+        Background = null;
     }
 }
