@@ -161,7 +161,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     private bool _win;
 
     public bool Win
@@ -173,7 +173,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     private bool _lose;
 
     public bool Lose
@@ -186,7 +186,6 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
-    
 
     private PlayCard _gunCard = new();
 
@@ -233,12 +232,6 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-
-    public byte CardsInDeck => (byte)(67 - PlayersList[0].CardsCount - PlayersList[1].CardsCount -
-                                      PlayersList[2].CardsCount - PlayersList[3].CardsCount);
-
-    public byte CardsInReset => (byte)(67 - CardsInDeck - PlayersList[0].CardsCount - PlayersList[1].CardsCount -
-                                       PlayersList[2].CardsCount - PlayersList[3].CardsCount);
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -399,10 +392,8 @@ public sealed class Player : INotifyPropertyChanged
     {
         var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
         Cards.Remove(PlayCards[packetCard.CardId]);
-        CardsCount--;
+        CardsCount = (byte)Cards.Count;
         OnPropertyChanged(nameof(Cards));
-        OnPropertyChanged(nameof(CardsInDeck));
-        OnPropertyChanged(nameof(CardsInReset));
     }
 
     private void ProcessStartingTurn(XPacket packet) => Turn = true;
@@ -411,10 +402,8 @@ public sealed class Player : INotifyPropertyChanged
     {
         var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
         Cards.Add(PlayCards[packetCard.CardId]);
-        CardsCount++;
+        CardsCount = (byte)Cards.Count;
         OnPropertyChanged(nameof(Cards));
-        OnPropertyChanged(nameof(CardsInDeck));
-        OnPropertyChanged(nameof(CardsInReset));
     }
 
     private void ProcessGettingPlayers(XPacket packet)
@@ -485,13 +474,17 @@ public sealed class Player : INotifyPropertyChanged
             {
                 var property = GetType().GetProperty(packetProperty.PropertyName!);
                 property!.SetValue(PlayersList[packetProperty.PlayerId],
-                    PlayCards[(byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!]);
+                    packetProperty.PropertyValue!.Equals(0)
+                        ? null
+                        : PlayCards[
+                            (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)]);
+
                 OnPropertyChanged(nameof(PlayersList));
                 if (packetProperty.PlayerId == Id)
                 {
                     property.SetValue(this,
                         PlayCards[
-                            (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)!]);
+                            (byte)Convert.ChangeType(packetProperty.PropertyValue, packetProperty.PropertyType!)]);
                     OnPropertyChanged(property.Name);
                 }
 
@@ -530,9 +523,6 @@ public sealed class Player : INotifyPropertyChanged
                 break;
             }
         }
-
-        OnPropertyChanged(nameof(CardsInDeck));
-        OnPropertyChanged(nameof(CardsInReset));
     }
 
     private void QueuePacketSend(byte[] packet)
@@ -567,7 +557,7 @@ public sealed class Player : INotifyPropertyChanged
     internal void DropCardOnTable(byte id, byte playerId = 10)
     {
         Cards.Remove(PlayCards[id]);
-        CardsCount--;
+        CardsCount = (byte)Cards.Count;
         OnPropertyChanged(nameof(Cards));
         var packet = XPacketConverter.Serialize(XPacketType.CardToTable, new XPacketCard(id, playerId)).ToPacket();
         QueuePacketSend(packet);
@@ -576,7 +566,7 @@ public sealed class Player : INotifyPropertyChanged
     internal void DropCardToReset(byte id)
     {
         Cards.Remove(PlayCards[id]);
-        CardsCount--;
+        CardsCount = (byte)Cards.Count;
         OnPropertyChanged(nameof(Cards));
         var packet = XPacketConverter.Serialize(XPacketType.CardToReset, new XPacketCard(id)).ToPacket();
         QueuePacketSend(packet);

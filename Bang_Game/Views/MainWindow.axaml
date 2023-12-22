@@ -544,7 +544,7 @@
                             <TextBlock Text="{Binding Player.PlayersList[2].Hp}"
                                        IsVisible="{Binding Player.PlayersList[2].Hp}" Foreground="Black"
                                        FontWeight="Bold"
-                                       Canvas.Right="18" Canvas.Top="5" />
+                                       Canvas.Right="20" Canvas.Top="5" />
                             <Image Source="../Assets/Cards/PlayCards/PlayCardBack.jpg" Canvas.Right="15"
                                    Canvas.Top="40" Width="40" Height="80" />
                             <TextBlock Text="{Binding Player.PlayersList[2].CardsCount}" Foreground="White"
@@ -636,10 +636,10 @@
             </Grid>
         </Grid>
         <Grid IsVisible="{Binding Player.Win}" Background="Black">
-            <TextBlock FontSize="50" Foreground="White">Победа</TextBlock>
+            <TextBlock FontSize="50" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Победа</TextBlock>
         </Grid>
         <Grid IsVisible="{Binding Player.Lose}" Background="Black">
-            <TextBlock FontSize="50" Foreground="White">Поражение</TextBlock>
+            <TextBlock FontSize="50" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Поражение</TextBlock>
         </Grid>
     </Grid>
 </Window>

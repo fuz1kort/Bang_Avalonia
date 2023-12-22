@@ -135,7 +135,8 @@ internal class XServer
             _reset = new Stack<byte>();
         }
 
-        connectedClient.GiveCard(_cardsDeck.Pop());
+        var card = _cardsDeck.Pop();
+        connectedClient.GiveCard(card);
     }
 
     public void StartGame()
@@ -176,8 +177,8 @@ internal class XServer
 
         while (!_isGameOver)
         {
-            // if (ConnectedClients.Count <= 3)
-            //     break;
+            if (ConnectedClients.Count <= 3)
+                break;
 
 
             var activePlayer = ConnectedClients[_activePlayerId % 4];
@@ -288,7 +289,16 @@ internal class XServer
                                 .Where(x => x.PlayCardType == PlayCardType.Missed).ToList()[0];
                             SendCardToReset(missedCard.Id);
                             player.Cards!.Remove(missedCard.Id);
-                            player.CardsCount--;
+                            player.CardsCount = (byte)player.Cards.Count;
+                        }
+                        else if (player.Hp == 1 &&
+                                 player.Cards!.Select(x => PlayCards[x].PlayCardType == PlayCardType.Beer).Any())
+                        {
+                            var beerCard = player.Cards!.Select(x => PlayCards[x])
+                                .Where(x => x.PlayCardType == PlayCardType.Beer).ToList()[0];
+                            SendCardToReset(beerCard.Id);
+                            player.Cards!.Remove(beerCard.Id);
+                            player.CardsCount = (byte)player.Cards.Count;
                         }
                         else
                             player.Hp--;
@@ -303,12 +313,14 @@ internal class XServer
                     }
                     case PlayCardType.CatBalou:
                     {
-                        activePlayer.RemoveCardRandom();
+                        var takenCard = ConnectedClients[activePlayer.ToPlayerId].GetRandomCard();
+                        SendCardToReset(takenCard);
                         break;
                     }
                     case PlayCardType.Gatling:
                     {
-                        foreach (var player in ConnectedClients.Where(client => client.Id != _activePlayerId))
+                        foreach (var player in ConnectedClients.Where(client =>
+                                     client.Id != _activePlayerId && client.Hp > 0))
                         {
                             if (player.BarrelCard != 0)
                             {
@@ -328,7 +340,16 @@ internal class XServer
                                     .Where(x => x.PlayCardType == PlayCardType.Missed).ToList()[0];
                                 SendCardToReset(missedCard.Id);
                                 player.Cards!.Remove(missedCard.Id);
-                                player.CardsCount--;
+                                player.CardsCount = (byte)player.Cards.Count;
+                            }
+                            else if (player.Hp == 1 &&
+                                     player.Cards!.Select(x => PlayCards[x].PlayCardType == PlayCardType.Beer).Any())
+                            {
+                                var beerCard = player.Cards!.Select(x => PlayCards[x])
+                                    .Where(x => x.PlayCardType == PlayCardType.Beer).ToList()[0];
+                                SendCardToReset(beerCard.Id);
+                                player.Cards!.Remove(beerCard.Id);
+                                player.CardsCount = (byte)player.Cards.Count;
                             }
                             else
                                 player.Hp--;
@@ -362,13 +383,12 @@ internal class XServer
                     break;
                 }
 
-                if (activePlayer.RoleType == (byte)RoleType.Bandit &&
-                    ConnectedClients.Any(x => x is { RoleType: (byte)RoleType.Sheriff, Hp: 0 }))
+                if (ConnectedClients.Any(x => x is { RoleType: (byte)RoleType.Sheriff, Hp: 0 }))
                 {
                     _isGameOver = true;
                     foreach (var client in ConnectedClients)
                     {
-                        if (client.Id == _activePlayerId)
+                        if (client.RoleType == (byte)RoleType.Bandit)
                             activePlayer.Win();
                         else
                             client.Lose();
@@ -377,7 +397,8 @@ internal class XServer
                     break;
                 }
 
-                if (activePlayer.RoleType != (byte)RoleType.Renegade || ConnectedClients.Any(x => x.Hp != 0)) continue;
+                if (activePlayer.RoleType != (byte)RoleType.Renegade ||
+                    ConnectedClients.Where(x => x.Id != _activePlayerId).Any(x => x.Hp != 0)) continue;
                 {
                     _isGameOver = true;
                     foreach (var client in ConnectedClients)
@@ -397,8 +418,5 @@ internal class XServer
         }
     }
 
-    internal static void SendCardToReset(byte id)
-    {
-        _reset.Push(id);
-    }
+    internal static void SendCardToReset(byte id) => _reset.Push(id);
 }

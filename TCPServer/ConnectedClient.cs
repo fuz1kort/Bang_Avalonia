@@ -268,7 +268,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     {
         var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
         Cards!.Remove(packetCard.CardId);
-        CardsCount--;
+        CardsCount = (byte)Cards.Count;
         XServer.SendCardToReset(packetCard.CardId);
     }
 
@@ -276,7 +276,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     {
         var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
         Cards!.Remove(packetCard.CardId);
-        CardsCount--;
+        CardsCount = (byte)Cards.Count;
         if (packetCard.ToPlayerId != 10)
             ToPlayerId = packetCard.ToPlayerId;
         CardOnTable = packetCard.CardId;
@@ -358,17 +358,8 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     public void GiveCard(byte cardId)
     {
         Cards!.Add(cardId);
-        CardsCount++;
+        CardsCount = (byte)Cards.Count;
         var packerCard = XPacketConverter.Serialize(XPacketType.CardToPlayer, new XPacketCard(cardId)).ToPacket();
-        QueuePacketSend(packerCard);
-    }
-
-    public void RemoveCardRandom()
-    {
-        var removedCard = Cards![_random.Next(CardsCount)];
-        Cards!.Remove(removedCard);
-        CardsCount--;
-        var packerCard = XPacketConverter.Serialize(XPacketType.RemoveCard, new XPacketCard(removedCard)).ToPacket();
         QueuePacketSend(packerCard);
     }
 
@@ -381,9 +372,9 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
 
     public byte GetRandomCard()
     {
-        var removedCard = Cards![_random.Next(CardsCount)];
+        var removedCard = Cards![_random.Next(1, CardsCount)];
         Cards!.Remove(removedCard);
-        CardsCount--;
+        CardsCount = (byte)Cards.Count;
         return removedCard;
     }
 

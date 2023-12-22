@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("XProtocol")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d7024812c1f48c56115bea4c1c0d1f0b6979f6c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aab6f0cc2e5b5c06ccab65547b0a7c2ef629c5cf")]
 [assembly: System.Reflection.AssemblyProductAttribute("XProtocol")]
 [assembly: System.Reflection.AssemblyTitleAttribute("XProtocol")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
