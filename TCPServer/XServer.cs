@@ -416,6 +416,8 @@ internal class XServer
             Console.WriteLine($"Player {activePlayer.Name} has finished his turn");
             _activePlayerId += 1;
         }
+
+        Console.WriteLine("Game over");
     }
 
     internal static void SendCardToReset(byte id) => _reset.Push(id);
