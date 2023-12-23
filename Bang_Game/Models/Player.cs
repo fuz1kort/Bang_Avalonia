@@ -161,7 +161,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-
+    
     private bool _win;
 
     public bool Win
@@ -173,7 +173,7 @@ public sealed class Player : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-
+    
     private bool _lose;
 
     public bool Lose
@@ -186,6 +186,7 @@ public sealed class Player : INotifyPropertyChanged
         }
     }
 
+    
 
     private PlayCard _gunCard = new();
 

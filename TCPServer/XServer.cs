@@ -190,6 +190,9 @@ internal class XServer
             }
 
             SendCard(activePlayer);
+            
+            Thread.Sleep(300);
+            
             SendCard(activePlayer);
 
             activePlayer.StartTurn();
@@ -288,17 +291,15 @@ internal class XServer
                             var missedCard = player.Cards!.Select(x => PlayCards[x])
                                 .Where(x => x.PlayCardType == PlayCardType.Missed).ToList()[0];
                             SendCardToReset(missedCard.Id);
-                            player.Cards!.Remove(missedCard.Id);
-                            player.CardsCount = (byte)player.Cards.Count;
+                            player.RemoveCard(missedCard.Id);
                         }
                         else if (player.Hp == 1 &&
-                                 player.Cards!.Select(x => PlayCards[x].PlayCardType == PlayCardType.Beer).Any())
+                                 player.Cards!.Any(x => PlayCards[x].PlayCardType == PlayCardType.Beer))
                         {
                             var beerCard = player.Cards!.Select(x => PlayCards[x])
                                 .Where(x => x.PlayCardType == PlayCardType.Beer).ToList()[0];
                             SendCardToReset(beerCard.Id);
-                            player.Cards!.Remove(beerCard.Id);
-                            player.CardsCount = (byte)player.Cards.Count;
+                            player.RemoveCard(beerCard.Id);
                         }
                         else
                             player.Hp--;
@@ -339,17 +340,15 @@ internal class XServer
                                 var missedCard = player.Cards!.Select(x => PlayCards[x])
                                     .Where(x => x.PlayCardType == PlayCardType.Missed).ToList()[0];
                                 SendCardToReset(missedCard.Id);
-                                player.Cards!.Remove(missedCard.Id);
-                                player.CardsCount = (byte)player.Cards.Count;
+                                player.RemoveCard(missedCard.Id);
                             }
                             else if (player.Hp == 1 &&
-                                     player.Cards!.Select(x => PlayCards[x].PlayCardType == PlayCardType.Beer).Any())
+                                     player.Cards!.Any(x => PlayCards[x].PlayCardType == PlayCardType.Beer))
                             {
                                 var beerCard = player.Cards!.Select(x => PlayCards[x])
                                     .Where(x => x.PlayCardType == PlayCardType.Beer).ToList()[0];
                                 SendCardToReset(beerCard.Id);
-                                player.Cards!.Remove(beerCard.Id);
-                                player.CardsCount = (byte)player.Cards.Count;
+                                player.RemoveCard(beerCard.Id);
                             }
                             else
                                 player.Hp--;

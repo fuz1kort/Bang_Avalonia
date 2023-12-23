@@ -100,7 +100,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         }
     }
 
-    internal List<byte>? Cards { get; init; }
+    internal List<byte>? Cards { get; }
 
     public byte CardsCount
     {
@@ -373,9 +373,16 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
     public byte GetRandomCard()
     {
         var removedCard = Cards![_random.Next(1, CardsCount)];
-        Cards!.Remove(removedCard);
-        CardsCount = (byte)Cards.Count;
+        RemoveCard(removedCard);
         return removedCard;
+    }
+    
+    public void RemoveCard(byte id)
+    {
+        Cards!.Remove(id);
+        CardsCount = (byte)Cards.Count;
+        var packetRemoveCard = XPacketConverter.Serialize(XPacketType.RemoveCard, new XPacketCard(id)).ToPacket();
+        QueuePacketSend(packetRemoveCard);
     }
 
     public void Win() => QueuePacketSend(XPacketConverter.Serialize(XPacketType.Win, new XPacketEmpty()).ToPacket());
