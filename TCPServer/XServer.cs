@@ -382,7 +382,8 @@ internal class XServer
                     break;
                 }
 
-                if (ConnectedClients.Any(x => x is { RoleType: (byte)RoleType.Sheriff, Hp: 0 }))
+                if (activePlayer.RoleType == (byte)RoleType.Bandit &&
+                    ConnectedClients.Where(x => x.Id != _activePlayerId && x.RoleType != (byte)RoleType.Bandit).All(x => x.Hp == 0))
                 {
                     _isGameOver = true;
                     foreach (var client in ConnectedClients)

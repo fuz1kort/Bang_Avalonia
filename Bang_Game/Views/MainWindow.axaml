@@ -198,6 +198,7 @@
                     </StackPanel>
                     <Grid VerticalAlignment="Bottom"
                           IsVisible="{Binding IsChoosing}">
+                        <StackPanel>
                         <ListBox ItemsSource="{Binding Player.PlayersList}" Background="#4680461C">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -219,6 +220,8 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+                        <Button Command="{Binding CloseChoosingCommand}" Width="200" Height="50" Background="#1FFF0800" Foreground="White" Content="Отмена" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
                     </Grid>
                 </Grid>
                 <Grid Grid.Column="1">

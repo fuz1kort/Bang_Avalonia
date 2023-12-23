@@ -30,6 +30,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<byte, Unit> DropCardOnTableCommand { get; }
 
     public ReactiveCommand<byte, Unit> ChoosePlayerCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> CloseChoosingCommand { get; }
 
     public bool IsGoingToReset
     {
@@ -61,6 +63,11 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private void CloseChoosing()
+    {
+        IsChoosing = false;
+    }
+
     private bool _didShoot;
 
     public MainWindowViewModel()
@@ -73,6 +80,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         DropCardOnTableCommand = ReactiveCommand.Create<byte>(DropCardOnTable);
         DropCardsToResetCommand = ReactiveCommand.Create(DropCardsToReset);
         ChoosePlayerCommand = ReactiveCommand.Create<byte>(DropCardOnTableToPlayer);
+        CloseChoosingCommand = ReactiveCommand.Create(CloseChoosing);
     }
 
     private void UpdateCanEndTurn(object? sender, PropertyChangedEventArgs e)
@@ -106,7 +114,6 @@ public sealed class MainWindowViewModel : ViewModelBase
                     if(_didShoot && Player.GunCard.PlayCardType != PlayCardType.Volcanic)
                         return;
                     IsChoosing = true;
-                    _didShoot = true;
                     break;
                 case PlayCardType.CatBalou:
                 case PlayCardType.Panic:
@@ -114,6 +121,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                     break;
                 default:
                     Player.DropCardOnTable(cardId);
+                    break;
+                case PlayCardType.Missed:
                     break;
             }
         }
@@ -130,6 +139,12 @@ public sealed class MainWindowViewModel : ViewModelBase
         if (playerId == Player.Id || Player.PlayersList[playerId].Hp == 0) return;
         if(Player.PlayCards[_lastCard].PlayCardType != PlayCardType.CatBalou)
             if (Player.PlayersList[playerId].Distance > Player.ShotRange) return;
+
+        if (_didShoot && Player.PlayCards[_lastCard].PlayCardType == PlayCardType.Bang)
+            return;
+        
+        if(Player.PlayCards[_lastCard].PlayCardType == PlayCardType.Bang)
+            _didShoot = true;
         
         Player.DropCardOnTable(_lastCard, playerId);
         IsChoosing = false;
