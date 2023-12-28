@@ -1,4 +1,4 @@
-﻿namespace Band_Server.Services;
+﻿namespace Bang_Server.Services;
 
 public class GeneratorService
 {

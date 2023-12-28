@@ -1,4 +1,4 @@
-﻿using Band_Server;
+﻿using Bang_Server;
 
 Console.Title = "BangServer";
 

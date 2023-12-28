@@ -5,7 +5,7 @@ using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
 
-namespace Band_Server;
+namespace Bang_Server;
 
 internal sealed class ConnectedClient : INotifyPropertyChanged
 {

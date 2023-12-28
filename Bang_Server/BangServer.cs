@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
-using Band_Server.Services;
 using Bang_Game_Models;
 using Bang_Game_Models.Cards;
+using Bang_Server.Services;
 
-namespace Band_Server;
+namespace Bang_Server;
 
 internal class BangServer
 {
