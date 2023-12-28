@@ -14,3 +14,9 @@ Bang_Game/obj/Debug/net7.0/Bang_Game.AssemblyInfo.cs
 *.info
 *.cache
 TCPServer/obj/Debug/net7.0/TCPServer.AssemblyInfo.cs
+.idea/.idea.Bang_Avalonia/.idea/discord.xml
+.idea/.idea.Bang_Avalonia/.idea/encodings.xml
+*.xml
+*.json
+Bang_Game_Models/bin/Debug/net7.0/Bang_Game_Models.deps.json
+Bang_Avalonia.sln.DotSettings.user

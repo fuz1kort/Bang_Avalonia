@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
+using Band_Server.Services;
 using Bang_Game_Models;
 using Bang_Game_Models.Cards;
-using TCPServer.Services;
 
-namespace TCPServer;
+namespace Band_Server;
 
-internal class XServer
+internal class BangServer
 {
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 

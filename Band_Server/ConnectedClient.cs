@@ -5,7 +5,7 @@ using XProtocol;
 using XProtocol.Serializer;
 using XProtocol.XPackets;
 
-namespace TCPServer;
+namespace Band_Server;
 
 internal sealed class ConnectedClient : INotifyPropertyChanged
 {
@@ -180,7 +180,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         set
         {
             _gunCard = value;
-            ShotRange = XServer.PlayCards[value].ShotRange;
+            ShotRange = BangServer.PlayCards[value].ShotRange;
             OnPropertyChanged();
         }
     }
@@ -269,7 +269,7 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
         var packetCard = XPacketConverter.Deserialize<XPacketCard>(packet);
         Cards!.Remove(packetCard.CardId);
         CardsCount = (byte)Cards.Count;
-        XServer.SendCardToReset(packetCard.CardId);
+        BangServer.SendCardToReset(packetCard.CardId);
     }
 
     private void ProcessGettingCardOnTable(XPacket packet)
@@ -347,11 +347,11 @@ internal sealed class ConnectedClient : INotifyPropertyChanged
 
     private static void SendPlayers()
     {
-        var players = XServer.ConnectedClients.Select(x => x.GetPlayerParameters()).ToList();
+        var players = BangServer.ConnectedClients.Select(x => x.GetPlayerParameters()).ToList();
         var packet = XPacketConverter.Serialize(XPacketType.PlayersList,
             new XPacketPlayers { Players = players });
         var bytePacket = packet.ToPacket();
-        foreach (var client in XServer.ConnectedClients)
+        foreach (var client in BangServer.ConnectedClients)
             client.QueuePacketSend(bytePacket);
     }
 

@@ -1,4 +1,4 @@
-﻿namespace TCPServer.Services;
+﻿namespace Band_Server.Services;
 
 public class GeneratorService
 {

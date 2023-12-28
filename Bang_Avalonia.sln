@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bang_Game", "Bang_Game\Bang_Game.csproj", "{38E8231C-E413-49BB-A5E2-164561CDFE25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPServer", "TCPServer\TCPServer.csproj", "{CFBCAC94-167C-48B7-A1A1-45D8861FBF0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Band_Server", "Band_Server\Band_Server.csproj", "{CFBCAC94-167C-48B7-A1A1-45D8861FBF0B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XProtocol", "XProtocol\XProtocol.csproj", "{D789A6BD-9650-40C1-9326-48783DAEA738}"
 EndProject
